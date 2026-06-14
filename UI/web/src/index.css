@@ -1,0 +1,149 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   Palissage design tokens — Figma Variables → CSS variables.
+   Light is :root, dark is [data-theme="dark"]. Theme switch is a
+   crossfade on <html> (see ThemeProvider).
+   ============================================================ */
+:root {
+  --c-page: #faf7f2;
+  --c-page-subtle: #f1ece4;
+  --c-surface: #ffffff;
+  --c-surface-raised: #ffffff;
+  --c-line: #e5ddd2;
+  --c-line-strong: #c9beaf;
+  --c-fg: #231d18;
+  --c-fg-secondary: #6e6357;
+  --c-fg-tertiary: #998c7d;
+  --c-fg-inverse: #faf7f2;
+  --c-accent: #7a1f30;
+  --c-accent-hover: #621826;
+  --c-accent-pressed: #4e1320;
+  --c-accent-subtle: #f4e4e7;
+  --c-success: #2f7a4d;
+  --c-success-subtle: #e3f1e8;
+  --c-warning: #9a6700;
+  --c-warning-subtle: #f8efd8;
+  --c-danger: #b3261e;
+  --c-danger-subtle: #f9e2e0;
+  --c-info: #2d5f8a;
+  --c-info-subtle: #e2edf6;
+  --c-gold: #8a6d1f;
+  --c-gold-subtle: #f6eed6;
+  --c-tile: #ffffff;
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --c-page: #171310;
+  --c-page-subtle: #211c18;
+  --c-surface: #241e1a;
+  --c-surface-raised: #2c2520;
+  --c-line: #3b332c;
+  --c-line-strong: #55493f;
+  --c-fg: #f3ece2;
+  --c-fg-secondary: #a99c8e;
+  --c-fg-tertiary: #7a6f63;
+  --c-fg-inverse: #231d18;
+  --c-accent: #c4566b;
+  --c-accent-hover: #d2697d;
+  --c-accent-pressed: #b0445a;
+  --c-accent-subtle: #3a2228;
+  --c-success: #5fbf8a;
+  --c-success-subtle: #1e3127;
+  --c-warning: #d9a43b;
+  --c-warning-subtle: #382c14;
+  --c-danger: #e5736c;
+  --c-danger-subtle: #3c1f1d;
+  --c-info: #7fafd4;
+  --c-info-subtle: #1c2b38;
+  --c-gold: #d7b45c;
+  --c-gold-subtle: #352b14;
+  --c-tile: #ffffff;
+  color-scheme: dark;
+}
+
+@layer base {
+  * {
+    border-color: var(--c-line);
+  }
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+  body {
+    margin: 0;
+    @apply bg-page text-fg font-sans;
+    transition: background-color 0.2s cubic-bezier(0.2, 0, 0, 1),
+      color 0.2s cubic-bezier(0.2, 0, 0, 1);
+  }
+  ::selection {
+    background: var(--c-accent-subtle);
+    color: var(--c-accent);
+  }
+  .tnum {
+    font-feature-settings: 'tnum' 1;
+  }
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--c-accent);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+}
+
+@layer components {
+  /* ---- Type styles (mirror Figma text styles) ---- */
+  .t-display { @apply font-serif font-semibold; font-size: 48px; line-height: 56px; letter-spacing: -0.01em; }
+  .t-h1 { @apply font-serif font-semibold; font-size: 32px; line-height: 40px; }
+  .t-h2 { @apply font-serif font-semibold; font-size: 24px; line-height: 32px; }
+  .t-h3 { @apply font-sans font-semibold; font-size: 18px; line-height: 26px; }
+  .t-body { @apply font-sans; font-size: 16px; line-height: 24px; }
+  .t-body-strong { @apply font-sans font-semibold; font-size: 16px; line-height: 24px; }
+  .t-small { @apply font-sans; font-size: 14px; line-height: 20px; }
+  .t-small-strong { @apply font-sans font-semibold; font-size: 14px; line-height: 20px; }
+  .t-caption { @apply font-sans font-medium uppercase; font-size: 12px; line-height: 16px; letter-spacing: 0.04em; }
+  .t-num { @apply font-serif font-semibold tnum; font-size: 40px; line-height: 48px; }
+  .t-num-sm { @apply font-serif font-semibold tnum; font-size: 32px; line-height: 40px; }
+  .t-mono { @apply font-mono tnum; font-size: 14px; line-height: 20px; }
+
+  @media (max-width: 640px) {
+    .t-display { font-size: 34px; line-height: 40px; }
+    .t-h1 { font-size: 26px; line-height: 32px; }
+    .t-h2 { font-size: 20px; line-height: 28px; }
+    .t-h3 { font-size: 16px; line-height: 24px; }
+    .t-num { font-size: 30px; line-height: 36px; }
+  }
+
+  .card { @apply bg-surface border border-line rounded-lg; }
+  .skeleton {
+    background: linear-gradient(90deg, var(--c-page-subtle) 25%, var(--c-line) 37%, var(--c-page-subtle) 63%);
+    background-size: 200% 100%;
+    @apply animate-shimmer rounded-md;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--c-line-strong) transparent;
+}
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb {
+  background: var(--c-line-strong);
+  border-radius: 9999px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}

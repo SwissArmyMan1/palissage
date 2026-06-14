@@ -72,6 +72,29 @@ contract WineLotTokenTest is Fixtures {
         token.setProductionStatus(lotId, IWineLotToken.ProductionStatus.Bottled);
     }
 
+    /// @dev M-02 regression: the winery can repoint metadataURI but must NOT be able to overwrite
+    ///      the verifier-attested docsHash; that anchor stays fixed until re-verification.
+    function test_UpdateLotMetadata_DoesNotTouchDocsHash() public {
+        bytes32 verifiedHash = token.getLot(lotId).docsHash;
+        assertEq(verifiedHash, keccak256("docs"));
+
+        vm.prank(winery);
+        vm.expectEmit(true, false, false, true);
+        emit IWineLotToken.LotMetadataUpdated(lotId, "ipfs://updated");
+        token.updateLotMetadata(lotId, "ipfs://updated");
+
+        IWineLotToken.WineLot memory lot = token.getLot(lotId);
+        assertEq(lot.metadataURI, "ipfs://updated");
+        assertEq(token.uri(lotId), "ipfs://updated");
+        assertEq(lot.docsHash, verifiedHash, "verifier docsHash unchanged");
+    }
+
+    function test_UpdateLotMetadata_OnlyLotWinery() public {
+        vm.prank(buyer);
+        vm.expectRevert(abi.encodeWithSelector(WineLotToken.NotLotWinery.selector, lotId, buyer));
+        token.updateLotMetadata(lotId, "ipfs://x");
+    }
+
     // ----------------------------------------------------------------- mint
 
     function test_Mint_OnlyMinterRole() public {
@@ -212,6 +235,35 @@ contract WineLotTokenTest is Fixtures {
             abi.encodeWithSelector(IAccessControl.AccessControlUnauthorizedAccount.selector, outsider, role)
         );
         token.forcedTransfer(buyer, buyer2, lotId, 1);
+    }
+
+    /// @dev H-02 regression: forcedTransfer must not accept from == address(0), which
+    ///      would mint unbacked supply through super._update, skipping MINTER_ROLE, the
+    ///      supply cap and the mintedBottles accounting.
+    function test_ForcedTransfer_RevertsFromZero_NoUnbackedMint() public {
+        uint256 supplyBefore = token.totalSupply(lotId);
+        uint32 mintedBefore = token.getLot(lotId).mintedBottles;
+
+        vm.prank(enforcer);
+        vm.expectRevert(WineLotToken.ZeroAddress.selector);
+        token.forcedTransfer(address(0), buyer, lotId, 5);
+
+        assertEq(token.totalSupply(lotId), supplyBefore, "supply unchanged");
+        assertEq(token.getLot(lotId).mintedBottles, mintedBefore, "mintedBottles unchanged");
+        assertEq(token.balanceOf(buyer, lotId), 0, "no tokens minted");
+    }
+
+    function test_ForcedTransfer_RevertsForZeroAmountAndUnknownLot() public {
+        vm.prank(minter);
+        token.mint(buyer, lotId, 10);
+
+        vm.prank(enforcer);
+        vm.expectRevert(WineLotToken.ZeroAmount.selector);
+        token.forcedTransfer(buyer, buyer2, lotId, 0);
+
+        vm.prank(enforcer);
+        vm.expectRevert(abi.encodeWithSelector(WineLotToken.LotDoesNotExist.selector, 999));
+        token.forcedTransfer(buyer, buyer2, 999, 1);
     }
 
     // ----------------------------------------------------------------- views

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-/// @title ClaimTopicsLib — canonical claim topics of the Palissage protocol.
+/// @title ClaimTopicsLib - canonical claim topics of the Palissage protocol.
 library ClaimTopicsLib {
     /// @notice Natural person / representative passed KYC.
     uint256 internal constant TOPIC_KYC = 1;

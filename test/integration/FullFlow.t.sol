@@ -10,7 +10,7 @@ import {IWineLotToken} from "../../src/interfaces/IWineLotToken.sol";
 ///      deposit reservation → remainder → mint → milestone releases →
 ///      secondary resale with fee + royalty → redemption → burn.
 contract FullFlowTest is Fixtures {
-    uint256 internal constant EN_PRIMEUR_PRICE = 6_500_000; // 6.50 EURC, pre-bottling discount
+    uint256 internal constant EN_PRIMEUR_PRICE = 6_500_000; // 6.50 EURe, pre-bottling discount
     uint256 internal constant RESALE_PRICE = 8_500_000;
 
     function test_EnPrimeurFullLifecycle() public {
@@ -92,7 +92,7 @@ contract FullFlowTest is Fixtures {
         _fundAndApprove(buyer2, resaleTotal, address(secondaryMarket));
         uint256 wineryBefore = eurc.balanceOf(winery);
         vm.prank(buyer2);
-        secondaryMarket.buy(listingId, 200);
+        secondaryMarket.buy(listingId, 200, RESALE_PRICE, block.timestamp);
 
         uint256 resaleFee = (resaleTotal * 200) / 10000;
         uint256 royalty = (resaleTotal * 250) / 10000;

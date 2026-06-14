@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-/// @title IERC735 — Claim Holder.
+/// @title IERC735 - Claim Holder.
 /// @notice Claims are signed third-party statements about an identity.
 ///         claimId = keccak256(abi.encode(issuer, topic)).
 interface IERC735 {

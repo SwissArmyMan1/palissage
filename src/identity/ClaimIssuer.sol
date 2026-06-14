@@ -8,7 +8,7 @@ import {IClaimIssuer} from "../interfaces/IClaimIssuer.sol";
 import {IIdentity} from "../interfaces/IIdentity.sol";
 import {ClaimTopicsLib} from "../libraries/ClaimTopicsLib.sol";
 
-/// @title ClaimIssuer — trusted issuer identity that signs, validates and revokes claims.
+/// @title ClaimIssuer - trusted issuer identity that signs, validates and revokes claims.
 /// @notice signature = ECDSA over toEthSignedMessageHash(keccak256(abi.encode(subject, topic, data))).
 ///         The recovered signer must hold a CLAIM (purpose 3) key in this issuer identity.
 contract ClaimIssuer is Identity, IClaimIssuer {

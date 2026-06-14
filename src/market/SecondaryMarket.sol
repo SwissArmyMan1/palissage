@@ -11,7 +11,7 @@ import {IWineLotToken} from "../interfaces/IWineLotToken.sol";
 import {IIdentityRegistry} from "../interfaces/IIdentityRegistry.sol";
 import {ClaimTopicsLib} from "../libraries/ClaimTopicsLib.sol";
 
-/// @title SecondaryMarket — whitelisted B2B resale of wine lot allocations.
+/// @title SecondaryMarket - whitelisted B2B resale of wine lot allocations.
 /// @notice Sellers list lazily (tokens stay in their wallet, market is an approved
 ///         operator); each purchase pays the protocol fee and the winery royalty.
 contract SecondaryMarket is AccessControl, Pausable, ReentrancyGuard {
@@ -40,6 +40,8 @@ contract SecondaryMarket is AccessControl, Pausable, ReentrancyGuard {
     error InsufficientListedQuantity(uint256 listingId, uint256 requested, uint256 available);
     error InsufficientSellerBalance(uint256 listingId);
     error SelfPurchase(uint256 listingId);
+    error PriceExceedsLimit(uint256 listingId, uint256 pricePerBottle, uint256 maxPricePerBottle);
+    error DeadlineExpired(uint256 deadline);
     error ZeroAmount();
     error ZeroAddress();
 
@@ -161,14 +163,25 @@ contract SecondaryMarket is AccessControl, Pausable, ReentrancyGuard {
         emit ListingCancelled(listingId);
     }
 
-    /// @notice Buys `quantity` bottles from a listing. Funds split: protocol fee →
-    ///         treasury, winery royalty → lot creator, remainder → seller. Tokens move
-    ///         seller → buyer with this market acting as the transfer agent.
-    function buy(uint256 listingId, uint32 quantity) external whenNotPaused nonReentrant {
+    /// @notice Buys `quantity` bottles from a listing. Funds split: protocol fee ->
+    ///         treasury, winery royalty -> lot creator, remainder -> seller. Tokens move
+    ///         seller -> buyer with this market acting as the transfer agent.
+    /// @param maxPricePerBottle Buyer-side slippage bound: the call reverts if the listing's
+    ///        current price exceeds this, protecting against a seller front-running a price hike.
+    /// @param deadline Latest timestamp the buyer is willing to have the trade execute at.
+    function buy(uint256 listingId, uint32 quantity, uint256 maxPricePerBottle, uint256 deadline)
+        external
+        whenNotPaused
+        nonReentrant
+    {
+        if (block.timestamp > deadline) revert DeadlineExpired(deadline);
         Listing storage listing = _activeListing(listingId);
         if (!identityRegistry.hasValidClaim(msg.sender, ClaimTopicsLib.TOPIC_B2B_BUYER)) revert NotBuyer(msg.sender);
         if (msg.sender == listing.seller) revert SelfPurchase(listingId);
         if (quantity == 0) revert ZeroAmount();
+        if (listing.pricePerBottle > maxPricePerBottle) {
+            revert PriceExceedsLimit(listingId, listing.pricePerBottle, maxPricePerBottle);
+        }
         if (quantity > listing.quantity) {
             revert InsufficientListedQuantity(listingId, quantity, listing.quantity);
         }

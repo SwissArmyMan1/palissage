@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-/// @title IERC734 — Key Holder (identity key management).
+/// @title IERC734 - Key Holder (identity key management).
 /// @notice Key purposes: 1 = MANAGEMENT, 2 = ACTION, 3 = CLAIM, 4 = ENCRYPTION.
 ///         Key types: 1 = ECDSA, 2 = RSA. Keys are stored as keccak256(abi.encode(address)).
 interface IERC734 {

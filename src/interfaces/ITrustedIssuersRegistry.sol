@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {IClaimIssuer} from "./IClaimIssuer.sol";
 
-/// @title ITrustedIssuersRegistry — registry of claim issuers trusted by the protocol.
+/// @title ITrustedIssuersRegistry - registry of claim issuers trusted by the protocol.
 interface ITrustedIssuersRegistry {
     event TrustedIssuerAdded(IClaimIssuer indexed issuer, uint256[] claimTopics);
     event TrustedIssuerRemoved(IClaimIssuer indexed issuer);

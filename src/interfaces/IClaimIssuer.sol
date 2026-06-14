@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {IIdentity} from "./IIdentity.sol";
 
-/// @title IClaimIssuer — trusted issuer identity able to validate and revoke its claim signatures.
+/// @title IClaimIssuer - trusted issuer identity able to validate and revoke its claim signatures.
 interface IClaimIssuer is IIdentity {
     event ClaimRevoked(bytes indexed signature);
 

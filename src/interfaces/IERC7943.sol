@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
-/// @title IERC7943MultiToken — uRWA (Universal Real World Asset) interface, multi-token variant.
+/// @title IERC7943MultiToken - uRWA (Universal Real World Asset) interface, multi-token variant.
 /// @notice Final ERC-7943 interface for ERC-1155 based RWA tokens. Interface ID: 0x41c4fbad.
 interface IERC7943MultiToken is IERC165 {
     /// @notice Emitted when tokens are transferred by an authorized enforcer, bypassing owner consent.

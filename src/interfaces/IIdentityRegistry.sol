@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {IIdentity} from "./IIdentity.sol";
 
-/// @title IIdentityRegistry — wallet ↔ identity binding and compliance verification.
+/// @title IIdentityRegistry - wallet ↔ identity binding and compliance verification.
 interface IIdentityRegistry {
     event IdentityRegistered(address indexed wallet, IIdentity indexed identity);
     event IdentityRemoved(address indexed wallet, IIdentity indexed identity);

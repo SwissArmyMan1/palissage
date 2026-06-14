@@ -8,7 +8,7 @@ import {IClaimIssuer} from "../interfaces/IClaimIssuer.sol";
 import {IIdentity} from "../interfaces/IIdentity.sol";
 import {ClaimTopicsLib} from "../libraries/ClaimTopicsLib.sol";
 
-/// @title IdentityRegistry — binds wallets to ERC-734/735 identities and answers
+/// @title IdentityRegistry - binds wallets to ERC-734/735 identities and answers
 ///        compliance queries (isVerified / hasValidClaim) against trusted issuers.
 contract IdentityRegistry is AccessControl, IIdentityRegistry {
     bytes32 public constant REGISTRY_AGENT_ROLE = keccak256("REGISTRY_AGENT_ROLE");

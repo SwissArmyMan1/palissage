@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 import {IERC1155} from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import {IERC7943MultiToken} from "./IERC7943.sol";
 
-/// @title IWineLotToken — wine lot RWA token: one tokenId per lot, balance = bottles.
+/// @title IWineLotToken - wine lot RWA token: one tokenId per lot, balance = bottles.
 interface IWineLotToken is IERC1155, IERC7943MultiToken {
     enum LotStatus {
         Draft,
@@ -60,12 +60,12 @@ interface IWineLotToken is IERC1155, IERC7943MultiToken {
     event LotVerified(uint256 indexed lotId, address indexed verifier, bytes32 docsHash);
     event LotStatusChanged(uint256 indexed lotId, LotStatus status);
     event ProductionStatusChanged(uint256 indexed lotId, ProductionStatus production);
-    event LotMetadataUpdated(uint256 indexed lotId, string metadataURI, bytes32 docsHash);
+    event LotMetadataUpdated(uint256 indexed lotId, string metadataURI);
 
     function createLot(WineLotInput calldata input) external returns (uint256 lotId);
     function verifyLot(uint256 lotId, bytes32 docsHash) external;
     function setProductionStatus(uint256 lotId, ProductionStatus production) external;
-    function updateLotMetadata(uint256 lotId, string calldata metadataURI, bytes32 docsHash) external;
+    function updateLotMetadata(uint256 lotId, string calldata metadataURI) external;
     function suspendLot(uint256 lotId) external;
     function unsuspendLot(uint256 lotId) external;
     function closeLot(uint256 lotId) external;

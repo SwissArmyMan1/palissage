@@ -16,7 +16,7 @@ import {IWineLotToken} from "../../src/interfaces/IWineLotToken.sol";
 import {IIdentity} from "../../src/interfaces/IIdentity.sol";
 import {IClaimIssuer} from "../../src/interfaces/IClaimIssuer.sol";
 import {ClaimTopicsLib} from "../../src/libraries/ClaimTopicsLib.sol";
-import {MockEURC} from "../mocks/MockEURC.sol";
+import {MockEURe} from "../mocks/MockEURe.sol";
 
 /// @dev Full protocol deployment + identity onboarding helpers shared by all tests.
 abstract contract Fixtures is Test {
@@ -27,9 +27,13 @@ abstract contract Fixtures is Test {
     address internal registryAgent = makeAddr("registryAgent");
     address internal issuerOwner = makeAddr("issuerOwner");
     address internal winery = makeAddr("winery");
-    address internal buyer = makeAddr("buyer");
     address internal buyer2 = makeAddr("buyer2");
     address internal outsider = makeAddr("outsider");
+
+    // `buyer` carries a known key so tests can produce the EIP-712 escrow-recovery authorization.
+    // makeAddrAndKey derives the same address makeAddr("buyer") would, so existing expectations hold.
+    address internal buyer;
+    uint256 internal buyerKey;
 
     address internal claimSigner;
     uint256 internal claimSignerKey;
@@ -41,11 +45,12 @@ abstract contract Fixtures is Test {
     SecondaryMarket internal secondaryMarket;
     RedemptionManager internal redemptionManager;
     ClaimIssuer internal claimIssuer;
-    MockEURC internal eurc;
+    MockEURe internal eurc;
 
     mapping(address => Identity) internal identities;
 
     function setUp() public virtual {
+        (buyer, buyerKey) = makeAddrAndKey("buyer");
         (claimSigner, claimSignerKey) = makeAddrAndKey("claimSigner");
 
         trustedIssuers = new TrustedIssuersRegistry(admin);
@@ -54,7 +59,7 @@ abstract contract Fixtures is Test {
         primaryMarket = new PrimaryMarket(admin, token, identityRegistry, treasury);
         secondaryMarket = new SecondaryMarket(admin, token, identityRegistry, treasury);
         redemptionManager = new RedemptionManager(admin, token);
-        eurc = new MockEURC();
+        eurc = new MockEURe();
 
         claimIssuer = new ClaimIssuer(issuerOwner);
         vm.prank(issuerOwner);
@@ -76,6 +81,7 @@ abstract contract Fixtures is Test {
         token.grantRole(token.TRANSFER_AGENT_ROLE(), address(primaryMarket));
         token.grantRole(token.TRANSFER_AGENT_ROLE(), address(secondaryMarket));
         token.grantRole(token.TRANSFER_AGENT_ROLE(), address(redemptionManager));
+        token.grantRole(token.ENFORCER_ROLE(), address(redemptionManager));
         token.setSystemAddress(address(redemptionManager), true);
 
         primaryMarket.grantRole(primaryMarket.VERIFIER_ROLE(), verifier);

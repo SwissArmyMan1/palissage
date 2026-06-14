@@ -4,10 +4,10 @@ pragma solidity ^0.8.24;
 import {IIdentity} from "../interfaces/IIdentity.sol";
 import {ClaimTopicsLib} from "../libraries/ClaimTopicsLib.sol";
 
-/// @title Identity — ERC-734 (Key Holder) + ERC-735 (Claim Holder) implementation.
+/// @title Identity - ERC-734 (Key Holder) + ERC-735 (Claim Holder) implementation.
 /// @notice One contract per participant. Keys are keccak256(abi.encode(address)).
 ///         Claim signatures are validated by readers (IdentityRegistry / ClaimIssuer),
-///         not at write time — OnchainID model.
+///         not at write time - OnchainID model.
 contract Identity is IIdentity {
     struct Key {
         uint256[] purposes;

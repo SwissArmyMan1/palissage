@@ -11,11 +11,11 @@ import {IERC7943MultiToken} from "../interfaces/IERC7943.sol";
 import {IIdentityRegistry} from "../interfaces/IIdentityRegistry.sol";
 import {ClaimTopicsLib} from "../libraries/ClaimTopicsLib.sol";
 
-/// @title WineLotToken — ERC-1155 + ERC-7943 (uRWA MultiToken) wine lot token.
+/// @title WineLotToken - ERC-1155 + ERC-7943 (uRWA MultiToken) wine lot token.
 /// @notice One tokenId per verified wine lot, balances denominated in bottles.
 ///         Transfers are restricted to verified identities and must be executed by
 ///         whitelisted transfer agents (markets, redemption) so that fees and
-///         royalties cannot be bypassed — stricter than ERC-7943 requires, which is allowed.
+///         royalties cannot be bypassed - stricter than ERC-7943 requires, which is allowed.
 contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
     bytes32 public constant VERIFIER_ROLE = keccak256("VERIFIER_ROLE");
     bytes32 public constant ENFORCER_ROLE = keccak256("ENFORCER_ROLE");
@@ -126,12 +126,15 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
     }
 
     /// @inheritdoc IWineLotToken
-    function updateLotMetadata(uint256 lotId, string calldata metadataURI, bytes32 docsHash) external {
+    /// @dev The winery may repoint the offchain metadata URI at any time, but the
+    ///      verifier-attested `docsHash` (set in `verifyLot`) is immutable here. Changing the
+    ///      anchored documents of a verified lot must go through re-verification; otherwise a
+    ///      winery could silently swap the evidence a lot was approved against.
+    function updateLotMetadata(uint256 lotId, string calldata metadataURI) external {
         WineLot storage lot = _existingLot(lotId);
         if (lot.winery != msg.sender) revert NotLotWinery(lotId, msg.sender);
         lot.metadataURI = metadataURI;
-        lot.docsHash = docsHash;
-        emit LotMetadataUpdated(lotId, metadataURI, docsHash);
+        emit LotMetadataUpdated(lotId, metadataURI);
         emit URI(metadataURI, lotId);
     }
 
@@ -225,7 +228,14 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
         onlyRole(ENFORCER_ROLE)
         returns (bool result)
     {
+        // A zero `from` would route super._update into the ERC-1155 mint path,
+        // bypassing the MINTER_ROLE check, the supply cap and the mintedBottles
+        // accounting in this contract's _update (unbacked supply). A zero `to`
+        // would likewise reach the burn path without BURNER_ROLE accounting.
+        if (from == address(0)) revert ZeroAddress();
         if (to == address(0)) revert TransferToZeroViaForce();
+        if (amount == 0) revert ZeroAmount();
+        if (_lots[tokenId].winery == address(0)) revert LotDoesNotExist(tokenId);
         if (!canReceive(to)) revert ERC7943CannotReceive(to);
 
         uint256 balance = balanceOf(from, tokenId);

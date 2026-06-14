@@ -55,12 +55,12 @@ contract SecondaryMarketTest is Fixtures {
     function test_Buy_SplitsFeeRoyaltyAndProceeds() public {
         uint256 listingId = _list(50);
 
-        uint256 total = 50 * RESALE_PRICE; // 400 EURC
+        uint256 total = 50 * RESALE_PRICE; // 400 EURe
         _fundAndApprove(buyer2, total, address(secondaryMarket));
 
         uint256 wineryBalanceBefore = eurc.balanceOf(winery);
         vm.prank(buyer2);
-        secondaryMarket.buy(listingId, 50);
+        secondaryMarket.buy(listingId, 50, RESALE_PRICE, block.timestamp);
 
         uint256 fee = (total * 200) / 10000; // 2%
         uint256 royalty = (total * 250) / 10000; // 2.5%
@@ -77,13 +77,13 @@ contract SecondaryMarketTest is Fixtures {
         _fundAndApprove(buyer2, 50 * RESALE_PRICE, address(secondaryMarket));
 
         vm.prank(buyer2);
-        secondaryMarket.buy(listingId, 20);
+        secondaryMarket.buy(listingId, 20, RESALE_PRICE, block.timestamp);
         (,, uint32 remaining,,, bool active) = secondaryMarket.listings(listingId);
         assertEq(remaining, 30);
         assertTrue(active);
 
         vm.prank(buyer2);
-        secondaryMarket.buy(listingId, 30);
+        secondaryMarket.buy(listingId, 30, RESALE_PRICE, block.timestamp);
         (,, remaining,,, active) = secondaryMarket.listings(listingId);
         assertEq(remaining, 0);
         assertFalse(active);
@@ -93,7 +93,7 @@ contract SecondaryMarketTest is Fixtures {
         uint256 listingId = _list(10);
         vm.prank(outsider);
         vm.expectRevert(abi.encodeWithSelector(SecondaryMarket.NotBuyer.selector, outsider));
-        secondaryMarket.buy(listingId, 1);
+        secondaryMarket.buy(listingId, 1, RESALE_PRICE, block.timestamp);
     }
 
     function test_Buy_RevertsWhenSellerBalanceGone() public {
@@ -110,7 +110,38 @@ contract SecondaryMarketTest is Fixtures {
         _fundAndApprove(buyer2, RESALE_PRICE, address(secondaryMarket));
         vm.prank(buyer2);
         vm.expectRevert(abi.encodeWithSelector(SecondaryMarket.InsufficientSellerBalance.selector, listingId));
-        secondaryMarket.buy(listingId, 1);
+        secondaryMarket.buy(listingId, 1, RESALE_PRICE, block.timestamp);
+    }
+
+    function test_Buy_RevertsWhenSellerFrontRunsPriceHike() public {
+        uint256 listingId = _list(1);
+
+        // Buyer approves a large allowance expecting to pay RESALE_PRICE.
+        _fundAndApprove(buyer2, 10_000 * RESALE_PRICE, address(secondaryMarket));
+
+        // Seller front-runs with an inflated price.
+        uint256 inflated = 10_000 * RESALE_PRICE;
+        vm.prank(buyer);
+        secondaryMarket.updateListingPrice(listingId, inflated);
+
+        // Buyer's slippage bound (RESALE_PRICE) protects them: the call reverts.
+        vm.prank(buyer2);
+        vm.expectRevert(
+            abi.encodeWithSelector(SecondaryMarket.PriceExceedsLimit.selector, listingId, inflated, RESALE_PRICE)
+        );
+        secondaryMarket.buy(listingId, 1, RESALE_PRICE, block.timestamp);
+    }
+
+    function test_Buy_RevertsAfterDeadline() public {
+        uint256 listingId = _list(1);
+        _fundAndApprove(buyer2, RESALE_PRICE, address(secondaryMarket));
+
+        vm.warp(1_000_000);
+        uint256 deadline = 999_999; // already in the past
+
+        vm.prank(buyer2);
+        vm.expectRevert(abi.encodeWithSelector(SecondaryMarket.DeadlineExpired.selector, deadline));
+        secondaryMarket.buy(listingId, 1, RESALE_PRICE, deadline);
     }
 
     function test_CancelListing() public {
@@ -121,6 +152,6 @@ contract SecondaryMarketTest is Fixtures {
         _fundAndApprove(buyer2, RESALE_PRICE, address(secondaryMarket));
         vm.prank(buyer2);
         vm.expectRevert(abi.encodeWithSelector(SecondaryMarket.ListingNotActive.selector, listingId));
-        secondaryMarket.buy(listingId, 1);
+        secondaryMarket.buy(listingId, 1, RESALE_PRICE, block.timestamp);
     }
 }

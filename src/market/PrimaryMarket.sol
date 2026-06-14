@@ -6,12 +6,13 @@ import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 
 import {IWineLotToken} from "../interfaces/IWineLotToken.sol";
 import {IIdentityRegistry} from "../interfaces/IIdentityRegistry.sol";
 import {ClaimTopicsLib} from "../libraries/ClaimTopicsLib.sol";
 
-/// @title PrimaryMarket — direct B2B sales of wine lots with escrow settlement.
+/// @title PrimaryMarket - direct B2B sales of wine lots with escrow settlement.
 /// @notice Wineries publish offers (standard or En Primeur); B2B buyers reserve
 ///         allocations paying in full or with a deposit. An allocation record is the
 ///         onchain receipt; ERC-7943 tokens are minted only once fully paid.
@@ -87,6 +88,7 @@ contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
     error PaymentExceedsDue(uint256 allocationId, uint256 paid, uint256 due);
     error AllocationNotInState(uint256 allocationId, AllocationState expected);
     error DeadlineNotReached(uint256 allocationId, uint64 deadline);
+    error PaymentDeadlinePassed(uint256 allocationId, uint64 deadline);
     error MilestonesAlreadyStarted(uint256 offerId);
     error MilestoneBpsSumInvalid(uint256 sum);
     error MilestoneAlreadyReleased(uint256 offerId, uint256 index);
@@ -264,11 +266,11 @@ contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
     }
 
     // ---------------------------------------------------------------------
-    // Reservations (buyer) — allocation receipts
+    // Reservations (buyer) - allocation receipts
     // ---------------------------------------------------------------------
 
     /// @notice Reserves `quantity` bottles. `payNow == totalDue` settles immediately and
-    ///         mints ERC-7943 tokens; a smaller `payNow` (≥ deposit) creates a Reserved receipt.
+    ///         mints ERC-7943 tokens; a smaller `payNow` (>= deposit) creates a Reserved receipt.
     function reserve(uint256 offerId, uint32 quantity, uint256 payNow)
         external
         whenNotPaused
@@ -339,6 +341,12 @@ contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
         if (amount > remaining) revert PaymentExceedsDue(allocationId, amount, remaining);
 
         Offer storage offer = offers[allocation.offerId];
+        // Settling must close by the deadline, symmetric to the winery's `claimDefault` right.
+        // Without this the buyer keeps free optionality past the deadline: wait to see whether the
+        // lot is worth completing and, if so, front-run `claimDefault` by paying the remainder.
+        if (block.timestamp > offer.fullPaymentDeadline) {
+            revert PaymentDeadlinePassed(allocationId, offer.fullPaymentDeadline);
+        }
         allocation.paidAmount += amount;
         settledFunds[allocation.offerId] += amount;
         IERC20(offer.paymentToken).safeTransferFrom(msg.sender, address(this), amount);
@@ -376,6 +384,12 @@ contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
         allocation.state = AllocationState.Cancelled;
         settledFunds[offerId] = newSettled;
         offer.reserved -= allocation.quantity;
+        // While the offer is active these bottles return to its available pool and can be
+        // re-reserved, so offeredPerLot legitimately still counts them. Once the offer is
+        // cancelled, cancelOffer only reclaimed the unreserved bottles; release this
+        // allocation's reserved share now or it stays committed to the lot forever, blocking
+        // the winery from re-offering the full volume.
+        if (!offer.active) offeredPerLot[offer.lotId] -= allocation.quantity;
 
         IERC20(offer.paymentToken).safeTransfer(allocation.buyer, refund);
         emit AllocationCancelled(allocationId, refund);
@@ -388,21 +402,38 @@ contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
         if (allocation.state != AllocationState.Reserved) {
             revert AllocationNotInState(allocationId, AllocationState.Reserved);
         }
-        Offer storage offer = offers[allocation.offerId];
+        uint256 offerId = allocation.offerId;
+        Offer storage offer = offers[offerId];
         if (msg.sender != offer.winery) revert NotLotWinery(offer.lotId, msg.sender);
         if (block.timestamp <= offer.fullPaymentDeadline) {
             revert DeadlineNotReached(allocationId, offer.fullPaymentDeadline);
         }
 
         uint256 forfeited = allocation.paidAmount;
-        allocation.state = AllocationState.Defaulted;
-        settledFunds[allocation.offerId] -= forfeited;
-        offer.reserved -= allocation.quantity;
+        uint256 settled = settledFunds[offerId];
+        // Part of this deposit may already have been paid to the winery through
+        // milestone withdrawals (withdrawReleased pools all settledFunds). Attribute
+        // that share to this allocation so it is not released a second time - paying
+        // the full deposit again would dip into the escrow of other allocations.
+        // Round the attributed (already-released) share UP: rounding it down would round
+        // the second payout up, letting the default skim up to one token unit from a sibling
+        // allocation's still-live escrow and leave its refund underfunded.
+        uint256 alreadyReleased =
+            settled == 0 ? 0 : Math.mulDiv(withdrawnGross[offerId], forfeited, settled, Math.Rounding.Ceil);
 
-        uint256 fee = (forfeited * primaryFeeBps) / BPS_DENOMINATOR;
+        allocation.state = AllocationState.Defaulted;
+        settledFunds[offerId] = settled - forfeited;
+        withdrawnGross[offerId] -= alreadyReleased;
+        offer.reserved -= allocation.quantity;
+        // See cancelAllocation: reclaim the committed bottles once the offer is inactive,
+        // otherwise a default on a cancelled offer leaks them out of offeredPerLot.
+        if (!offer.active) offeredPerLot[offer.lotId] -= allocation.quantity;
+
+        uint256 payout = forfeited - alreadyReleased;
+        uint256 fee = (payout * primaryFeeBps) / BPS_DENOMINATOR;
         IERC20 paymentToken = IERC20(offer.paymentToken);
         if (fee > 0) paymentToken.safeTransfer(treasury, fee);
-        paymentToken.safeTransfer(offer.winery, forfeited - fee);
+        paymentToken.safeTransfer(offer.winery, payout - fee);
 
         emit AllocationDefaulted(allocationId, forfeited);
     }
@@ -420,7 +451,7 @@ contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
     }
 
     /// @notice Transfers to the winery everything it is entitled to so far:
-    ///         settledFunds × releasedBps − already withdrawn, net of the protocol fee.
+    ///         settledFunds * releasedBps − already withdrawn, net of the protocol fee.
     function withdrawReleased(uint256 offerId) external nonReentrant {
         Offer storage offer = offers[offerId];
         if (offer.winery != msg.sender) revert NotLotWinery(offer.lotId, msg.sender);

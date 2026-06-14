@@ -5,7 +5,7 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {ITrustedIssuersRegistry} from "../interfaces/ITrustedIssuersRegistry.sol";
 import {IClaimIssuer} from "../interfaces/IClaimIssuer.sol";
 
-/// @title TrustedIssuersRegistry — claim issuers trusted by the protocol, per topic.
+/// @title TrustedIssuersRegistry - claim issuers trusted by the protocol, per topic.
 contract TrustedIssuersRegistry is AccessControl, ITrustedIssuersRegistry {
     error IssuerAlreadyExists(address issuer);
     error IssuerDoesNotExist(address issuer);
