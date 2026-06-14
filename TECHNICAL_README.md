@@ -1,3 +1,20 @@
+All deployed smart contracts:
+TrustedIssuersRegistry: https://sepolia.arbiscan.io/address/0x798Cc1a405Eb3bC6179Db81De5a9d1e5b2349201
+
+IdentityRegistry: https://sepolia.arbiscan.io/address/0x313d7a63c717ad25a0c49BFBaa8fe142CD28E0bd
+
+WineLotToken: https://sepolia.arbiscan.io/address/0x0fef031115E60105c09458E4e28031DaF62D1AbD
+
+PrimaryMarket: https://sepolia.arbiscan.io/address/0x98EDC97B03Ae9901D4Af73F62dbF3C10F3927fA1
+
+SecondaryMarket: https://sepolia.arbiscan.io/address/0x4F0862a4346A3EB88545F66B3E0b423966F6aCe0
+
+RedemptionManager: https://sepolia.arbiscan.io/address/0x67C05db79223707635f9F386C57227AFe1C782aE
+
+ClaimIssuer: https://sepolia.arbiscan.io/address/0x960ba1FE7eCb3753Ae1D7d2cf1304aaAd0d19D4d
+
+RoleGateway: https://sepolia.arbiscan.io/address/0x6ee8A97e14Ce92c6DC27166880CD985D24897f88
+
 # Palissage
 
 Palissage is an ERC-7943-focused RWA protocol for tokenized wine lots. The core
