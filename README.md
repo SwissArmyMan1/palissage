@@ -90,21 +90,23 @@ That is why I believe this project has real potential. The problem is not
 theoretical, and the first possible participants are close enough for me to work
 with directly.
 
-## Buildathon Goal
+## MVP Funding Request
 
-With this buildathon, I hope to receive funding and support to move Palissage
-toward an MVP.
+I am applying through the Arbitrum Foundation's Builders form to request funding
+and support for building the Palissage MVP.
 
-The next stage will require substantial work on the technical
-infrastructure and the UI: improving the smart-contract system, building the
-marketplace experience, creating the onboarding flow for wineries and buyers,
-and making the product simple enough for traditional businesses to use.
+The funding would be used to turn the current prototype into a usable pilot:
+strengthening the smart-contract system, completing the marketplace experience,
+creating onboarding flows for wineries and buyers, and making the product simple
+enough for traditional wine businesses to use without crypto-native assumptions.
 
-After that, the goal is to prove the full loop: onboard real wineries, tokenize
-real wine lots, connect buyers, settle payments on Arbitrum, and test the
-redemption journey from token to bottle.
+The immediate milestone is to prove the full loop on Arbitrum: onboard real
+wineries, tokenize real wine lots, connect buyers, settle payments on Arbitrum,
+and test the redemption journey from token to bottle.
 
-I am confident that Palissage has a future because it gives value to every side:
-wineries, shops, buyers, crypto communities, and Arbitrum itself.
+Support from Arbitrum would help Palissage bring concrete real-world commerce to
+the network: local producers, verified assets, real buyers, EURe settlement, and
+a clear path from MVP to pilot deployments in the Languedoc-Roussillon wine
+ecosystem.
 
 Thank you for your attention.
