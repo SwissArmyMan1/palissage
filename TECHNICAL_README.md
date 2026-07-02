@@ -26,9 +26,9 @@ restricted assets when required.
 `WineLotToken` uses ERC-1155 only as the underlying multi-token accounting
 primitive: one `tokenId` represents one verified wine lot, and balances are
 denominated in bottles. The compliance model itself is ERC-7943-style, backed by
-an ERC-3643 / OnchainID-inspired identity and claims layer. Wineries can create
-and sell lots, verified B2B buyers can reserve or resell allocations, and token
-holders can redeem bottles against physical delivery once the lot is ready.
+a dedicated identity and claims layer. Wineries can create and sell lots,
+verified B2B buyers can reserve or resell allocations, and token holders can
+redeem bottles against physical delivery once the lot is ready.
 
 I structured the repository so reviewers can inspect the protocol without going
 through the frontend first: the Solidity system lives in `src/`, tests live in
@@ -41,8 +41,8 @@ The protocol is split into five main layers.
 
 ### Identity and claims
 
-`src/identity/` implements an ERC-3643 / OnchainID-inspired compliance layer
-used by the ERC-7943 transfer checks.
+`src/identity/` implements the identity and claims layer used by the ERC-7943
+transfer checks.
 
 - `Identity` is an ERC-734/735 key and claim holder for a participant.
 - `ClaimIssuer` validates issuer-signed claims and supports signature
