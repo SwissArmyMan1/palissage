@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 960" width="1440" height="960" role="img">
+  <defs><linearGradient id="cellar" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#3B2F2C"/><stop offset="100%" stop-color="#241C1F"/>
+  </linearGradient></defs>
+  <rect width="1440" height="960" fill="url(#cellar)"/>
+  <path d="M0 172.8 Q 720.0 -57.6 1440 172.8 L 1440 0 H 0 Z" fill="#4A3B36" opacity="0.7"/>
+  <g transform="translate(288.0 595.2)">
+      <ellipse rx="230.4" ry="225.8" fill="#8C6244" opacity="1"/>
+      <ellipse rx="165.9" ry="165.9" fill="#A67A55" opacity="0.85"/>
+      <ellipse rx="69.1" ry="69.1" fill="#511B2D" opacity="0.55"/>
+      <circle r="198.1" fill="none" stroke="#291F24" stroke-opacity="0.28" stroke-width="16.1"/>
+    </g>
+  <g transform="translate(576.0 595.2)">
+      <ellipse rx="230.4" ry="225.8" fill="#8C6244" opacity="1"/>
+      <ellipse rx="165.9" ry="165.9" fill="#A67A55" opacity="0.85"/>
+      <ellipse rx="69.1" ry="69.1" fill="#511B2D" opacity="0.55"/>
+      <circle r="198.1" fill="none" stroke="#291F24" stroke-opacity="0.28" stroke-width="16.1"/>
+    </g>
+  <g transform="translate(864.0 595.2)">
+      <ellipse rx="230.4" ry="225.8" fill="#8C6244" opacity="1"/>
+      <ellipse rx="165.9" ry="165.9" fill="#A67A55" opacity="0.85"/>
+      <ellipse rx="69.1" ry="69.1" fill="#511B2D" opacity="0.55"/>
+      <circle r="198.1" fill="none" stroke="#291F24" stroke-opacity="0.28" stroke-width="16.1"/>
+    </g>
+  <g transform="translate(1152.0 595.2)">
+      <ellipse rx="230.4" ry="225.8" fill="#8C6244" opacity="1"/>
+      <ellipse rx="165.9" ry="165.9" fill="#A67A55" opacity="0.85"/>
+      <ellipse rx="69.1" ry="69.1" fill="#511B2D" opacity="0.55"/>
+      <circle r="198.1" fill="none" stroke="#291F24" stroke-opacity="0.28" stroke-width="16.1"/>
+    </g>
+  <g transform="translate(446.4 345.6)">
+      <ellipse rx="172.8" ry="169.3" fill="#8C6244" opacity="0.75"/>
+      <ellipse rx="124.4" ry="124.4" fill="#A67A55" opacity="0.85"/>
+      <ellipse rx="51.8" ry="51.8" fill="#511B2D" opacity="0.55"/>
+      <circle r="148.6" fill="none" stroke="#291F24" stroke-opacity="0.28" stroke-width="12.1"/>
+    </g>
+  <g transform="translate(806.4 345.6)">
+      <ellipse rx="172.8" ry="169.3" fill="#8C6244" opacity="0.75"/>
+      <ellipse rx="124.4" ry="124.4" fill="#A67A55" opacity="0.85"/>
+      <ellipse rx="51.8" ry="51.8" fill="#511B2D" opacity="0.55"/>
+      <circle r="148.6" fill="none" stroke="#291F24" stroke-opacity="0.28" stroke-width="12.1"/>
+    </g>
+  <g transform="translate(1166.4 345.6)">
+      <ellipse rx="172.8" ry="169.3" fill="#8C6244" opacity="0.75"/>
+      <ellipse rx="124.4" ry="124.4" fill="#A67A55" opacity="0.85"/>
+      <ellipse rx="51.8" ry="51.8" fill="#511B2D" opacity="0.55"/>
+      <circle r="148.6" fill="none" stroke="#291F24" stroke-opacity="0.28" stroke-width="12.1"/>
+    </g>
+  <rect width="1440" height="960" fill="#742C42" opacity="0.08"/>
+</svg>

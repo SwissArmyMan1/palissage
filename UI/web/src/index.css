@@ -3,147 +3,245 @@
 @tailwind utilities;
 
 /* ============================================================
-   Palissage design tokens — Figma Variables → CSS variables.
-   Light is :root, dark is [data-theme="dark"]. Theme switch is a
-   crossfade on <html> (see ThemeProvider).
+   Palissage design tokens — "Living trellis".
+   Values are fixed by specifications/ui-mvp/03-design-system-and-motion.md §2.
+   Light is the only theme in P0: a theme switch appears when a dark palette
+   has been designed and contrast-checked, not before.
    ============================================================ */
 :root {
-  --c-page: #faf7f2;
-  --c-page-subtle: #f1ece4;
+  --c-page: #f7f4ed;
+  --c-page-subtle: #eee8dd;
   --c-surface: #ffffff;
   --c-surface-raised: #ffffff;
-  --c-line: #e5ddd2;
-  --c-line-strong: #c9beaf;
-  --c-fg: #231d18;
-  --c-fg-secondary: #6e6357;
-  --c-fg-tertiary: #998c7d;
-  --c-fg-inverse: #faf7f2;
-  --c-accent: #7a1f30;
-  --c-accent-hover: #621826;
-  --c-accent-pressed: #4e1320;
-  --c-accent-subtle: #f4e4e7;
-  --c-success: #2f7a4d;
-  --c-success-subtle: #e3f1e8;
-  --c-warning: #9a6700;
-  --c-warning-subtle: #f8efd8;
-  --c-danger: #b3261e;
-  --c-danger-subtle: #f9e2e0;
-  --c-info: #2d5f8a;
-  --c-info-subtle: #e2edf6;
-  --c-gold: #8a6d1f;
-  --c-gold-subtle: #f6eed6;
-  --c-tile: #ffffff;
+  --c-fg: #291f24;
+  --c-fg-secondary: #6b625d;
+  --c-fg-inverse: #f7f4ed;
+  --c-accent: #742c42;
+  --c-accent-hover: #622237;
+  --c-accent-pressed: #511b2d;
+  --c-accent-subtle: #f3e6e8;
+  --c-vine: #355b46;
+  --c-success: #355b46;
+  --c-success-subtle: #edf2e9;
+  --c-warning: #775311;
+  --c-warning-subtle: #fcf0d5;
+  --c-danger: #a33134;
+  --c-danger-subtle: #fbeae7;
+  --c-info: #305c79;
+  --c-info-subtle: #e8f0f6;
+  --c-line: #dcd5c9;
+  --c-line-strong: #8a8177;
+  --c-overlay: rgb(41 31 36 / 48%);
+
+  --shadow-hover: 0 8px 24px rgb(41 31 36 / 8%);
+  --shadow-overlay: 0 24px 64px rgb(41 31 36 / 18%);
+
+  --motion-fast: 120ms;
+  --motion-base: 180ms;
+  --motion-panel: 240ms;
+  --motion-reveal: 420ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+
+  --header-height: 64px;
+  --sticky-action-height: 0px;
+
   color-scheme: light;
 }
 
-[data-theme='dark'] {
-  --c-page: #171310;
-  --c-page-subtle: #211c18;
-  --c-surface: #241e1a;
-  --c-surface-raised: #2c2520;
-  --c-line: #3b332c;
-  --c-line-strong: #55493f;
-  --c-fg: #f3ece2;
-  --c-fg-secondary: #a99c8e;
-  --c-fg-tertiary: #7a6f63;
-  --c-fg-inverse: #231d18;
-  --c-accent: #c4566b;
-  --c-accent-hover: #d2697d;
-  --c-accent-pressed: #b0445a;
-  --c-accent-subtle: #3a2228;
-  --c-success: #5fbf8a;
-  --c-success-subtle: #1e3127;
-  --c-warning: #d9a43b;
-  --c-warning-subtle: #382c14;
-  --c-danger: #e5736c;
-  --c-danger-subtle: #3c1f1d;
-  --c-info: #7fafd4;
-  --c-info-subtle: #1c2b38;
-  --c-gold: #d7b45c;
-  --c-gold-subtle: #352b14;
-  --c-tile: #ffffff;
-  color-scheme: dark;
+@media (min-width: 768px) {
+  :root { --header-height: 72px; }
+}
+@media (min-width: 1200px) {
+  :root { --header-height: 80px; }
 }
 
 @layer base {
-  * {
-    border-color: var(--c-line);
-  }
   html {
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    scroll-behavior: smooth;
+    /* Anchors clear the fixed header and any sticky action bar. */
+    scroll-padding-top: calc(var(--header-height) + 16px);
+    scroll-padding-bottom: calc(var(--sticky-action-height) + 16px);
   }
+
   body {
     margin: 0;
-    @apply bg-page text-fg font-sans;
-    transition: background-color 0.2s cubic-bezier(0.2, 0, 0, 1),
-      color 0.2s cubic-bezier(0.2, 0, 0, 1);
+    background-color: var(--c-page);
+    color: var(--c-fg);
+    font-family: 'Inter Variable', Inter, system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1.625;
   }
-  ::selection {
-    background: var(--c-accent-subtle);
-    color: var(--c-accent);
+
+  h1, h2, h3, h4 {
+    font-family: 'Fraunces Variable', Fraunces, Georgia, serif;
+    color: var(--c-fg);
+    text-wrap: balance;
   }
-  .tnum {
-    font-feature-settings: 'tnum' 1;
-  }
-  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+
+  h3, h4 { font-family: 'Inter Variable', Inter, system-ui, sans-serif; }
+
+  :focus-visible {
     outline: 2px solid var(--c-accent);
-    outline-offset: 2px;
-    border-radius: 6px;
+    outline-offset: 3px;
+    border-radius: 2px;
   }
+
+  [id] { scroll-margin-top: calc(var(--header-height) + 24px); }
+
+  ::selection { background: var(--c-accent-subtle); }
+
+  /* Amounts and counts stay aligned across rows. */
+  .tabular { font-variant-numeric: tabular-nums; }
+
+  table { border-collapse: collapse; }
+
+  dialog::backdrop { background: var(--c-overlay); }
 }
 
 @layer components {
-  /* ---- Type styles (mirror Figma text styles) ---- */
-  .t-display { @apply font-serif font-semibold; font-size: 48px; line-height: 56px; letter-spacing: -0.01em; }
-  .t-h1 { @apply font-serif font-semibold; font-size: 32px; line-height: 40px; }
-  .t-h2 { @apply font-serif font-semibold; font-size: 24px; line-height: 32px; }
-  .t-h3 { @apply font-sans font-semibold; font-size: 18px; line-height: 26px; }
-  .t-body { @apply font-sans; font-size: 16px; line-height: 24px; }
-  .t-body-strong { @apply font-sans font-semibold; font-size: 16px; line-height: 24px; }
-  .t-small { @apply font-sans; font-size: 14px; line-height: 20px; }
-  .t-small-strong { @apply font-sans font-semibold; font-size: 14px; line-height: 20px; }
-  .t-caption { @apply font-sans font-medium uppercase; font-size: 12px; line-height: 16px; letter-spacing: 0.04em; }
-  .t-num { @apply font-serif font-semibold tnum; font-size: 40px; line-height: 48px; }
-  .t-num-sm { @apply font-serif font-semibold tnum; font-size: 32px; line-height: 40px; }
-  .t-mono { @apply font-mono tnum; font-size: 14px; line-height: 20px; }
-
-  @media (max-width: 640px) {
-    .t-display { font-size: 34px; line-height: 40px; }
-    .t-h1 { font-size: 26px; line-height: 32px; }
-    .t-h2 { font-size: 20px; line-height: 28px; }
-    .t-h3 { font-size: 16px; line-height: 24px; }
-    .t-num { font-size: 30px; line-height: 36px; }
+  .display {
+    font-family: 'Fraunces Variable', Fraunces, Georgia, serif;
+    font-weight: 500;
+    letter-spacing: -0.035em;
+    font-size: clamp(2.5rem, 1.6rem + 3.6vw, 4.5rem);
+    line-height: 1.06;
+  }
+  .h1 {
+    font-weight: 500;
+    letter-spacing: -0.025em;
+    font-size: clamp(2rem, 1.5rem + 1.8vw, 3rem);
+    line-height: 1.16;
+  }
+  .h2 {
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    font-size: clamp(1.75rem, 1.4rem + 1.4vw, 2.5rem);
+    line-height: 1.2;
+  }
+  .h3 {
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    font-size: clamp(1.375rem, 1.3rem + 0.3vw, 1.5rem);
+    line-height: 1.33;
+  }
+  .lead {
+    font-size: clamp(1.125rem, 1.05rem + 0.3vw, 1.25rem);
+    line-height: 1.5;
+    max-width: 54ch;
+    color: var(--c-fg-secondary);
+  }
+  .prose-body { max-width: 68ch; }
+  .caption { font-size: 0.75rem; line-height: 1.5; font-weight: 500; color: var(--c-fg-secondary); }
+  .label { font-size: 0.875rem; line-height: 1.43; font-weight: 500; }
+  .numeric {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    font-size: clamp(1.75rem, 1.6rem + 0.6vw, 2rem);
+    line-height: 1.25;
+  }
+  .code {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.8125rem;
+    line-height: 1.54;
+    word-break: break-all;
   }
 
-  .card { @apply bg-surface border border-line rounded-lg; }
-  .skeleton {
-    background: linear-gradient(90deg, var(--c-page-subtle) 25%, var(--c-line) 37%, var(--c-page-subtle) 63%);
-    background-size: 200% 100%;
-    @apply animate-shimmer rounded-md;
+  .container-public {
+    width: 100%;
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: 16px;
   }
+  @media (min-width: 390px) { .container-public { padding-inline: 20px; } }
+  @media (min-width: 768px) { .container-public { padding-inline: 32px; } }
+  @media (min-width: 1200px) { .container-public { padding-inline: 80px; } }
+
+  .section-gap { padding-block: 64px; }
+  @media (min-width: 768px) { .section-gap { padding-block: 88px; } }
+  @media (min-width: 1200px) { .section-gap { padding-block: 120px; } }
+
+  .panel {
+    background: var(--c-surface);
+    border: 1px solid var(--c-line);
+    border-radius: 16px;
+    padding: 16px;
+  }
+  @media (min-width: 390px) { .panel { padding: 20px; } }
+  @media (min-width: 768px) { .panel { padding: 24px; } }
+  @media (min-width: 1200px) { .panel { padding: 32px; } }
+
+  .panel-flush { background: var(--c-surface); border: 1px solid var(--c-line); border-radius: 16px; }
+
+  .field-input {
+    width: 100%;
+    min-height: 48px;
+    padding: 10px 12px;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--c-fg);
+    background: var(--c-surface);
+    border: 1px solid var(--c-line-strong);
+    border-radius: 8px;
+  }
+  .field-input::placeholder { color: var(--c-fg-secondary); }
+  .field-input:disabled { background: var(--c-page-subtle); color: var(--c-fg-secondary); }
+  .field-input[aria-invalid='true'] { border-color: var(--c-danger); box-shadow: inset 0 0 0 1px var(--c-danger); }
+
+  .divider { border-top: 1px solid var(--c-line); }
+
+  .link {
+    color: var(--c-accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .link:hover { color: var(--c-accent-hover); }
+
+  .skip-link {
+    position: absolute;
+    left: 16px;
+    top: -100px;
+    z-index: 80;
+    background: var(--c-surface);
+    color: var(--c-accent);
+    border: 1px solid var(--c-accent);
+    border-radius: 8px;
+    padding: 12px 16px;
+    transition: top var(--motion-base) var(--ease-standard);
+  }
+  .skip-link:focus { top: 12px; }
 }
 
+/* Overlay motion: transform and opacity only, no spring and no bounce. */
+@layer components {
+  @keyframes palissage-backdrop-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes palissage-dialog-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes palissage-drawer-in {
+    from { opacity: 0; transform: translateX(24px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .motion-backdrop { animation: palissage-backdrop-in var(--motion-base) var(--ease-standard) both; }
+  .motion-dialog { animation: palissage-dialog-in var(--motion-panel) var(--ease-enter) both; }
+  .motion-drawer { animation: palissage-drawer-in var(--motion-panel) var(--ease-enter) both; }
+}
+
+/* Reduced motion removes movement, scaling and decorative loops; every status
+   remains readable and every workflow transition still happens. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
-    animation-duration: 0.001ms !important;
+    animation-duration: 1ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
+    transition-duration: 1ms !important;
     scroll-behavior: auto !important;
   }
-}
-
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--c-line-strong) transparent;
-}
-*::-webkit-scrollbar { width: 10px; height: 10px; }
-*::-webkit-scrollbar-thumb {
-  background: var(--c-line-strong);
-  border-radius: 9999px;
-  border: 3px solid transparent;
-  background-clip: padding-box;
 }

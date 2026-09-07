@@ -1,47 +1,53 @@
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
-export type Tone =
-  | 'neutral'
-  | 'success'
-  | 'warning'
-  | 'danger'
-  | 'info'
-  | 'gold';
+export type BadgeTone = 'neutral' | 'info' | 'warning' | 'success' | 'danger' | 'accent';
 
-const tones: Record<Tone, { dot: string; text: string; bg: string }> = {
-  neutral: { dot: 'bg-fg-secondary', text: 'text-fg-secondary', bg: 'bg-page-subtle' },
-  success: { dot: 'bg-success', text: 'text-success', bg: 'bg-success-subtle' },
-  warning: { dot: 'bg-warning', text: 'text-warning', bg: 'bg-warning-subtle' },
-  danger: { dot: 'bg-danger', text: 'text-danger', bg: 'bg-danger-subtle' },
-  info: { dot: 'bg-info', text: 'text-info', bg: 'bg-info-subtle' },
-  gold: { dot: 'bg-gold', text: 'text-gold', bg: 'bg-gold-subtle' },
+const TONES: Record<BadgeTone, string> = {
+  neutral: 'bg-page-subtle text-fg border-line',
+  info: 'bg-info-subtle text-info border-transparent',
+  warning: 'bg-warning-subtle text-warning border-transparent',
+  success: 'bg-success-subtle text-success border-transparent',
+  danger: 'bg-danger-subtle text-danger border-transparent',
+  accent: 'bg-accent-subtle text-accent border-transparent',
 };
 
-/** Single shared pill for lifecycle status, so the tone colors stay consistent everywhere. */
+/** Colour is never the only signal: the label always carries the meaning. */
 export function StatusBadge({
   tone = 'neutral',
   children,
   icon,
   className,
 }: {
-  tone?: Tone;
+  tone?: BadgeTone;
   children: ReactNode;
   icon?: ReactNode;
   className?: string;
 }) {
-  const t = tones[tone];
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-2 rounded-full px-3 py-1 t-caption',
-        t.bg,
-        t.text,
+        'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium leading-4',
+        TONES[tone],
         className,
       )}
     >
-      {icon ?? <span className={cn('h-2 w-2 rounded-full', t.dot)} />}
+      {icon}
       {children}
     </span>
+  );
+}
+
+export function ModeBanner({ mode, label }: { mode: 'demo' | 'testnet'; label: string }) {
+  return (
+    <div
+      className={cn(
+        'flex items-center justify-center gap-2 px-4 py-1.5 text-xs font-medium',
+        mode === 'demo' ? 'bg-warning-subtle text-warning' : 'bg-info-subtle text-info',
+      )}
+    >
+      <span aria-hidden="true">{mode === 'demo' ? '◆' : '◈'}</span>
+      <span>{label}</span>
+    </div>
   );
 }

@@ -1,6 +1,14 @@
 # 04. Данные, состояния, расчёты и интеграционные контракты
 
-Статус: техническое задание; реализация не начата. Язык документа — русский, исходные UI-строки и ключи — английский, второй язык — французский. Документ фиксирует поведение прочитанных исходников на 7 сентября 2026 года; работоспособность публичного deployment и адресов в этом исследовании не проверялась.
+Статус: техническое задание; приёмка реализации выполняется отдельно. Язык документа — русский, исходные UI-строки и ключи — английский, второй язык — французский. Документ фиксирует поведение прочитанных исходников на 7 сентября 2026 года; работоспособность публичного deployment и адресов в этом исследовании не проверялась.
+
+**Поправка интеграции 1.1:** новый blockchain MVP использует Base Sepolia и TestEURe.
+[Chain/08](../../docs/chain-mvp/08-ui-compatibility-and-readiness.md) фиксирует совместимость,
+[Chain/03](../../docs/chain-mvp/03-contract-changes.md) — новые guards/Lens,
+[Chain/09](../../docs/chain-mvp/09-artifacts-and-read-model.md) — manifest, event history и sample
+metadata/commitments. Описания исходного кода ниже остаются наблюдениями; при реализации нового
+testnet применяются эти явно заданные изменения. Private WorkflowAdapter в testnet P0 недоступен,
+sample evidence и onchain writes разделены. Автономные fixtures и их clock/fees не изменяются.
 
 Нормативные слова: **MUST** — обязательное условие приёмки; **SHOULD** — рекомендуемая реализация; **PROPOSED** — новый интерфейс/продуктовая политика, отсутствующие в исследованном контрактном коде. Нельзя выдавать PROPOSED за уже работающий backend.
 
@@ -19,7 +27,7 @@
 | Режим | Как включается | Данные и операции | Обязательная маркировка |
 |---|---|---|---|
 | `demo` | `/demo`, затем явный выбор сценария/роли | Версионированные локальные fixtures, детерминированный reducer, без кошелька и RPC | `Interactive demo · Fictional data · No real payments` |
-| `testnet` | `/testnet` → явное продолжение | Чтение выбранного deployment; подписи только после подключения кошелька | `Arbitrum Sepolia · Test assets only` |
+| `testnet` | `/testnet` → явное продолжение | Чтение выбранного deployment; подписи только после подключения кошелька | `Base Sepolia · Test assets only` |
 | `mainnet` | Недоступен в MVP | Все write capabilities отключены; случайная конфигурация mainnet — ошибка настройки | `Mainnet is not enabled for this prototype` |
 
 MUST: режим задаётся discriminated union в корневом provider; наличие адреса контракта, потеря RPC или отключение кошелька никогда не переводят testnet в demo. Ошибка testnet показывает error/retry и ссылку `Open interactive demo`, переход требует клика.
@@ -53,13 +61,15 @@ type EvidenceLevel = 'illustrative' | 'self_reported' | 'document_available'
   | 'hash_anchored' | 'reviewed' | 'unavailable' | 'mismatch';
 type DataOrigin =
   | { kind: 'fixture'; scenarioId: string; version: number }
-  | { kind: 'chain'; chainId: 421614; contract: Address; blockNumber: string;
+  | { kind: 'chain'; chainId: 84532 | 31337; transportKind: 'public_testnet' | 'local_fork';
+      deploymentId: string; contract: Address; blockNumber: string;
       blockHash: Hex; readAt: string; txHash?: Hex }
   | { kind: 'editorial'; revision: string; reviewedAt?: string }
   | { kind: 'offchain'; recordId: string; updatedAt: string };
+// 31337/local_fork допускаются только developer build; публичный manifest принимает только 84532/public_testnet.
 type Sourced<T> = { value: T; origin: DataOrigin; evidence: EvidenceLevel };
 type Money = { units: UnitString; token: Address | 'DEMO_EUR'; decimals: number;
-  symbol: string; chainId: 421614 | null };
+  symbol: string; chainId: 84532 | 31337 | null };
 type Capability = { allowed: boolean; reasonCode?: string; checkedAt: string;
   dependsOnBlock?: string };
 type DocumentRef = { id: EntityId; label: string; kind: string;
@@ -269,7 +279,7 @@ Requested | Shipped → Cancelled     (verifier refundRedemption / recoverEscrow
 
 Канонический demo пример: `demo-lot-001` / `demo-offer-001`, totalBottles=2400, EnPrimeur, Verified/Growing, price €8.40, depositBps=3000, primaryFeeBps=300, royaltyBps=250. Для этой основной партии стартовый buyer-ready не имеет allocations или minted supply; исторические данные других партий заданы отдельно в05. Покупка 120 бутылок: total €1008.00, депозит €302.40, остаток €705.60; после доплаты mintedEver=120. Полный primary withdrawal: fee €30.24, winery €977.76. Offer end `2026-10-31T22:59:59Z`, fullPaymentDeadline `2027-02-28T22:59:59Z`, ReadyForDelivery в demo clock — 15 июня 2027 года.
 
-Secondary пример того же сценария: demo-buyer-001 продаёт demo-buyer-002 24 бутылки × €9.20 = €220.80; demo secondaryFeeBps=300 → fee €6.624, royalty 2.5% → €5.52, seller net €208.656. Demo-ставка сознательно отличается от исходного default200bps; testnet использует считанное значение. Все значения показывать до 3 десятичных знаков в expanded exact breakdown, чтобы сумма визуально сходилась. После сделки balances 96/24. После redemption 60 бутылок первого buyer: balances 36/24, redeemed=60, mintedEver=120, circulating=60 по основной партии. Номинал demo — учебные евро; testnet — EURe units, знак € не означает банковскую операцию.
+Secondary пример того же сценария: demo-buyer-001 продаёт demo-buyer-002 24 бутылки × €9.20 = €220.80; demo secondaryFeeBps=300 → fee €6.624, royalty 2.5% → €5.52, seller net €208.656. Demo-ставка сознательно отличается от исходного default200bps; testnet использует считанное значение. Все значения показывать до 3 десятичных знаков в expanded exact breakdown, чтобы сумма визуально сходилась. После сделки balances 96/24. После redemption 60 бутылок первого buyer: balances 36/24, redeemed=60, mintedEver=120, circulating=60 по основной партии. Номинал demo — учебные евро; testnet — tEURe units, знак € не означает банковскую операцию.
 
 Не использовать float, `toFixed` перед parseUnits или скрытое округление к центам для отправки суммы. При несовпадении суммы в 2 десятичных знаках с точным amount показывать расширенную точность в `Exact amount`; approve и действие получают исходный bigint. Если floor deposit даёт 0 на искусственно малой цене, UI блокирует такую депозитную покупку с `Deposit amount is below supported precision` (PROPOSED ограничение).
 
@@ -349,7 +359,7 @@ State machine UI: `idle → validating → awaiting_approval_signature → appro
 | Код адаптера / контрактная причина | Английский текст | Следующее действие |
 |---|---|---|
 | `WALLET_REJECTED` | `You cancelled the wallet request. Nothing was submitted.` | Вернуться к review; сохранять несекретные поля |
-| `WRONG_NETWORK` | `Switch to Arbitrum Sepolia to continue.` | Явная кнопка switch, без auto-switch при открытии страницы |
+| `WRONG_NETWORK` | `Switch to Base Sepolia to continue.` | Явная кнопка switch, без auto-switch при открытии страницы |
 | `CONFIGURATION_ERROR` | `Testnet setup is incomplete.` | Diagnostics с безопасными полями; demo по отдельной ссылке |
 | `INSUFFICIENT_FUNDS` | `Insufficient test token balance.` | Показать required/current и проверенную инструкцию получения test assets |
 | `INSUFFICIENT_GAS` | `Test ETH is needed for network fees.` | Faucet help; не обещать выдачу средств сайтом |
@@ -370,11 +380,13 @@ State machine UI: `idle → validating → awaiting_approval_signature → appro
 
 Иллюстрации и публичные документы подключать через asset manifest из раздела контента/ассетов, не из произвольного пользовательского URL. Metadata JSON имеет schemaVersion, размер не более 256 KiB, лимиты строк (name 120, description 4000), whitelist полей, проверку MIME/схемы URL. Запрещены HTML rendering, javascript/file/data URL и выполнение SVG из metadata; HTTPS/IPFS gateway только из конфигурации. Не загружать private документы через публичный gateway.
 
+Для нового testnet точная расширенная schema/публикация/hash определены Chain/09 §5; chain ID/lot ID связываются через seed mapping, sample metadata не является доказательством onchain identity.
+
 PROPOSED metadata schema: `schemaVersion`, `lotId`, `producerId`, `localeContent`, `assetIds`, `documents`, `commercialTerms`, `revision`, `updatedAt`. В demo файлы статические и содержат вымышленные сведения. Backend загрузки, KYB-provider, carrier API и хранилище private документов в прочитанных исходниках не установлены: показывать их как planned integration; не имитировать реальную отправку персональных данных.
 
 PROPOSED upload policy: не более 5 документов на submission, каждый ≤10 MiB, суммарно ≤25 MiB; PDF/JPEG/PNG, проверка сигнатуры/MIME, не только расширения; product image JPEG/PNG/WebP ≤8 MiB и ≤24 MP. SVG/HTML/ZIP/executable attachments запрещены. PDF не исполняет active content; браузерный preview изолирован. В demo P0 default — выбор заранее созданного sample документа, не загрузка реального KYC. Если drag/file picker демонстрируется, file bytes и имя остаются в памяти до закрытия формы, после refresh нужен повторный выбор. Testnet upload выключен без private service; клиентская проверка не заменяет server validation.
 
-Evidence requirements для demo review: Growing/Announced — sample producer declaration и lot specification; Harvested/Vinification/Aging — дополнительно sample production record; Bottled/ReadyForDelivery — sample bottling/availability record. Это предложенная operational policy, не требование Solidity. Milestone final release требует sample readiness record и review; shipment требует отдельный shipment record. У каждого файла caption и watermark sample. В testnet правила и наличие документов задаёт workflow service; отсутствие обязательного документа блокирует review, не генерирует сертификат.
+Evidence requirements для demo review: Growing/Announced — sample producer declaration и lot specification; Harvested/Vinification/Aging — дополнительно sample production record; Bottled/ReadyForDelivery — sample bottling/availability record. Это предложенная operational policy, не требование Solidity. Milestone final release требует sample readiness record и review; shipment требует отдельный shipment record. У каждого файла caption и watermark sample. В testnet P0 без private service доступны только versioned sample bundles по Chain/09; отсутствие обязательного sample документа блокирует sandbox review. Реальная экспертиза/подача документов остаётся недоступной, сертификат не генерируется.
 
 В demo формы доставки используют вымышленные company/contact/address с `.example` email; разрешается локальное редактирование, но перед полем есть `Use fictional details`. Ничего не отправляется в сеть. В testnet реальную PII не принимать, пока не подключён утверждённый private service и retention policy; использовать test delivery data. `deliveryDataHash`/`shipmentDocsHash` — commitments к данным вне chain, не способ безопасно опубликовать адрес открытым текстом.
 

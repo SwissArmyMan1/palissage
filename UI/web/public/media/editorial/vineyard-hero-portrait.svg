@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1250" width="1000" height="1250" role="img">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E3DED3"/>
+      <stop offset="100%" stop-color="#F7F4ED"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#C9C4B2"/>
+      <stop offset="100%" stop-color="#A9A991"/>
+    </linearGradient>
+    <clipPath id="frame"><rect width="1000" height="1250"/></clipPath>
+  </defs>
+  <g clip-path="url(#frame)">
+    <rect width="1000" height="1250" fill="url(#sky)"/>
+    <path d="M0 525 H 1000 V 1250 H 0 Z" fill="url(#ground)"/>
+    <path d="M0 450.0 C 250 400.0, 600 500.0, 1000 425.0 L 1000 525 H 0 Z" fill="#8A8177" opacity="0.35"/>
+    <path d="M -900.0 1250 L 320.0 525.0" stroke="#355B46" stroke-width="2.40" stroke-linecap="round" opacity="0.9"/>
+    <path d="M -620.0 1250 L 356.0 525.0" stroke="#4B7359" stroke-width="3.00" stroke-linecap="round" opacity="0.9"/>
+    <path d="M -340.0 1250 L 392.0 525.0" stroke="#355B46" stroke-width="3.60" stroke-linecap="round" opacity="0.9"/>
+    <path d="M -60.0 1250 L 428.0 525.0" stroke="#4B7359" stroke-width="4.20" stroke-linecap="round" opacity="0.9"/>
+    <path d="M 220.0 1250 L 464.0 525.0" stroke="#355B46" stroke-width="4.80" stroke-linecap="round" opacity="0.9"/>
+    <path d="M 500.0 1250 L 500.0 525.0" stroke="#4B7359" stroke-width="5.40" stroke-linecap="round" opacity="0.9"/>
+    <path d="M 780.0 1250 L 536.0 525.0" stroke="#355B46" stroke-width="4.80" stroke-linecap="round" opacity="0.9"/>
+    <path d="M 1060.0 1250 L 572.0 525.0" stroke="#4B7359" stroke-width="4.20" stroke-linecap="round" opacity="0.9"/>
+    <path d="M 1340.0 1250 L 608.0 525.0" stroke="#355B46" stroke-width="3.60" stroke-linecap="round" opacity="0.9"/>
+    <path d="M 1620.0 1250 L 644.0 525.0" stroke="#4B7359" stroke-width="3.00" stroke-linecap="round" opacity="0.9"/>
+    <path d="M 1900.0 1250 L 680.0 525.0" stroke="#355B46" stroke-width="2.40" stroke-linecap="round" opacity="0.9"/>
+    <path d="M 500.0 525.0 H 500.0" stroke="#291F24" stroke-width="0.60" opacity="0.10"/>
+    <path d="M 431.2 546.1 H 568.8" stroke="#291F24" stroke-width="0.80" opacity="0.12"/>
+    <path d="M 336.5 593.7 H 663.5" stroke="#291F24" stroke-width="1.00" opacity="0.14"/>
+    <path d="M 228.6 661.8 H 771.4" stroke="#291F24" stroke-width="1.20" opacity="0.16"/>
+    <path d="M 111.1 748.1 H 888.9" stroke="#291F24" stroke-width="1.40" opacity="0.18"/>
+    <path d="M -14.0 851.1 H 1014.0" stroke="#291F24" stroke-width="1.60" opacity="0.20"/>
+    <path d="M -145.6 969.6 H 1145.6" stroke="#291F24" stroke-width="1.80" opacity="0.22"/>
+    <path d="M -282.8 1102.8 H 1282.8" stroke="#291F24" stroke-width="2.00" opacity="0.24"/>
+    <path d="M -425.0 1250.0 H 1425.0" stroke="#291F24" stroke-width="2.20" opacity="0.26"/>
+    <rect width="1000" height="1250" fill="#511B2D" opacity="0.05"/>
+  </g>
+</svg>

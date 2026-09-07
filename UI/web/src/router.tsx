@@ -1,100 +1,141 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { ZONE, zoneBase } from '@/lib/zone';
-import { wineryNav, shopNav, adminNav } from '@/lib/nav';
-import { RoleShell } from '@/components/layout/DashboardLayout';
-import { ConsumerShell } from '@/components/layout/ConsumerShell';
+import { lazy, Suspense } from 'react';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { EnvironmentProvider } from '@/app/environment';
+import { TourProvider } from '@/app/demo-tour';
+import { LEGACY_REDIRECTS } from '@/app/route-manifest';
 import { PublicShell } from '@/components/layout/PublicShell';
+import { AppShell } from '@/components/layout/AppShell';
+import { LoadingBlock } from '@/components/ui/Feedback';
+import { NotFound } from '@/features/system/EnvironmentGate';
+import { DemoToolbar } from '@/features/demo/DemoToolbar';
 
-import Landing from '@/pages/public/Landing';
-import SignIn from '@/pages/public/SignIn';
-import { Placeholder } from '@/pages/Placeholder';
+// The public pages and the workspace load as separate chunks, so a visitor
+// reading the landing page never downloads the workspace bundle.
+const Landing = lazy(() => import('@/features/public/Landing'));
+const Marketplace = lazy(() => import('@/features/public/Marketplace'));
+const PublicLotDetail = lazy(() => import('@/features/public/LotDetail'));
+const Producer = lazy(() => import('@/features/public/Producer'));
+const Pilot = lazy(() => import('@/features/public/Pilot'));
+const Testnet = lazy(() => import('@/features/public/Testnet'));
+const Legal = lazy(() => import('@/features/public/Legal'));
+const DemoLauncher = lazy(() => import('@/features/demo/Launcher'));
+const Passport = lazy(() => import('@/features/passport/Passport'));
 
-import WineryDashboard from '@/pages/winery/Dashboard';
-import WineryLots from '@/pages/winery/Lots';
-import WineryLotDetail from '@/pages/winery/LotDetail';
-import WineryFinance from '@/pages/winery/Finance';
+const AppMarketplace = lazy(() => import('@/features/app/AppMarketplace'));
+const AppLotDetail = lazy(() => import('@/features/app/AppLotDetail'));
 
-import Marketplace from '@/pages/shop/Marketplace';
-import ShopLotDetail from '@/pages/shop/LotDetail';
-import Portfolio from '@/pages/shop/Portfolio';
+const BuyerOverview = lazy(() => import('@/features/buyer/Overview'));
+const Allocations = lazy(() => import('@/features/buyer/Allocations'));
+const AllocationDetail = lazy(() => import('@/features/buyer/AllocationDetail'));
+const Reserve = lazy(() => import('@/features/buyer/Reserve'));
+const Secondary = lazy(() => import('@/features/buyer/Secondary'));
+const SecondaryPurchase = lazy(() => import('@/features/buyer/SecondaryPurchase'));
+const PositionDetail = lazy(() => import('@/features/buyer/PositionDetail'));
+const BuyerDeliveries = lazy(() => import('@/features/fulfilment/BuyerDeliveries'));
+const BuyerDeliveryDetail = lazy(() => import('@/features/fulfilment/BuyerDeliveryDetail'));
 
-import AdminOverview from '@/pages/admin/Overview';
-import Participants from '@/pages/admin/Participants';
-import Verification from '@/pages/admin/Verification';
+const WineryOverview = lazy(() => import('@/features/winery/Overview'));
+const WineryLots = lazy(() => import('@/features/winery/Lots'));
+const CreateLot = lazy(() => import('@/features/winery/CreateLot'));
+const WineryLotDetail = lazy(() => import('@/features/winery/LotDetail'));
+const Finance = lazy(() => import('@/features/winery/Finance'));
+const WineryDeliveries = lazy(() => import('@/features/fulfilment/WineryDeliveries'));
+const WineryDeliveryDetail = lazy(() => import('@/features/fulfilment/WineryDeliveryDetail'));
 
-import ScanLanding from '@/pages/consumer/ScanLanding';
-import Passport from '@/pages/consumer/Passport';
-import Achievements from '@/pages/consumer/Achievements';
+const OperationsOverview = lazy(() => import('@/features/operations/Overview'));
+const Participants = lazy(() => import('@/features/operations/Participants'));
+const ParticipantDetail = lazy(() => import('@/features/operations/ParticipantDetail'));
+const Verification = lazy(() => import('@/features/operations/Verification'));
+const VerificationDetail = lazy(() => import('@/features/operations/VerificationDetail'));
+const Redemptions = lazy(() => import('@/features/operations/Redemptions'));
+const RedemptionCase = lazy(() => import('@/features/operations/RedemptionCase'));
+const Account = lazy(() => import('@/features/account/Account'));
 
-function wineryTree(base: string) {
+function Loading() {
   return (
-    <Route key="winery" path={base || '/'} element={<RoleShell nav={wineryNav} role="winery" />}>
-      <Route index element={<WineryDashboard />} />
-      <Route path="lots" element={<WineryLots />} />
-      <Route path="lots/:id" element={<WineryLotDetail />} />
-      <Route path="finance" element={<WineryFinance />} />
-      <Route path="deliveries" element={<Placeholder title="Deliveries" text="Redemption requests — Requested → Shipped → Completed. (P1)" />} />
-    </Route>
-  );
-}
-
-function shopTree(base: string) {
-  return (
-    <Route key="shop" path={base || '/'} element={<RoleShell nav={shopNav} role="shop" />}>
-      <Route index element={<Marketplace />} />
-      <Route path="lot/:id" element={<ShopLotDetail />} />
-      <Route path="portfolio" element={<Portfolio />} />
-      <Route path="secondary" element={<Placeholder title="Secondary market" text="Buy & list allocations on the whitelisted secondary market. (P1)" />} />
-      <Route path="profile" element={<Placeholder title="Account settings" text="Email for invoices & notifications, appearance. (P1)" />} />
-    </Route>
-  );
-}
-
-function adminTree(base: string) {
-  return (
-    <Route key="admin" path={base || '/'} element={<RoleShell nav={adminNav} role="admin" />}>
-      <Route index element={<AdminOverview />} />
-      <Route path="participants" element={<Participants />} />
-      <Route path="verification" element={<Verification />} />
-      <Route path="settings" element={<Placeholder title="Protocol settings" text="Fees (bps), treasury, payment tokens, trusted issuers. (P1)" />} />
-    </Route>
-  );
-}
-
-function consumerTree(base: string) {
-  return (
-    <Route key="consumer" path={base || '/'} element={<ConsumerShell />}>
-      <Route index element={<ScanLanding />} />
-      <Route path="passport" element={<Passport />} />
-      <Route path="achievements" element={<Achievements />} />
-      <Route path="profile" element={<Placeholder title="Profile" text="Appearance, membership passes, account. (P1)" />} />
-    </Route>
+    <div className="container-public py-16">
+      <LoadingBlock label="Loading" />
+    </div>
   );
 }
 
 export function AppRouter() {
   return (
     <BrowserRouter>
-      <Routes>
-        {ZONE === 'public' && (
-          <Route element={<PublicShell />}>
-            <Route path="/" element={<Landing />} />
-            <Route path="/sign-in" element={<SignIn />} />
-          </Route>
-        )}
-        {ZONE !== 'public' && (
-          <Route element={<PublicShell />}>
-            <Route path="/sign-in" element={<SignIn />} />
-          </Route>
-        )}
+      <EnvironmentProvider>
+        <TourProvider>
+          <Suspense fallback={<Loading />}>
+            <DemoToolbar />
+            <Routes>
+              {/* Public site */}
+              <Route element={<PublicShell />}>
+                <Route path="/" element={<Landing />} />
+                <Route path="/marketplace" element={<Marketplace />} />
+                <Route path="/lots/:lotId" element={<PublicLotDetail />} />
+                <Route path="/producers/:producerId" element={<Producer />} />
+                <Route path="/demo" element={<DemoLauncher />} />
+                <Route path="/testnet" element={<Testnet />} />
+                <Route path="/pilot" element={<Pilot />} />
+                <Route path="/legal/:slug" element={<Legal />} />
+              </Route>
 
-        {(ZONE === 'public' || ZONE === 'winery') && wineryTree(zoneBase('winery'))}
-        {(ZONE === 'public' || ZONE === 'shop') && shopTree(zoneBase('shop'))}
-        {(ZONE === 'public' || ZONE === 'admin') && adminTree(zoneBase('admin'))}
-        {(ZONE === 'public' || ZONE === 'consumer') && consumerTree(zoneBase('consumer'))}
+              {/* The passport is its own mobile-first surface. */}
+              <Route path="/passport/:passportId" element={<Passport />} />
 
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+              {/* Buyer workspace */}
+              <Route element={<AppShell role="buyer" />}>
+                <Route path="/app/buyer/overview" element={<BuyerOverview />} />
+                <Route path="/app/buyer/allocations" element={<Allocations />} />
+                <Route path="/app/buyer/allocations/:allocationId" element={<AllocationDetail />} />
+                <Route path="/app/buyer/reserve/:offerId" element={<Reserve />} />
+                <Route path="/app/buyer/secondary" element={<Secondary />} />
+                <Route path="/app/buyer/secondary/:listingId" element={<SecondaryPurchase />} />
+                <Route path="/app/buyer/positions/:lotId" element={<PositionDetail />} />
+                <Route path="/app/buyer/deliveries" element={<BuyerDeliveries />} />
+                <Route path="/app/buyer/deliveries/:redemptionId" element={<BuyerDeliveryDetail />} />
+                <Route path="/app/buyer/account" element={<Account role="buyer" />} />
+                {/* Catalogue of the selected environment, shared with the public one. */}
+                <Route path="/app/marketplace" element={<AppMarketplace />} />
+                <Route path="/app/lots/:lotId" element={<AppLotDetail />} />
+              </Route>
+
+              {/* Winery workspace */}
+              <Route element={<AppShell role="winery" />}>
+                <Route path="/app/winery/overview" element={<WineryOverview />} />
+                <Route path="/app/winery/lots" element={<WineryLots />} />
+                <Route path="/app/winery/lots/new" element={<CreateLot />} />
+                <Route path="/app/winery/lots/:lotId" element={<WineryLotDetail />} />
+                <Route path="/app/winery/finance" element={<Finance />} />
+                <Route path="/app/winery/deliveries" element={<WineryDeliveries />} />
+                <Route path="/app/winery/deliveries/:redemptionId" element={<WineryDeliveryDetail />} />
+                <Route path="/app/winery/account" element={<Account role="winery" />} />
+              </Route>
+
+              {/* Operations workspace */}
+              <Route element={<AppShell role="operations" />}>
+                <Route path="/app/operations/overview" element={<OperationsOverview />} />
+                <Route path="/app/operations/participants" element={<Participants />} />
+                <Route path="/app/operations/participants/:participantId" element={<ParticipantDetail />} />
+                <Route path="/app/operations/verification" element={<Verification />} />
+                <Route path="/app/operations/verification/:lotId" element={<VerificationDetail />} />
+                <Route path="/app/operations/redemptions" element={<Redemptions />} />
+                <Route path="/app/operations/redemptions/:redemptionId" element={<RedemptionCase />} />
+                <Route path="/app/operations/account" element={<Account role="operations" />} />
+              </Route>
+
+              {/* Zones from the previous interface keep working as redirects. */}
+              {LEGACY_REDIRECTS.map((entry) => (
+                <Route key={entry.from} path={entry.from} element={<Navigate to={entry.to} replace />} />
+              ))}
+
+              {/* An unknown identifier is a 404, never the first fixture. */}
+              <Route element={<PublicShell />}>
+                <Route path="*" element={<NotFound />} />
+              </Route>
+            </Routes>
+          </Suspense>
+        </TourProvider>
+      </EnvironmentProvider>
     </BrowserRouter>
   );
 }

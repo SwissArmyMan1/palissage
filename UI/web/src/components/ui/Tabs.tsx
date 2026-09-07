@@ -1,74 +1,53 @@
-import { motion } from 'framer-motion';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { cn } from '@/lib/cn';
 
+export type TabItem = { id: string; label: string; count?: number };
+
+/**
+ * Tabs write the active panel into `?tab=`, so a deep link and Back both work.
+ * They are links, not buttons, because they change the address.
+ */
 export function Tabs({
   items,
-  value,
-  onChange,
-  id = 'tabs',
+  activeId,
+  label,
+  param = 'tab',
 }: {
-  items: string[];
-  value: string;
-  onChange: (v: string) => void;
-  id?: string;
+  items: TabItem[];
+  activeId: string;
+  label: string;
+  param?: string;
 }) {
-  return (
-    <div className="flex gap-6 overflow-x-auto border-b border-line">
-      {items.map((it) => {
-        const active = it === value;
-        return (
-          <button
-            key={it}
-            onClick={() => onChange(it)}
-            className={cn(
-              'relative whitespace-nowrap pb-2.5 pt-1 transition-colors',
-              active ? 't-body-strong text-accent' : 't-body text-fg-secondary hover:text-fg',
-            )}
-          >
-            {it}
-            {active && (
-              <motion.span
-                layoutId={`${id}-underline`}
-                className="absolute inset-x-0 -bottom-px h-0.5 bg-accent"
-                transition={{ duration: 0.2, ease: [0.2, 0, 0, 1] }}
-              />
-            )}
-          </button>
-        );
-      })}
-    </div>
-  );
-}
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
 
-/** Filter chips row (mobile / compact filtering). */
-export function Chips({
-  items,
-  value,
-  onChange,
-}: {
-  items: string[];
-  value: string;
-  onChange: (v: string) => void;
-}) {
   return (
-    <div className="flex gap-2 overflow-x-auto pb-1">
-      {items.map((it) => {
-        const active = it === value;
-        return (
-          <button
-            key={it}
-            onClick={() => onChange(it)}
-            className={cn(
-              'whitespace-nowrap rounded-full border px-3.5 py-2 t-small-strong transition-colors',
-              active
-                ? 'border-accent bg-accent-subtle text-accent'
-                : 'border-line-strong bg-surface text-fg-secondary hover:text-fg',
-            )}
-          >
-            {it}
-          </button>
-        );
-      })}
+    <div className="overflow-x-auto">
+      <nav aria-label={label} className="flex min-w-max gap-1 border-b border-line">
+        {items.map((item) => {
+          const next = new URLSearchParams(searchParams);
+          next.set(param, item.id);
+          const active = item.id === activeId;
+          return (
+            <Link
+              key={item.id}
+              to={{ pathname: location.pathname, search: `?${next.toString()}` }}
+              aria-current={active ? 'page' : undefined}
+              replace
+              className={cn(
+                'relative -mb-px inline-flex min-h-[44px] items-center gap-2 border-b-2 px-4 text-sm font-medium',
+                'transition-colors duration-[var(--motion-base)] ease-standard',
+                active ? 'border-accent text-accent' : 'border-transparent text-fg-secondary hover:text-fg',
+              )}
+            >
+              {item.label}
+              {typeof item.count === 'number' ? (
+                <span className="rounded-full bg-page-subtle px-2 py-0.5 text-xs tabular">{item.count}</span>
+              ) : null}
+            </Link>
+          );
+        })}
+      </nav>
     </div>
   );
 }
