@@ -34,14 +34,20 @@ contract RoleGatewayTest is Fixtures {
         // Seed the protocol admin as a gateway admin (also grants it VERIFIER_ROLE).
         vm.prank(owner);
         gateway.assignRole(admin, RoleGateway.Role.Admin);
+
+        // Self-service is off by default in a new deployment; the sandbox is opened explicitly
+        // once wiring and seed are done (runbook 04 §5.3 stage 9).
+        vm.prank(owner);
+        gateway.setTestMode(true);
     }
 
     // ---------------------------------------------------------------------
     // Test mode toggle
     // ---------------------------------------------------------------------
 
-    function test_TestModeDefaultsOn() public view {
-        assertTrue(gateway.testMode());
+    function test_TestModeDefaultsOff() public {
+        RoleGateway fresh = new RoleGateway(owner, identityRegistry, IVerifierRoleManager(address(token)));
+        assertFalse(fresh.testMode());
     }
 
     function test_OnlyOwnerTogglesTestMode() public {
@@ -124,9 +130,20 @@ contract RoleGatewayTest is Fixtures {
         gateway.assumeRole(RoleGateway.Role.Winery);
     }
 
-    function test_TestModeAdminCanAssumeAndThenGrant() public {
+    /// @dev A public visitor must not be able to make itself the token verifier: that role can
+    ///      suspend a live lot. Admins come from {assignRole} only.
+    function test_AssumeRoleAdminReverts() public {
         vm.prank(user);
+        vm.expectRevert(RoleGateway.AdminRoleNotSelfAssignable.selector);
         gateway.assumeRole(RoleGateway.Role.Admin);
+
+        assertEq(uint256(gateway.roleOf(user)), uint256(RoleGateway.Role.None));
+        assertFalse(token.hasRole(token.VERIFIER_ROLE(), user));
+    }
+
+    function test_AssignedAdminGetsVerifierAndCanGrant() public {
+        vm.prank(owner);
+        gateway.assignRole(user, RoleGateway.Role.Admin);
         assertEq(uint256(gateway.roleOf(user)), uint256(RoleGateway.Role.Admin));
         assertTrue(token.hasRole(token.VERIFIER_ROLE(), user));
 

@@ -240,6 +240,125 @@ contract PrimaryMarketTest is Fixtures {
         assertEq(eurc.balanceOf(address(primaryMarket)), 0);
     }
 
+    /// @dev R01: a schedule whose milestones were confirmed must not be replaceable. Otherwise
+    ///      the fresh `released == false` entries can be confirmed again on top of a `releasedBps`
+    ///      that still counts the first round, taking the entitlement past 100% of the escrow.
+    function test_SetMilestones_RevertsAfterConfirmationOnEmptyOffer() public {
+        uint256 offerId = _createOffer(1_000, 0);
+
+        uint16[] memory bps = new uint16[](1);
+        bps[0] = 10000;
+        string[] memory descriptions = new string[](1);
+        descriptions[0] = "ready";
+        vm.prank(winery);
+        primaryMarket.setMilestones(offerId, bps, descriptions);
+
+        // No reservation and no money yet: `reserved` and `settledFunds` are both zero.
+        vm.prank(verifier);
+        primaryMarket.confirmMilestone(offerId, 0);
+        assertEq(primaryMarket.releasedBps(offerId), 10000);
+
+        vm.prank(winery);
+        vm.expectRevert(abi.encodeWithSelector(PrimaryMarket.MilestonesAlreadyStarted.selector, offerId));
+        primaryMarket.setMilestones(offerId, bps, descriptions);
+
+        // The entitlement stays at exactly the escrow the buyer paid in.
+        uint256 total = 100 * PRICE;
+        _fundAndApprove(buyer, total, address(primaryMarket));
+        vm.prank(buyer);
+        primaryMarket.reserve(offerId, 100, total);
+        assertEq(primaryMarket.withdrawable(offerId), total);
+    }
+
+    /// @dev R01: cancelling every allocation returns `reserved` and `settledFunds` to zero, which
+    ///      must not reopen a schedule the buyer already reserved against.
+    function test_SetMilestones_RevertsAfterReservationEvenWhenFullyCancelled() public {
+        uint256 offerId = _createOffer(1_000, 3000);
+        uint256 total = 100 * PRICE;
+        uint256 deposit = (total * 3000) / 10000;
+        _fundAndApprove(buyer, deposit, address(primaryMarket));
+        vm.prank(buyer);
+        uint256 allocationId = primaryMarket.reserve(offerId, 100, deposit);
+
+        vm.prank(winery);
+        primaryMarket.cancelAllocation(allocationId);
+        (,,,, uint32 quantity, uint32 reserved,,,,,,) = primaryMarket.offers(offerId);
+        assertEq(reserved, 0);
+        assertEq(primaryMarket.settledFunds(offerId), 0);
+        assertEq(quantity, 1_000);
+
+        uint16[] memory bps = new uint16[](1);
+        bps[0] = 10000;
+        string[] memory descriptions = new string[](1);
+        descriptions[0] = "ready";
+        vm.prank(winery);
+        vm.expectRevert(abi.encodeWithSelector(PrimaryMarket.MilestonesAlreadyStarted.selector, offerId));
+        primaryMarket.setMilestones(offerId, bps, descriptions);
+    }
+
+    /// @dev R01: `withdrawReleased` scales the escrow by `releasedBps`, so the running total is
+    ///      capped at 100% independently of how the schedule was built.
+    function test_ConfirmMilestone_CannotExceedFullRelease() public {
+        uint256 offerId = _createOffer(1_000, 0);
+
+        uint16[] memory bps = new uint16[](1);
+        bps[0] = 10000;
+        string[] memory descriptions = new string[](1);
+        descriptions[0] = "ready";
+        vm.prank(winery);
+        primaryMarket.setMilestones(offerId, bps, descriptions);
+
+        vm.prank(verifier);
+        primaryMarket.confirmMilestone(offerId, 0);
+
+        vm.prank(verifier);
+        vm.expectRevert(abi.encodeWithSelector(PrimaryMarket.MilestoneAlreadyReleased.selector, offerId, 0));
+        primaryMarket.confirmMilestone(offerId, 0);
+        assertEq(primaryMarket.releasedBps(offerId), 10000);
+    }
+
+    /// @dev R01: the winery of one offer must never be able to reach another offer's escrow.
+    function test_WithdrawReleased_CannotDrainAnotherOffersEscrow() public {
+        uint256 emptyOffer = _createOffer(1_000, 0);
+        uint256 fundedOffer = _createOffer(1_000, 0);
+
+        uint16[] memory bps = new uint16[](1);
+        bps[0] = 10000;
+        string[] memory descriptions = new string[](1);
+        descriptions[0] = "ready";
+        vm.prank(winery);
+        primaryMarket.setMilestones(emptyOffer, bps, descriptions);
+
+        // Confirm the empty offer's schedule, then try to reopen and confirm it a second time.
+        vm.prank(verifier);
+        primaryMarket.confirmMilestone(emptyOffer, 0);
+        vm.prank(winery);
+        vm.expectRevert(abi.encodeWithSelector(PrimaryMarket.MilestonesAlreadyStarted.selector, emptyOffer));
+        primaryMarket.setMilestones(emptyOffer, bps, descriptions);
+
+        // A second buyer escrows real money on the other offer.
+        uint256 otherTotal = 500 * PRICE;
+        _fundAndApprove(buyer2, otherTotal, address(primaryMarket));
+        vm.prank(buyer2);
+        primaryMarket.reserve(fundedOffer, 500, otherTotal);
+
+        // The winery pays 100 bottles into the empty offer and may withdraw exactly that.
+        uint256 own = 100 * PRICE;
+        _fundAndApprove(buyer, own, address(primaryMarket));
+        vm.prank(buyer);
+        primaryMarket.reserve(emptyOffer, 100, own);
+
+        assertEq(primaryMarket.withdrawable(emptyOffer), own);
+        vm.prank(winery);
+        primaryMarket.withdrawReleased(emptyOffer);
+
+        // The other offer's escrow is untouched.
+        assertEq(eurc.balanceOf(address(primaryMarket)), otherTotal);
+        vm.prank(winery);
+        vm.expectRevert(abi.encodeWithSelector(PrimaryMarket.NothingToWithdraw.selector, emptyOffer));
+        primaryMarket.withdrawReleased(emptyOffer);
+    }
+
     function test_ConfirmMilestone_OnlyVerifier() public {
         uint256 offerId = _createOffer(1_000, 0);
         _fundAndApprove(buyer, PRICE, address(primaryMarket));
@@ -496,6 +615,125 @@ contract PrimaryMarketTest is Fixtures {
         primaryMarket.cancelAllocation(allocationId);
         // Offer still active: the 1_000 bottles remain committed and re-reservable.
         assertEq(primaryMarket.offeredPerLot(lotId), 1_000);
+    }
+
+    // ------------------------------------------------- suspended lot guards
+
+    /// @dev A lot suspended after the offer was published can no longer be minted against, so a
+    ///      deposit taken here could never settle and would be forfeited through claimDefault.
+    function test_Reserve_RevertsOnSuspendedLot() public {
+        uint256 offerId = _createOffer(1_000, 3000);
+        uint256 total = 100 * PRICE;
+        _fundAndApprove(buyer, total, address(primaryMarket));
+
+        vm.prank(verifier);
+        token.suspendLot(lotId);
+
+        vm.prank(buyer);
+        vm.expectRevert(abi.encodeWithSelector(PrimaryMarket.LotNotVerified.selector, lotId));
+        primaryMarket.reserve(offerId, 100, total);
+
+        // Nothing moved.
+        assertEq(eurc.balanceOf(address(primaryMarket)), 0);
+        assertEq(primaryMarket.allocationCount(), 0);
+
+        vm.prank(verifier);
+        token.unsuspendLot(lotId);
+        vm.prank(buyer);
+        primaryMarket.reserve(offerId, 100, total);
+        assertEq(token.balanceOf(buyer, lotId), 100);
+    }
+
+    /// @dev Every payment is refused while the lot is suspended, the partial one included: a
+    ///      partial payment mints nothing, so the token's own mint guard would not catch it.
+    function test_PayRemainder_PartialAndFull_RevertOnSuspendedLot() public {
+        uint256 offerId = _createOffer(1_000, 3000);
+        uint256 total = 100 * PRICE;
+        uint256 deposit = (total * 3000) / 10000;
+        _fundAndApprove(buyer, total, address(primaryMarket));
+        vm.prank(buyer);
+        uint256 allocationId = primaryMarket.reserve(offerId, 100, deposit);
+
+        vm.prank(verifier);
+        token.suspendLot(lotId);
+
+        uint256 marketBalance = eurc.balanceOf(address(primaryMarket));
+        uint256 buyerBalance = eurc.balanceOf(buyer);
+        uint256 allowanceBefore = eurc.allowance(buyer, address(primaryMarket));
+        uint256 settledBefore = primaryMarket.settledFunds(offerId);
+
+        // Partial top-up.
+        vm.prank(buyer);
+        vm.expectRevert(abi.encodeWithSelector(PrimaryMarket.LotNotVerified.selector, lotId));
+        primaryMarket.payRemainder(allocationId, 1);
+
+        // Full remainder.
+        vm.prank(buyer);
+        vm.expectRevert(abi.encodeWithSelector(PrimaryMarket.LotNotVerified.selector, lotId));
+        primaryMarket.payRemainder(allocationId, total - deposit);
+
+        assertEq(eurc.balanceOf(address(primaryMarket)), marketBalance);
+        assertEq(eurc.balanceOf(buyer), buyerBalance);
+        assertEq(eurc.allowance(buyer, address(primaryMarket)), allowanceBefore);
+        assertEq(primaryMarket.settledFunds(offerId), settledBefore);
+
+        // Cleared before the deadline: settlement is possible again. The clock never stopped.
+        vm.prank(verifier);
+        token.unsuspendLot(lotId);
+        vm.prank(buyer);
+        primaryMarket.payRemainder(allocationId, total - deposit);
+        assertEq(token.balanceOf(buyer, lotId), 100);
+    }
+
+    /// @dev Symmetric guard: while the buyer cannot settle, the winery cannot default them either.
+    function test_ClaimDefault_RevertsOnSuspendedLot() public {
+        uint256 offerId = _createOffer(1_000, 3000);
+        uint64 deadline = uint64(block.timestamp + 60 days);
+        uint256 total = 100 * PRICE;
+        uint256 deposit = (total * 3000) / 10000;
+        _fundAndApprove(buyer, total, address(primaryMarket));
+        vm.prank(buyer);
+        uint256 allocationId = primaryMarket.reserve(offerId, 100, deposit);
+
+        vm.prank(verifier);
+        token.suspendLot(lotId);
+        vm.warp(deadline + 1);
+
+        vm.prank(winery);
+        vm.expectRevert(abi.encodeWithSelector(PrimaryMarket.LotNotVerified.selector, lotId));
+        primaryMarket.claimDefault(allocationId);
+
+        (,,,,,,, PrimaryMarket.AllocationState state) = primaryMarket.allocations(allocationId);
+        assertEq(uint8(state), uint8(PrimaryMarket.AllocationState.Reserved));
+    }
+
+    /// @dev Cancelling the offer stops new reservations but does not tear up existing
+    ///      allocations: the remainder stays payable until the deadline.
+    function test_PayRemainder_StillAllowedAfterCancelOffer() public {
+        uint256 offerId = _createOffer(1_000, 3000);
+        uint256 total = 100 * PRICE;
+        uint256 deposit = (total * 3000) / 10000;
+        _fundAndApprove(buyer, total, address(primaryMarket));
+        vm.prank(buyer);
+        uint256 allocationId = primaryMarket.reserve(offerId, 100, deposit);
+
+        vm.prank(winery);
+        primaryMarket.cancelOffer(offerId);
+
+        vm.prank(buyer);
+        primaryMarket.payRemainder(allocationId, total - deposit);
+        assertEq(token.balanceOf(buyer, lotId), 100);
+    }
+
+    function test_ConfirmMilestone_RevertsOnIndexOutOfRange() public {
+        uint256 offerId = _createOffer(1_000, 0);
+        _fundAndApprove(buyer, PRICE, address(primaryMarket));
+        vm.prank(buyer);
+        primaryMarket.reserve(offerId, 1, PRICE); // creates the default [10000] schedule
+
+        vm.prank(verifier);
+        vm.expectRevert(abi.encodeWithSelector(PrimaryMarket.MilestoneIndexOutOfRange.selector, offerId, 1));
+        primaryMarket.confirmMilestone(offerId, 1);
     }
 
     function test_Pause_BlocksReservations() public {

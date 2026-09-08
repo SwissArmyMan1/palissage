@@ -7,32 +7,24 @@ import {IIdentity} from "../interfaces/IIdentity.sol";
 import {IIdentityRegistry} from "../interfaces/IIdentityRegistry.sol";
 import {ClaimTopicsLib} from "../libraries/ClaimTopicsLib.sol";
 
-/// @notice Minimal slice of WineLotToken (AccessControl) the gateway needs to
-///         grant/revoke the verifier role to admin wallets.
+/// @notice The slice of WineLotToken the gateway needs to grant and revoke the verifier role.
 interface IVerifierRoleManager {
     function VERIFIER_ROLE() external view returns (bytes32);
     function grantRole(bytes32 role, address account) external;
     function revokeRole(bytes32 role, address account) external;
 }
 
-/// @title RoleGateway - test-mode role switcher and on-chain role authority.
-/// @notice A self-contained trusted claim issuer that lets the Palissage UI assign protocol
-///         roles on-chain without off-chain signing. Each managed wallet gets one gateway-owned
-///         {Identity} and a set of issuer claims; the gateway validates its own claims from
-///         on-chain bookkeeping (see {isClaimValid}) instead of ECDSA recovery.
-///
-///         Two ways to set a role:
-///           - {assumeRole}  — open self-service, only while {testMode} is on (the sandbox).
-///           - {assignRole}  — gateway-admin only, works in any mode (real admin onboarding).
-///
-///         A wallet holds exactly one role at a time; assigning a new role removes the previous
-///         one's claims (and the admin verifier role) first.
-///
-///         SECURITY: this is a privileged sandbox component. To do its job it holds
-///         REGISTRY_AGENT_ROLE on the IdentityRegistry, is a trusted issuer for every role topic,
-///         and holds DEFAULT_ADMIN_ROLE on the WineLotToken. A production deployment keeps
-///         {testMode} off and scopes these powers down or retires them.
+/// @title RoleGateway - on-chain role authority and test-mode role switcher.
+/// @notice A trusted claim issuer that assigns protocol roles without off-chain signing. Each
+///         managed wallet gets a gateway-owned {Identity}; claims are validated from the
+///         gateway's own bookkeeping instead of ECDSA recovery. A wallet holds one role at a
+///         time - {assignRole} (admin) and {assumeRole} (self-service, test mode only) both
+///         drop the previous role's claims first.
+/// @dev Privileged component: registry agent, trusted issuer for every role topic and admin on
+///      the token. In production {testMode} stays off and these powers are scoped down.
 contract RoleGateway is Ownable {
+    string public constant VERSION = "1.0.0-mvp";
+
     enum Role {
         None,
         Admin,
@@ -42,6 +34,7 @@ contract RoleGateway is Ownable {
     }
 
     error InvalidRole();
+    error AdminRoleNotSelfAssignable();
     error NotGatewayAdmin(address caller);
     error TestModeDisabled();
     error WalletManagedElsewhere(address wallet);
@@ -52,8 +45,9 @@ contract RoleGateway is Ownable {
     IIdentityRegistry public immutable identityRegistry;
     IVerifierRoleManager public immutable token;
 
-    /// @notice When on, any wallet may {assumeRole} into any role (testnet sandbox). Default: on.
-    bool public testMode = true;
+    /// @notice When on, any wallet may {assumeRole} into any non-admin role. Off by default:
+    ///         the owner opens it only once the deployment is wired and seeded.
+    bool public testMode;
 
     /// @notice The single role currently held by each wallet.
     mapping(address => Role) public roleOf;
@@ -71,8 +65,7 @@ contract RoleGateway is Ownable {
     constructor(address owner_, IIdentityRegistry identityRegistry_, IVerifierRoleManager token_) Ownable(owner_) {
         identityRegistry = identityRegistry_;
         token = token_;
-        // The protocol admin is seeded post-deploy via `assignRole(admin, Role.Admin)` (callable by
-        // the owner) so it also picks up the VERIFIER_ROLE grant.
+        // The admin is seeded after deploy via assignRole, which also grants VERIFIER_ROLE.
     }
 
     modifier onlyGatewayAdmin() {
@@ -95,9 +88,12 @@ contract RoleGateway is Ownable {
     // ---------------------------------------------------------------------
 
     /// @notice Self-service: the caller takes on `role`, dropping any previous role. Test mode only.
+    /// @dev Admin is not self-assignable: it carries the token's VERIFIER_ROLE, so anyone
+    ///      could suspend a live lot. Admins come in through {assignRole}.
     function assumeRole(Role role) external {
         if (!testMode) revert TestModeDisabled();
         if (role == Role.None) revert InvalidRole();
+        if (role == Role.Admin) revert AdminRoleNotSelfAssignable();
         _setRole(msg.sender, role);
     }
 
