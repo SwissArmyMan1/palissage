@@ -48,8 +48,15 @@ contract SecondaryMarketTest is Fixtures {
 
     function test_List_RevertsWithoutBalance() public {
         vm.prank(buyer2);
-        vm.expectRevert(abi.encodeWithSelector(SecondaryMarket.InsufficientSellerBalance.selector, 0));
+        vm.expectRevert(abi.encodeWithSelector(SecondaryMarket.SellerBalanceTooLow.selector, lotId, 0, 1));
         secondaryMarket.list(lotId, 1, RESALE_PRICE, address(eurc));
+    }
+
+    function test_SetSecondaryFeeBps_RevertsAboveLimit() public {
+        uint16 tooHigh = secondaryMarket.MAX_FEE_BPS() + 1;
+        vm.prank(admin);
+        vm.expectRevert(SecondaryMarket.InvalidBps.selector);
+        secondaryMarket.setSecondaryFeeBps(tooHigh);
     }
 
     function test_Buy_SplitsFeeRoyaltyAndProceeds() public {
@@ -70,6 +77,22 @@ contract SecondaryMarketTest is Fixtures {
 
         assertEq(token.balanceOf(buyer, lotId), 50);
         assertEq(token.balanceOf(buyer2, lotId), 50);
+    }
+
+    /// @dev `lotId` is indexed on Purchased so a lot's trade history is filterable from logs.
+    function test_Buy_EmitsPurchasedWithLotId() public {
+        uint256 listingId = _list(10);
+        uint256 total = 10 * RESALE_PRICE;
+        _fundAndApprove(buyer2, total, address(secondaryMarket));
+
+        uint256 fee = (total * secondaryMarket.secondaryFeeBps()) / 10000;
+        uint256 royalty = (total * 250) / 10000;
+
+        vm.expectEmit(true, true, true, true, address(secondaryMarket));
+        emit SecondaryMarket.Purchased(listingId, lotId, buyer2, 10, total, fee, royalty);
+
+        vm.prank(buyer2);
+        secondaryMarket.buy(listingId, 10, RESALE_PRICE, block.timestamp);
     }
 
     function test_Buy_PartialThenSoldOut() public {

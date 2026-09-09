@@ -11,6 +11,8 @@ import {ClaimTopicsLib} from "../libraries/ClaimTopicsLib.sol";
 /// @title IdentityRegistry - binds wallets to ERC-734/735 identities and answers
 ///        compliance queries (isVerified / hasValidClaim) against trusted issuers.
 contract IdentityRegistry is AccessControl, IIdentityRegistry {
+    string public constant VERSION = "1.0.0-mvp";
+
     bytes32 public constant REGISTRY_AGENT_ROLE = keccak256("REGISTRY_AGENT_ROLE");
 
     error WalletAlreadyRegistered(address wallet);

@@ -12,6 +12,8 @@ import {ClaimTopicsLib} from "../libraries/ClaimTopicsLib.sol";
 /// @notice signature = ECDSA over toEthSignedMessageHash(keccak256(abi.encode(subject, topic, data))).
 ///         The recovered signer must hold a CLAIM (purpose 3) key in this issuer identity.
 contract ClaimIssuer is Identity, IClaimIssuer {
+    string public constant VERSION = "1.0.0-mvp";
+
     mapping(bytes32 => bool) private _revokedSignatures;
 
     constructor(address initialManagementKey) Identity(initialManagementKey) {}

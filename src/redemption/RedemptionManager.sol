@@ -15,10 +15,11 @@ import {IWineLotToken} from "../interfaces/IWineLotToken.sol";
 ///         burns the tokens and updates the lot's redeemed counter.
 contract RedemptionManager is AccessControl, ReentrancyGuard, ERC1155Holder, EIP712 {
     using SignatureChecker for address;
+    string public constant VERSION = "1.0.0-mvp";
 
     bytes32 public constant VERIFIER_ROLE = keccak256("VERIFIER_ROLE");
 
-    /// @dev EIP-712 typehash for a buyer's authorization to recover their escrow to a new wallet.
+    /// @dev Typehash of the buyer's authorization to recover their escrow to a new wallet.
     bytes32 private constant RECOVER_TYPEHASH =
         keccak256("RecoverEscrow(uint256 redemptionId,address newWallet,uint256 deadline)");
 
@@ -130,11 +131,8 @@ contract RedemptionManager is AccessControl, ReentrancyGuard, ERC1155Holder, EIP
         emit Redeemed(redemptionId, redemption.lotId, redemption.buyer, redemption.quantity);
     }
 
-    /// @notice Dispute fallback: a verifier resolves a failed delivery by returning the
-    ///         escrowed tokens to the buyer. Callable while the redemption is still open
-    ///         (Requested or Shipped) - in particular after `markShipped`, where the buyer
-    ///         can otherwise neither cancel nor recover the escrowed tokens. This is the
-    ///         symmetric counterpart to `confirmDelivery` for when the goods never arrive.
+    /// @notice Dispute fallback: a verifier returns the escrow to the buyer while the
+    ///         redemption is open. After `markShipped` the buyer has no other way out.
     function refundRedemption(uint256 redemptionId) external nonReentrant onlyRole(VERIFIER_ROLE) {
         Redemption storage redemption = redemptions[redemptionId];
         if (redemption.state != RedemptionState.Requested && redemption.state != RedemptionState.Shipped) {
@@ -147,22 +145,13 @@ contract RedemptionManager is AccessControl, ReentrancyGuard, ERC1155Holder, EIP
         emit RedemptionRefunded(redemptionId, msg.sender);
     }
 
-    /// @notice Dispute fallback for when the buyer has lost transfer eligibility after escrowing.
-    ///         `refundRedemption`/`cancelRedemption` return tokens to the original buyer, but the
-    ///         escrow return runs through `forcedTransfer`, which still enforces `canReceive` on the
-    ///         destination. If the buyer's identity was revoked while tokens sat in escrow, those
-    ///         paths revert and the only remaining resolution would be `confirmDelivery` (an
-    ///         irreversible burn forcing physical delivery). This lets a verifier instead return the
-    ///         escrow to a new, compliant wallet the buyer designates offchain, so restricted tokens
-    ///         are never trapped yet never land on a non-compliant holder (`canReceive(newWallet)`
-    ///         is enforced inside `forcedTransfer`). Callable while the redemption is still open.
-    ///
-    ///         The verifier only executes; it cannot choose the destination. `newWallet` must be
-    ///         authorized by the original buyer through an EIP-712 `RecoverEscrow` signature (the
-    ///         buyer keeps signing power even after their identity is revoked), which binds the
-    ///         redemption, the destination and an expiry. This prevents a compromised verifier from
-    ///         diverting escrowed tokens to a wallet of its own choosing. The `Cancelled` state
-    ///         transition makes each authorization single-use per redemption.
+    /// @notice Dispute fallback for a buyer who lost transfer eligibility while escrowed: the
+    ///         refund paths run through `forcedTransfer`, which still checks `canReceive`, so a
+    ///         revoked buyer can no longer be refunded and only the irreversible
+    ///         `confirmDelivery` would be left. This sends the escrow to a compliant wallet.
+    /// @dev The verifier only executes, it does not pick the destination: `newWallet` must be
+    ///      authorized by the buyer with an EIP-712 `RecoverEscrow` signature binding the
+    ///      redemption, the destination and an expiry. Cancelling makes it single-use.
     function recoverEscrow(uint256 redemptionId, address newWallet, uint256 deadline, bytes calldata buyerSig)
         external
         nonReentrant
@@ -187,8 +176,6 @@ contract RedemptionManager is AccessControl, ReentrancyGuard, ERC1155Holder, EIP
     }
 
     /// @notice EIP-712 digest the buyer signs to authorize `recoverEscrow` to `newWallet`.
-    ///         Exposed so the buyer (or the UI) can produce the authorization offchain and the
-    ///         verifier can verify it before submitting.
     function recoveryDigest(uint256 redemptionId, address newWallet, uint256 deadline)
         public
         view
@@ -211,14 +198,9 @@ contract RedemptionManager is AccessControl, ReentrancyGuard, ERC1155Holder, EIP
         emit RedemptionCancelled(redemptionId);
     }
 
-    /// @dev Returns escrowed tokens to the buyer via `forcedTransfer` rather than the standard
-    ///      transfer path. A refund/cancel must remain possible exactly when delivery disputes
-    ///      arise - including after the verifier has suspended the lot - and the standard path
-    ///      reverts on a non-Verified lot (`LotNotTransferable`). `forcedTransfer` bypasses the
-    ///      lot-status and transfer-agent restrictions (mirroring `confirmDelivery`'s burn path,
-    ///      which also ignores lot status) while still enforcing `canReceive(buyer)`, so the
-    ///      escrow is never trapped by a suspension yet restricted tokens are never pushed onto
-    ///      a non-compliant holder. Requires the manager to hold ENFORCER_ROLE on the token.
+    /// @dev `forcedTransfer`, not the standard path: a refund has to work exactly when the lot
+    ///      is suspended, which the standard path rejects. `canReceive` is still enforced.
+    ///      Requires ENFORCER_ROLE on the token.
     function _returnEscrow(address buyer, uint256 lotId, uint32 quantity) internal {
         wineLotToken.forcedTransfer(address(this), buyer, lotId, quantity);
     }

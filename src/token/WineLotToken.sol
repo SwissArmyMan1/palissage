@@ -11,12 +11,12 @@ import {IERC7943MultiToken} from "../interfaces/IERC7943.sol";
 import {IIdentityRegistry} from "../interfaces/IIdentityRegistry.sol";
 import {ClaimTopicsLib} from "../libraries/ClaimTopicsLib.sol";
 
-/// @title WineLotToken - ERC-1155 + ERC-7943 (uRWA MultiToken) wine lot token.
-/// @notice One tokenId per verified wine lot, balances denominated in bottles.
-///         Transfers are restricted to verified identities and must be executed by
-///         whitelisted transfer agents (markets, redemption) so that fees and
-///         royalties cannot be bypassed - stricter than ERC-7943 requires, which is allowed.
+/// @title WineLotToken - ERC-1155 + ERC-7943 wine lot token.
+/// @notice One tokenId per lot, balance denominated in bottles. Transfers run through
+///         whitelisted agents (markets, redemption) so fees and royalties are not bypassed.
 contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
+    string public constant VERSION = "1.0.0-mvp";
+
     bytes32 public constant VERIFIER_ROLE = keccak256("VERIFIER_ROLE");
     bytes32 public constant ENFORCER_ROLE = keccak256("ENFORCER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
@@ -126,10 +126,7 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
     }
 
     /// @inheritdoc IWineLotToken
-    /// @dev The winery may repoint the offchain metadata URI at any time, but the
-    ///      verifier-attested `docsHash` (set in `verifyLot`) is immutable here. Changing the
-    ///      anchored documents of a verified lot must go through re-verification; otherwise a
-    ///      winery could silently swap the evidence a lot was approved against.
+    /// @dev URI only. `docsHash` is verifier-attested, changing it means re-verification.
     function updateLotMetadata(uint256 lotId, string calldata metadataURI) external {
         WineLot storage lot = _existingLot(lotId);
         if (lot.winery != msg.sender) revert NotLotWinery(lotId, msg.sender);
@@ -198,8 +195,7 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
     }
 
     /// @inheritdoc IERC7943MultiToken
-    /// @dev Does not account for the transfer-agent restriction enforced at execution
-    ///      time (the view has no operator context).
+    /// @dev No operator context here, so the transfer-agent restriction is not reflected.
     function canTransfer(address from, address to, uint256 tokenId, uint256 amount)
         public
         view
@@ -228,10 +224,8 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
         onlyRole(ENFORCER_ROLE)
         returns (bool result)
     {
-        // A zero `from` would route super._update into the ERC-1155 mint path,
-        // bypassing the MINTER_ROLE check, the supply cap and the mintedBottles
-        // accounting in this contract's _update (unbacked supply). A zero `to`
-        // would likewise reach the burn path without BURNER_ROLE accounting.
+        // Zero on either side lands in the mint/burn path of super._update and skips
+        // the role checks and supply accounting done in _update.
         if (from == address(0)) revert ZeroAddress();
         if (to == address(0)) revert TransferToZeroViaForce();
         if (amount == 0) revert ZeroAmount();
@@ -251,8 +245,7 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
         uint256[] memory values = new uint256[](1);
         ids[0] = tokenId;
         values[0] = amount;
-        // Bypass this contract's compliance checks; balance sufficiency is still
-        // enforced (and reverts) inside the base ERC-1155 update.
+        // Skips the checks in _update; the base still reverts on insufficient balance.
         super._update(from, to, ids, values);
 
         emit ForcedTransfer(from, to, tokenId, amount);

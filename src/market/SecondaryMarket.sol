@@ -17,6 +17,8 @@ import {ClaimTopicsLib} from "../libraries/ClaimTopicsLib.sol";
 contract SecondaryMarket is AccessControl, Pausable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
+    string public constant VERSION = "1.0.0-mvp";
+
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 
     uint16 public constant BPS_DENOMINATOR = 10000;
@@ -39,6 +41,8 @@ contract SecondaryMarket is AccessControl, Pausable, ReentrancyGuard {
     error ListingNotActive(uint256 listingId);
     error InsufficientListedQuantity(uint256 listingId, uint256 requested, uint256 available);
     error InsufficientSellerBalance(uint256 listingId);
+    error SellerBalanceTooLow(uint256 lotId, uint256 balance, uint256 requested);
+    error InvalidBps();
     error SelfPurchase(uint256 listingId);
     error PriceExceedsLimit(uint256 listingId, uint256 pricePerBottle, uint256 maxPricePerBottle);
     error DeadlineExpired(uint256 deadline);
@@ -60,6 +64,7 @@ contract SecondaryMarket is AccessControl, Pausable, ReentrancyGuard {
     event ListingCancelled(uint256 indexed listingId);
     event Purchased(
         uint256 indexed listingId,
+        uint256 indexed lotId,
         address indexed buyer,
         uint32 quantity,
         uint256 total,
@@ -105,7 +110,7 @@ contract SecondaryMarket is AccessControl, Pausable, ReentrancyGuard {
     }
 
     function setSecondaryFeeBps(uint16 feeBps) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        if (feeBps > MAX_FEE_BPS) revert ZeroAmount();
+        if (feeBps > MAX_FEE_BPS) revert InvalidBps();
         secondaryFeeBps = feeBps;
         emit SecondaryFeeUpdated(feeBps);
     }
@@ -133,7 +138,8 @@ contract SecondaryMarket is AccessControl, Pausable, ReentrancyGuard {
 
         IWineLotToken.WineLot memory lot = wineLotToken.getLot(lotId);
         if (lot.status != IWineLotToken.LotStatus.Verified) revert LotNotVerified(lotId);
-        if (wineLotToken.balanceOf(msg.sender, lotId) < quantity) revert InsufficientSellerBalance(0);
+        uint256 sellerBalance = wineLotToken.balanceOf(msg.sender, lotId);
+        if (sellerBalance < quantity) revert SellerBalanceTooLow(lotId, sellerBalance, quantity);
 
         listingId = ++listingCount;
         listings[listingId] = Listing({
@@ -166,9 +172,8 @@ contract SecondaryMarket is AccessControl, Pausable, ReentrancyGuard {
     /// @notice Buys `quantity` bottles from a listing. Funds split: protocol fee ->
     ///         treasury, winery royalty -> lot creator, remainder -> seller. Tokens move
     ///         seller -> buyer with this market acting as the transfer agent.
-    /// @param maxPricePerBottle Buyer-side slippage bound: the call reverts if the listing's
-    ///        current price exceeds this, protecting against a seller front-running a price hike.
-    /// @param deadline Latest timestamp the buyer is willing to have the trade execute at.
+    /// @param maxPricePerBottle Slippage bound against the seller raising the price first.
+    /// @param deadline Latest timestamp the buyer accepts for the trade.
     function buy(uint256 listingId, uint32 quantity, uint256 maxPricePerBottle, uint256 deadline)
         external
         whenNotPaused
@@ -206,7 +211,7 @@ contract SecondaryMarket is AccessControl, Pausable, ReentrancyGuard {
 
         wineLotToken.safeTransferFrom(listing.seller, msg.sender, listing.lotId, quantity, "");
 
-        emit Purchased(listingId, msg.sender, quantity, total, protocolFee, royalty);
+        emit Purchased(listingId, listing.lotId, msg.sender, quantity, total, protocolFee, royalty);
     }
 
     function _activeListing(uint256 listingId) internal view returns (Listing storage listing) {
