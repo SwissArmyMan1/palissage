@@ -1,19 +1,25 @@
-All deployed smart contracts:
-TrustedIssuersRegistry: https://sepolia.arbiscan.io/address/0x798Cc1a405Eb3bC6179Db81De5a9d1e5b2349201
+**Base Sepolia address draft.** Chain id `84532`, protocol version `1.0.0-mvp`.
+These addresses come from a local draft record. Treat them as unverified until receipts, source code, and live wiring have been checked independently.
 
-IdentityRegistry: https://sepolia.arbiscan.io/address/0x313d7a63c717ad25a0c49BFBaa8fe142CD28E0bd
+| Contract | Address |
+| --- | --- |
+| `TrustedIssuersRegistry` | [`0x798Cc1a405Eb3bC6179Db81De5a9d1e5b2349201`](https://sepolia.basescan.org/address/0x798Cc1a405Eb3bC6179Db81De5a9d1e5b2349201) |
+| `IdentityRegistry` | [`0x313d7a63c717ad25a0c49BFBaa8fe142CD28E0bd`](https://sepolia.basescan.org/address/0x313d7a63c717ad25a0c49BFBaa8fe142CD28E0bd) |
+| `WineLotToken` | [`0x0fef031115E60105c09458E4e28031DaF62D1AbD`](https://sepolia.basescan.org/address/0x0fef031115E60105c09458E4e28031DaF62D1AbD) |
+| `PrimaryMarket` | [`0x98EDC97B03Ae9901D4Af73F62dbF3C10F3927fA1`](https://sepolia.basescan.org/address/0x98EDC97B03Ae9901D4Af73F62dbF3C10F3927fA1) |
+| `SecondaryMarket` | [`0x4F0862a4346A3EB88545F66B3E0b423966F6aCe0`](https://sepolia.basescan.org/address/0x4F0862a4346A3EB88545F66B3E0b423966F6aCe0) |
+| `RedemptionManager` | [`0x67C05db79223707635f9F386C57227AFe1C782aE`](https://sepolia.basescan.org/address/0x67C05db79223707635f9F386C57227AFe1C782aE) |
+| `ClaimIssuer` | [`0xD05a0B4B5Cd522Cc175C1eB0DA857212b42E1074`](https://sepolia.basescan.org/address/0xD05a0B4B5Cd522Cc175C1eB0DA857212b42E1074) |
+| `RoleGateway` | [`0x23083F4d7048B31627631510DC73a5a56D630840`](https://sepolia.basescan.org/address/0x23083F4d7048B31627631510DC73a5a56D630840) |
+| `PalissageLens` | [`0x36C5f43919CB220A7368c2E3bC373B378D0eE7B6`](https://sepolia.basescan.org/address/0x36C5f43919CB220A7368c2E3bC373B378D0eE7B6) |
 
-WineLotToken: https://sepolia.arbiscan.io/address/0x0fef031115E60105c09458E4e28031DaF62D1AbD
+Deployer, admin, owner and treasury are all
+[`0xDCf00f1A5600c6191Fbc8d333A4C004903580A85`](https://sepolia.basescan.org/address/0xDCf00f1A5600c6191Fbc8d333A4C004903580A85).
+The local address draft is excluded from Git. A published manifest requires separate verification.
 
-PrimaryMarket: https://sepolia.arbiscan.io/address/0x98EDC97B03Ae9901D4Af73F62dbF3C10F3927fA1
-
-SecondaryMarket: https://sepolia.arbiscan.io/address/0x4F0862a4346A3EB88545F66B3E0b423966F6aCe0
-
-RedemptionManager: https://sepolia.arbiscan.io/address/0x67C05db79223707635f9F386C57227AFe1C782aE
-
-ClaimIssuer: https://sepolia.arbiscan.io/address/0x960ba1FE7eCb3753Ae1D7d2cf1304aaAd0d19D4d
-
-RoleGateway: https://sepolia.arbiscan.io/address/0x6ee8A97e14Ce92c6DC27166880CD985D24897f88
+The intended settlement token is **EURC**, Circle's euro stablecoin, at its Base Sepolia address
+[`0x808456652fdb597867f38412077A9182bf77359F`](https://sepolia.basescan.org/address/0x808456652fdb597867f38412077A9182bf77359F)
+(6 decimals). The deployment script also deploys and allowlists a freely mintable **TestEURe** test token. Do not confuse test token trades with real payment or infer live EURC configuration from this draft.
 
 # Palissage
 
@@ -132,6 +138,8 @@ src/
   token/           WineLotToken ERC-7943-style RWA token over ERC-1155 accounting
   market/          PrimaryMarket and SecondaryMarket
   redemption/      RedemptionManager
+  periphery/       PalissageLens, the read-only projection the interface reads
+  testing/         TestEURe, the faucet payment token used on local chains
   interfaces/      Protocol interfaces, including ERC-734/735/7943 surfaces
   libraries/       Claim topic constants
 
@@ -144,10 +152,13 @@ test/
 
 script/
   Deploy.s.sol     Full protocol deployment and role wiring
+  Seed.s.sol       One canonical seed transaction per invocation
 
 deployments/
-  arbitrum-sepolia.md
-                   Current Arbitrum Sepolia deployment notes and addresses
+  schema/          JSON Schema of the published deployment manifest
+  abis/            Generated ABI JSON; their digests go into the manifest
+  fixtures/        Seed plan template
+  README.md        Draft → receipts → verification → seed → published manifest
 
 UI/web/
   React + TypeScript + Vite frontend, with its own README and env example
@@ -243,11 +254,11 @@ The properties currently checked are:
   redemptions match burned supply, and buyer + escrow + redeemed bottles equal
   the initial mint.
 
-## Deploying to Anvil
+## Deploying locally
 
-The recommended local end-to-end setup is an Anvil fork of Arbitrum Sepolia. It
-lets the deployment use the existing EURe test token that the UI is already
-configured to understand.
+The target network is **Base Sepolia (84532)**; a local Anvil chain (31337) is the only other
+network the deploy script accepts. On Base Sepolia the markets settle in Circle's EURC. The
+script also deploys `TestEURe`, a faucet token used for local Anvil runs, where no EURC exists.
 
 If Foundry is installed but not in `PATH`, export it first:
 
@@ -258,25 +269,27 @@ export PATH="$HOME/.foundry/bin:$PATH"
 Start Anvil in one terminal:
 
 ```bash
-anvil --fork-url https://sepolia-rollup.arbitrum.io/rpc --chain-id 421614
+anvil --chain-id 31337
 ```
 
-Deploy from another terminal with the first default Anvil account:
+Deploy from another terminal. Set `ANVIL_TEST_PRIVATE_KEY` to the first local Anvil
+account key printed in that terminal. Actor addresses are passed as addresses only; the signer
+comes from `--private-key` locally, and from a Foundry keystore (`--account <alias>`) on a public
+network:
 
 ```bash
-export RPC_URL=http://127.0.0.1:8545
-export PRIVATE_KEY=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
-export ADMIN=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
-export OWNER=$ADMIN
-export TREASURY=$ADMIN
-export PAYMENT_TOKEN=0xFdEed5cE7E281B4e0F163B70eBe2Cf0B10803b7B
+export DEPLOYER=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+export ADMIN=0x70997970C51812dc3A010C7d01b50e0d17dc79C8   # operator: verifier, pauser, gateway admin
+export OWNER=0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC   # the only account that may open test mode
+export TREASURY=0x90F79bf6EB2c4f870365E785982E1f101E93b906
 
 forge script script/Deploy.s.sol:Deploy \
-  --rpc-url $RPC_URL \
-  --broadcast
+  --rpc-url http://127.0.0.1:8545 \
+  --private-key "$ANVIL_TEST_PRIVATE_KEY" \
+  --sender $DEPLOYER --broadcast
 ```
 
-The deploy script creates and wires:
+The script deploys and wires ten contracts:
 
 1. `TrustedIssuersRegistry`
 2. `IdentityRegistry`
@@ -284,61 +297,32 @@ The deploy script creates and wires:
 4. `PrimaryMarket`
 5. `SecondaryMarket`
 6. `RedemptionManager`
-7. `ClaimIssuer`
-8. `RoleGateway`
+7. `TestEURe`
+8. `ClaimIssuer`
+9. `RoleGateway`
+10. `PalissageLens`
 
-It also grants the market and redemption roles on `WineLotToken`, allowlists
-`PAYMENT_TOKEN` on both markets when provided, seeds the admin role through the
-`RoleGateway`, and registers claim topics `1..5` for the claim issuer/gateway.
+It grants the market and redemption roles on `WineLotToken`, gives the operator the three
+separate verifier roles and both market pausers, allowlists the local faucet token, makes the
+operator a gateway admin, and hands ownership to `OWNER`/`ADMIN`. `testMode` stays **off**: the
+sandbox opens only at the end of the seed, so no public self-service window exists between the
+deployment transactions.
 
-To connect the frontend to the fork:
+Everything the script writes to `deployments/` is a **draft**, never a manifest.
 
-```bash
-cd UI/web
-cp .env.example .env.local
-```
+### Seeding and verifying
 
-Fill `.env.local` with the printed deployment addresses:
+`script/Seed.s.sol` executes one seed step per invocation. The deployment script writes only
+an address draft. Before publishing a manifest, check the broadcast receipts, deployed
+bytecode, contract source verification, role wiring, payment-token allowlists and seed
+post-state against the chain. The schema and ABI files under `deployments/` describe
+the intended published format; their presence does not prove a live deployment.
 
-```env
-VITE_CHAIN_ID=421614
-VITE_ARBITRUM_RPC_URL=http://127.0.0.1:8545
-VITE_EURE_ADDRESS=0xFdEed5cE7E281B4e0F163B70eBe2Cf0B10803b7B
-VITE_WINE_LOT_TOKEN_ADDRESS=<WineLotToken>
-VITE_PRIMARY_MARKET_ADDRESS=<PrimaryMarket>
-VITE_SECONDARY_MARKET_ADDRESS=<SecondaryMarket>
-VITE_REDEMPTION_MANAGER_ADDRESS=<RedemptionManager>
-VITE_IDENTITY_REGISTRY_ADDRESS=<IdentityRegistry>
-VITE_TRUSTED_ISSUERS_REGISTRY_ADDRESS=<TrustedIssuersRegistry>
-VITE_CLAIM_ISSUER_ADDRESS=<ClaimIssuer>
-VITE_ROLE_GATEWAY_ADDRESS=<RoleGateway>
-```
-
-Then run the UI:
-
-```bash
-npm install
-npm run dev
-```
-
-In the browser wallet, add `http://127.0.0.1:8545` as a local RPC for chain id
-`421614`, import the Anvil private key above, connect, and use the RoleGateway
-test-mode role picker.
-
-For a contracts-only local chain without an Arbitrum fork, deploy `MockEURe`
-first and pass its address as `PAYMENT_TOKEN`. The UI path is still expected to
-use the Arbitrum Sepolia fork because its chain config intentionally supports
-Arbitrum One and Arbitrum Sepolia only.
-
-## Existing testnet deployment
-
-The current Arbitrum Sepolia deployment is documented in
-`deployments/arbitrum-sepolia.md`, including contract addresses, explorer links,
-payment token, wiring checks, and broadcast file location.
+The frontend is maintained as a separate repository linked at `UI/web`. Its scripts and
+network setup must be checked there for the current UI revision.
 
 ## Frontend
 
-The frontend is in `UI/web`. It is a React + TypeScript + Vite app with
-role-aware zones for public, winery, shop, admin, and consumer flows. Contract
-integration lives in `UI/web/src/contracts/`, and the frontend README explains
-environment variables, ABI generation, and local fork verification.
+The frontend is linked at `UI/web` as a submodule of
+[SwissArmyMan1/palissage_ui](https://github.com/SwissArmyMan1/palissage_ui). See its README for
+its current routes, dependencies and network behavior.

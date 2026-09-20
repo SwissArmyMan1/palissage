@@ -1,0 +1,263 @@
+{
+  "_readme": [
+    "Template of the canonical seed plan (chain-mvp 04 §5, schema 09 §7). It is NOT a plan:",
+    "every 0x0 address, every \"0\" timestamp and every confirmed id is filled in by",
+    "UI/web/scripts/seed-runner.mjs from the verified deployment draft and the collected T0.",
+    "Amounts, quantities, ids and timestamps are decimal strings so no value ever passes",
+    "through a JSON float. Names, prices and volumes are the canonical demonstration set and",
+    "must not be edited between two resumes of the same seed: the runner journals a digest of",
+    "this business input and refuses to continue against a changed plan.",
+    "Deadlines are relative to T0 = timestamp of the first confirmed deployment block:",
+    "lots 001/005 (En Primeur): start T0, end T0+30d, full payment T0+60d;",
+    "lots 002/003/004/006 (Standard): start T0, end and full payment T0+180d."
+  ],
+  "schemaVersion": 1,
+  "status": "draft",
+  "seedVersion": "palissage-testnet-seed-v1",
+  "deploymentId": "",
+  "chainId": "84532",
+  "t0": "0",
+  "operator": "0x0000000000000000000000000000000000000000",
+  "gatewayOwner": "0x0000000000000000000000000000000000000000",
+  "contracts": {
+    "roleGateway": "0x0000000000000000000000000000000000000000",
+    "wineLotToken": "0x0000000000000000000000000000000000000000",
+    "primaryMarket": "0x0000000000000000000000000000000000000000",
+    "secondaryMarket": "0x0000000000000000000000000000000000000000",
+    "redemptionManager": "0x0000000000000000000000000000000000000000",
+    "testEURe": "0x0000000000000000000000000000000000000000"
+  },
+  "catalog": {
+    "url": "",
+    "sha256": ""
+  },
+  "actors": [
+    {
+      "fixtureId": "demo-producer-001",
+      "address": "0x0000000000000000000000000000000000000000",
+      "keystoreAlias": "palissage-winery-1",
+      "role": "Winery",
+      "country": "0"
+    },
+    {
+      "fixtureId": "demo-producer-002",
+      "address": "0x0000000000000000000000000000000000000000",
+      "keystoreAlias": "palissage-winery-2",
+      "role": "Winery",
+      "country": "0"
+    },
+    {
+      "fixtureId": "demo-producer-003",
+      "address": "0x0000000000000000000000000000000000000000",
+      "keystoreAlias": "palissage-winery-3",
+      "role": "Winery",
+      "country": "0"
+    },
+    {
+      "fixtureId": "demo-buyer-001",
+      "address": "0x0000000000000000000000000000000000000000",
+      "keystoreAlias": "palissage-buyer-1",
+      "role": "Shop",
+      "country": "0"
+    },
+    {
+      "fixtureId": "demo-buyer-002",
+      "address": "0x0000000000000000000000000000000000000000",
+      "keystoreAlias": "palissage-buyer-2",
+      "role": "Shop",
+      "country": "0"
+    }
+  ],
+  "funding": [
+    {
+      "fixtureId": "demo-buyer-001",
+      "buyer": "0x0000000000000000000000000000000000000000",
+      "amount": "10000000000000000000000"
+    },
+    {
+      "fixtureId": "demo-buyer-002",
+      "buyer": "0x0000000000000000000000000000000000000000",
+      "amount": "22440000000000000000000"
+    }
+  ],
+  "lots": [
+    {
+      "fixtureId": "demo-lot-001",
+      "winery": "0x0000000000000000000000000000000000000000",
+      "name": "Les Terrasses — Récolte 2026",
+      "region": "Occitanie",
+      "grapes": "",
+      "vintage": "2026",
+      "totalBottles": "2400",
+      "royaltyBps": "250",
+      "bottleSizeMl": "750",
+      "exportAllowed": false,
+      "metadataURI": "",
+      "docsHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "targetProduction": "Growing",
+      "offer": {
+        "pricePerBottle": "8400000000000000000",
+        "quantity": "2400",
+        "startTime": "0",
+        "endTime": "0",
+        "depositBps": "3000",
+        "fullPaymentDeadline": "0",
+        "kind": "EnPrimeur"
+      },
+      "milestones": [{ "bps": "10000", "description": "Final release on delivery readiness" }]
+    },
+    {
+      "fixtureId": "demo-lot-002",
+      "winery": "0x0000000000000000000000000000000000000000",
+      "name": "Les Pierres Claires",
+      "region": "Occitanie",
+      "grapes": "",
+      "vintage": "2024",
+      "totalBottles": "1200",
+      "royaltyBps": "250",
+      "bottleSizeMl": "750",
+      "exportAllowed": false,
+      "metadataURI": "",
+      "docsHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "targetProduction": "ReadyForDelivery",
+      "offer": {
+        "pricePerBottle": "11200000000000000000",
+        "quantity": "1200",
+        "startTime": "0",
+        "endTime": "0",
+        "depositBps": "0",
+        "fullPaymentDeadline": "0",
+        "kind": "Standard"
+      },
+      "milestones": [{ "bps": "10000", "description": "Final release on delivery readiness" }]
+    },
+    {
+      "fixtureId": "demo-lot-003",
+      "winery": "0x0000000000000000000000000000000000000000",
+      "name": "Lumière Blanche",
+      "region": "Occitanie",
+      "grapes": "",
+      "vintage": "2025",
+      "totalBottles": "600",
+      "royaltyBps": "250",
+      "bottleSizeMl": "750",
+      "exportAllowed": false,
+      "metadataURI": "",
+      "docsHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "targetProduction": "ReadyForDelivery",
+      "offer": {
+        "pricePerBottle": "9600000000000000000",
+        "quantity": "600",
+        "startTime": "0",
+        "endTime": "0",
+        "depositBps": "0",
+        "fullPaymentDeadline": "0",
+        "kind": "Standard"
+      },
+      "milestones": [{ "bps": "10000", "description": "Final release on delivery readiness" }]
+    },
+    {
+      "fixtureId": "demo-lot-004",
+      "winery": "0x0000000000000000000000000000000000000000",
+      "name": "Rosée du Matin",
+      "region": "Occitanie",
+      "grapes": "",
+      "vintage": "2025",
+      "totalBottles": "1800",
+      "royaltyBps": "250",
+      "bottleSizeMl": "750",
+      "exportAllowed": false,
+      "metadataURI": "",
+      "docsHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "targetProduction": "Bottled",
+      "offer": {
+        "pricePerBottle": "7800000000000000000",
+        "quantity": "1800",
+        "startTime": "0",
+        "endTime": "0",
+        "depositBps": "0",
+        "fullPaymentDeadline": "0",
+        "kind": "Standard"
+      },
+      "milestones": [{ "bps": "10000", "description": "Final release on delivery readiness" }]
+    },
+    {
+      "fixtureId": "demo-lot-005",
+      "winery": "0x0000000000000000000000000000000000000000",
+      "name": "Première Lueur — Récolte 2026",
+      "region": "Occitanie",
+      "grapes": "",
+      "vintage": "2026",
+      "totalBottles": "1200",
+      "royaltyBps": "250",
+      "bottleSizeMl": "750",
+      "exportAllowed": false,
+      "metadataURI": "",
+      "docsHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "targetProduction": "Growing",
+      "offer": {
+        "pricePerBottle": "10000000000000000000",
+        "quantity": "1200",
+        "startTime": "0",
+        "endTime": "0",
+        "depositBps": "3000",
+        "fullPaymentDeadline": "0",
+        "kind": "EnPrimeur"
+      },
+      "milestones": [{ "bps": "10000", "description": "Final release on delivery readiness" }]
+    },
+    {
+      "fixtureId": "demo-lot-006",
+      "winery": "0x0000000000000000000000000000000000000000",
+      "name": "La Ligne des Vignes",
+      "region": "Occitanie",
+      "grapes": "",
+      "vintage": "2024",
+      "totalBottles": "600",
+      "royaltyBps": "250",
+      "bottleSizeMl": "750",
+      "exportAllowed": false,
+      "metadataURI": "",
+      "docsHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "targetProduction": "ReadyForDelivery",
+      "offer": {
+        "pricePerBottle": "12400000000000000000",
+        "quantity": "600",
+        "startTime": "0",
+        "endTime": "0",
+        "depositBps": "0",
+        "fullPaymentDeadline": "0",
+        "kind": "Standard"
+      },
+      "milestones": [{ "bps": "10000", "description": "Final release on delivery readiness" }]
+    }
+  ],
+  "seedPaid": {
+    "fixtureId": "demo-allocation-seed-006",
+    "offerFixtureId": "demo-lot-006",
+    "offerId": "0",
+    "buyer": "0x0000000000000000000000000000000000000000",
+    "quantity": "600",
+    "totalDue": "7440000000000000000000"
+  },
+  "expectedBaseline": {
+    "_readme": "Read-only expectation checked by verify-deployment.mjs --phase seed-closed (04 §5.3).",
+    "buyer1Balance": "10000000000000000000000",
+    "buyer2Balance": "15000000000000000000000",
+    "wineryBalances": "0",
+    "treasuryBalance": "0",
+    "primaryMarketBalance": "7440000000000000000000",
+    "paymentTokenSupply": "32440000000000000000000",
+    "lot006": {
+      "walletBuyer2": "600",
+      "minted": "600",
+      "redeemed": "0",
+      "circulating": "600",
+      "offerReserved": "600",
+      "offerAvailable": "0",
+      "settledFunds": "7440000000000000000000",
+      "withdrawnGross": "0",
+      "withdrawable": "0"
+    }
+  }
+}
