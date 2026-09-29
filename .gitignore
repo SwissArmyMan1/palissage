@@ -1,20 +1,43 @@
-# Compiler files
-cache/
-out/
+# Foundry output and local transaction records
+/cache/
+/out/
+/broadcast/
 
-# Ignores development broadcast logs
-!/broadcast
-/broadcast/*/31337/
-/broadcast/**/dry-run/
-
-# Docs
-docs/
-
-# Dotenv files
+# Local plans, archives and credentials
+/docs/
+/_archive/
 .env
 .env.*
 !.env.example
 !.env.*.example
 
-# Local quarantine — never pushed (UI repo, build/audit artifacts, specs, deploy records, skills)
-_archive/
+# Dependencies and caches
+node_modules/
+npm-cache/
+.npm/
+
+# Published deployment manifests remain trackable; local drafts do not
+/deployments/*.addresses.json
+/deployments/*.draft.json
+/deployments/*.seed-plan.json
+/deployments/*.seed-journal.json
+
+# Personal correspondence, applications and working deck exports
+/*.pdf
+/*.pptx
+/*.docx
+/*.txt
+/*support-letter*.md
+/french-tech-visa-*.md
+.~lock.*#
+
+# Unlicensed or intermediate design assets
+/UI/*.jpg
+/UI/pics/
+/UI/brand-out/
+/UI/vid/
+/photof.jpg
+/A_single_continuous_second_c (1).mp4
+
+# One-off local migration helper
+/.eurc-migration-tools/

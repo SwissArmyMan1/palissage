@@ -11,6 +11,10 @@ This file is the project idea and motivation. The technical architecture,
 contracts, tests, Echidna harnesses, and Anvil deployment instructions are in
 [TECHNICAL_README.md](TECHNICAL_README.md).
 
+The frontend lives in the separate [palissage_ui](https://github.com/SwissArmyMan1/palissage_ui)
+repository and is linked here at `UI/web` as a Git submodule. Clone with
+`git clone --recurse-submodules` to include it.
+
 ## What Palissage Is
 
 In French viticulture, *palissage* is the trellis system of posts and wires that
