@@ -1,458 +1,458 @@
 [
   {
+    "type": "constructor",
     "inputs": [
       {
-        "internalType": "address",
         "name": "admin",
-        "type": "address"
+        "type": "address",
+        "internalType": "address"
       }
     ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
+    "stateMutability": "nonpayable"
   },
   {
-    "inputs": [],
+    "type": "function",
     "name": "DEFAULT_ADMIN_ROLE",
+    "inputs": [],
     "outputs": [
       {
-        "internalType": "bytes32",
         "name": "",
-        "type": "bytes32"
+        "type": "bytes32",
+        "internalType": "bytes32"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability": "view"
   },
   {
-    "inputs": [],
+    "type": "function",
     "name": "VERSION",
+    "inputs": [],
     "outputs": [
       {
-        "internalType": "string",
         "name": "",
-        "type": "string"
+        "type": "string",
+        "internalType": "string"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability": "view"
   },
   {
-    "inputs": [
-      {
-        "internalType": "contract IClaimIssuer",
-        "name": "issuer",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "claimTopics",
-        "type": "uint256[]"
-      }
-    ],
+    "type": "function",
     "name": "addTrustedIssuer",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
+        "name": "issuer",
+        "type": "address",
+        "internalType": "contract IClaimIssuer"
+      },
+      {
+        "name": "claimTopics",
+        "type": "uint256[]",
+        "internalType": "uint256[]"
       }
     ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "getRoleAdmin",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
-        "internalType": "contract IClaimIssuer",
-        "name": "issuer",
-        "type": "address"
+        "name": "role",
+        "type": "bytes32",
+        "internalType": "bytes32"
       }
     ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "getTrustedIssuerClaimTopics",
+    "inputs": [
+      {
+        "name": "issuer",
+        "type": "address",
+        "internalType": "contract IClaimIssuer"
+      }
+    ],
     "outputs": [
       {
-        "internalType": "uint256[]",
         "name": "topics",
-        "type": "uint256[]"
+        "type": "uint256[]",
+        "internalType": "uint256[]"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability": "view"
   },
   {
-    "inputs": [],
+    "type": "function",
     "name": "getTrustedIssuers",
+    "inputs": [],
     "outputs": [
       {
-        "internalType": "contract IClaimIssuer[]",
         "name": "issuers",
-        "type": "address[]"
+        "type": "address[]",
+        "internalType": "contract IClaimIssuer[]"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability": "view"
   },
   {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
+    "type": "function",
     "name": "grantRole",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "issuer",
-        "type": "address"
+        "name": "role",
+        "type": "bytes32",
+        "internalType": "bytes32"
       },
       {
-        "internalType": "uint256",
-        "name": "topic",
-        "type": "uint256"
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
       }
     ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "hasClaimTopic",
+    "inputs": [
+      {
+        "name": "issuer",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "topic",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
     "outputs": [
       {
-        "internalType": "bool",
         "name": "has",
-        "type": "bool"
+        "type": "bool",
+        "internalType": "bool"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability": "view"
   },
   {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
+    "type": "function",
     "name": "hasRole",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "issuer",
-        "type": "address"
+        "name": "role",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
       }
     ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "isTrustedIssuer",
+    "inputs": [
+      {
+        "name": "issuer",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
     "outputs": [
       {
-        "internalType": "bool",
         "name": "trusted",
-        "type": "bool"
+        "type": "bool",
+        "internalType": "bool"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability": "view"
   },
   {
-    "inputs": [
-      {
-        "internalType": "contract IClaimIssuer",
-        "name": "issuer",
-        "type": "address"
-      }
-    ],
+    "type": "function",
     "name": "removeTrustedIssuer",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address",
-        "name": "callerConfirmation",
-        "type": "address"
+        "name": "issuer",
+        "type": "address",
+        "internalType": "contract IClaimIssuer"
       }
     ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "renounceRole",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
-        "internalType": "bytes32",
         "name": "role",
-        "type": "bytes32"
+        "type": "bytes32",
+        "internalType": "bytes32"
       },
       {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
+        "name": "callerConfirmation",
+        "type": "address",
+        "internalType": "address"
       }
     ],
-    "name": "revokeRole",
     "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "stateMutability": "nonpayable"
   },
   {
+    "type": "function",
+    "name": "revokeRole",
     "inputs": [
       {
-        "internalType": "bytes4",
-        "name": "interfaceId",
-        "type": "bytes4"
+        "name": "role",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
       }
     ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "supportsInterface",
+    "inputs": [
+      {
+        "name": "interfaceId",
+        "type": "bytes4",
+        "internalType": "bytes4"
+      }
+    ],
     "outputs": [
       {
-        "internalType": "bool",
         "name": "",
-        "type": "bool"
+        "type": "bool",
+        "internalType": "bool"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability": "view"
   },
   {
-    "inputs": [
-      {
-        "internalType": "contract IClaimIssuer",
-        "name": "issuer",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "claimTopics",
-        "type": "uint256[]"
-      }
-    ],
+    "type": "function",
     "name": "updateIssuerClaimTopics",
+    "inputs": [
+      {
+        "name": "issuer",
+        "type": "address",
+        "internalType": "contract IClaimIssuer"
+      },
+      {
+        "name": "claimTopics",
+        "type": "uint256[]",
+        "internalType": "uint256[]"
+      }
+    ],
     "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "stateMutability": "nonpayable"
   },
   {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "contract IClaimIssuer",
-        "name": "issuer",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256[]",
-        "name": "claimTopics",
-        "type": "uint256[]"
-      }
-    ],
+    "type": "event",
     "name": "ClaimTopicsUpdated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "previousAdminRole",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "newAdminRole",
-        "type": "bytes32"
-      }
-    ],
-    "name": "RoleAdminChanged",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "sender",
-        "type": "address"
-      }
-    ],
-    "name": "RoleGranted",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "sender",
-        "type": "address"
-      }
-    ],
-    "name": "RoleRevoked",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "contract IClaimIssuer",
         "name": "issuer",
-        "type": "address"
+        "type": "address",
+        "indexed": true,
+        "internalType": "contract IClaimIssuer"
       },
       {
-        "indexed": false,
-        "internalType": "uint256[]",
         "name": "claimTopics",
-        "type": "uint256[]"
+        "type": "uint256[]",
+        "indexed": false,
+        "internalType": "uint256[]"
       }
     ],
-    "name": "TrustedIssuerAdded",
-    "type": "event"
+    "anonymous": false
   },
   {
-    "anonymous": false,
+    "type": "event",
+    "name": "RoleAdminChanged",
     "inputs": [
       {
+        "name": "role",
+        "type": "bytes32",
         "indexed": true,
-        "internalType": "contract IClaimIssuer",
-        "name": "issuer",
-        "type": "address"
-      }
-    ],
-    "name": "TrustedIssuerRemoved",
-    "type": "event"
-  },
-  {
-    "inputs": [],
-    "name": "AccessControlBadConfirmation",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
+        "internalType": "bytes32"
       },
       {
-        "internalType": "bytes32",
-        "name": "neededRole",
-        "type": "bytes32"
+        "name": "previousAdminRole",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "newAdminRole",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
       }
     ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "RoleGranted",
+    "inputs": [
+      {
+        "name": "role",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "sender",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "RoleRevoked",
+    "inputs": [
+      {
+        "name": "role",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "account",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "sender",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "TrustedIssuerAdded",
+    "inputs": [
+      {
+        "name": "issuer",
+        "type": "address",
+        "indexed": true,
+        "internalType": "contract IClaimIssuer"
+      },
+      {
+        "name": "claimTopics",
+        "type": "uint256[]",
+        "indexed": false,
+        "internalType": "uint256[]"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "TrustedIssuerRemoved",
+    "inputs": [
+      {
+        "name": "issuer",
+        "type": "address",
+        "indexed": true,
+        "internalType": "contract IClaimIssuer"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "error",
+    "name": "AccessControlBadConfirmation",
+    "inputs": []
+  },
+  {
+    "type": "error",
     "name": "AccessControlUnauthorizedAccount",
-    "type": "error"
+    "inputs": [
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "neededRole",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ]
   },
   {
-    "inputs": [],
+    "type": "error",
     "name": "EmptyClaimTopics",
-    "type": "error"
+    "inputs": []
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "issuer",
-        "type": "address"
-      }
-    ],
+    "type": "error",
     "name": "IssuerAlreadyExists",
-    "type": "error"
-  },
-  {
     "inputs": [
       {
-        "internalType": "address",
         "name": "issuer",
-        "type": "address"
+        "type": "address",
+        "internalType": "address"
       }
-    ],
-    "name": "IssuerDoesNotExist",
-    "type": "error"
+    ]
   },
   {
-    "inputs": [],
+    "type": "error",
+    "name": "IssuerDoesNotExist",
+    "inputs": [
+      {
+        "name": "issuer",
+        "type": "address",
+        "internalType": "address"
+      }
+    ]
+  },
+  {
+    "type": "error",
     "name": "ZeroAddress",
-    "type": "error"
+    "inputs": []
   }
 ]

@@ -33,17 +33,13 @@ contract PrimaryMarketTest is Fixtures {
     function test_CreateOffer_RevertsForNonWinery() public {
         vm.prank(buyer);
         vm.expectRevert(abi.encodeWithSelector(PrimaryMarket.NotWinery.selector, buyer));
-        primaryMarket.createOffer(
-            lotId, address(eurc), PRICE, 100, 0, 1, 0, 1, PrimaryMarket.OfferKind.Standard
-        );
+        primaryMarket.createOffer(lotId, address(eurc), PRICE, 100, 0, 1, 0, 1, PrimaryMarket.OfferKind.Standard);
     }
 
     function test_CreateOffer_RevertsOnOversell() public {
         _createOffer(9_000, 0);
         vm.prank(winery);
-        vm.expectRevert(
-            abi.encodeWithSelector(PrimaryMarket.OfferQuantityExceedsLot.selector, lotId, 2_000, 1_000)
-        );
+        vm.expectRevert(abi.encodeWithSelector(PrimaryMarket.OfferQuantityExceedsLot.selector, lotId, 2_000, 1_000));
         primaryMarket.createOffer(
             lotId,
             address(eurc),

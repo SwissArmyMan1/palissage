@@ -9,10 +9,10 @@ import {IIdentity} from "../interfaces/IIdentity.sol";
 import {ClaimTopicsLib} from "../libraries/ClaimTopicsLib.sol";
 
 /// @title ClaimIssuer - trusted issuer identity that signs, validates and revokes claims.
-/// @notice signature = ECDSA over toEthSignedMessageHash(keccak256(abi.encode(subject, topic, data))).
+/// @notice Claims bind the chain, issuer, subject, topic and data. Sign {claimDigest}.
 ///         The recovered signer must hold a CLAIM (purpose 3) key in this issuer identity.
 contract ClaimIssuer is Identity, IClaimIssuer {
-    string public constant VERSION = "1.0.0-mvp";
+    string public constant VERSION = "1.1.0";
 
     mapping(bytes32 => bool) private _revokedSignatures;
 
@@ -37,11 +37,16 @@ contract ClaimIssuer is Identity, IClaimIssuer {
     {
         if (isClaimRevoked(signature)) return false;
 
-        bytes32 dataHash = keccak256(abi.encode(subject, topic, data));
-        bytes32 ethSignedHash = MessageHashUtils.toEthSignedMessageHash(dataHash);
-        (address signer, ECDSA.RecoverError err,) = ECDSA.tryRecover(ethSignedHash, signature);
+        (address signer, ECDSA.RecoverError err,) = ECDSA.tryRecover(claimDigest(subject, topic, data), signature);
         if (err != ECDSA.RecoverError.NoError) return false;
 
         return keyHasPurpose(keccak256(abi.encode(signer)), ClaimTopicsLib.PURPOSE_CLAIM);
+    }
+
+    /// @notice EIP-191 digest for an issuer claim, scoped to this network and issuer.
+    function claimDigest(IIdentity subject, uint256 topic, bytes memory data) public view returns (bytes32) {
+        return MessageHashUtils.toEthSignedMessageHash(
+            keccak256(abi.encode(block.chainid, address(this), subject, topic, data))
+        );
     }
 }

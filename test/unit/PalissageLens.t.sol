@@ -72,7 +72,7 @@ contract PalissageLensTest is Fixtures {
         PalissageLens.ProtocolView memory view_ = lens.protocol(address(eurc));
 
         assertEq(view_.chainId, block.chainid);
-        assertEq(view_.version, "1.0.0-mvp");
+        assertEq(view_.version, "1.1.0");
         assertEq(view_.wineLotToken, address(token));
         assertEq(view_.primaryMarket, address(primaryMarket));
         assertEq(view_.secondaryMarket, address(secondaryMarket));

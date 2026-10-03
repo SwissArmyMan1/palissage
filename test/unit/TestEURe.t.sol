@@ -15,7 +15,7 @@ contract TestEUReTest is Test {
     address internal other = makeAddr("other");
 
     function setUp() public {
-        vm.chainId(84532); // Base Sepolia
+        vm.chainId(421614); // Arbitrum Sepolia
         eure = new TestEURe(owner);
     }
 
@@ -23,22 +23,24 @@ contract TestEUReTest is Test {
         assertEq(eure.decimals(), 18);
         assertEq(eure.symbol(), "tEURe");
         assertEq(eure.name(), "Palissage Test EUR");
-        assertEq(eure.VERSION(), "1.0.0-mvp");
+        assertEq(eure.VERSION(), "1.1.0");
         assertEq(eure.FAUCET_AMOUNT(), 5_000e18);
         assertEq(eure.FAUCET_COOLDOWN(), 1 days);
     }
 
     // ------------------------------------------------------------ chain guard
 
-    function test_Constructor_AllowsBaseSepoliaAndLocal() public {
-        vm.chainId(84532);
+    function test_Constructor_AllowsBothTestnetsAndLocal() public {
+        vm.chainId(421614);
+        assertEq(new TestEURe(owner).decimals(), 18);
+        vm.chainId(46630);
         assertEq(new TestEURe(owner).decimals(), 18);
         vm.chainId(31337);
         assertEq(new TestEURe(owner).decimals(), 18);
     }
 
     function test_Constructor_RejectsOtherChains() public {
-        uint256[4] memory forbidden = [uint256(1), 8453, 42161, 421614];
+        uint256[3] memory forbidden = [uint256(1), 42161, 4663];
         for (uint256 i = 0; i < forbidden.length; i++) {
             vm.chainId(forbidden[i]);
             vm.expectRevert(abi.encodeWithSelector(TestEURe.UnsupportedTestChain.selector, forbidden[i]));

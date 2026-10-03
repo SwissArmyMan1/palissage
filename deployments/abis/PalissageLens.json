@@ -1,2434 +1,2434 @@
 [
   {
+    "type": "constructor",
     "inputs": [
       {
-        "internalType": "contract WineLotToken",
         "name": "token_",
-        "type": "address"
+        "type": "address",
+        "internalType": "contract WineLotToken"
       },
       {
-        "internalType": "contract PrimaryMarket",
         "name": "primary_",
-        "type": "address"
+        "type": "address",
+        "internalType": "contract PrimaryMarket"
       },
       {
-        "internalType": "contract SecondaryMarket",
         "name": "secondary_",
-        "type": "address"
+        "type": "address",
+        "internalType": "contract SecondaryMarket"
       },
       {
-        "internalType": "contract RedemptionManager",
         "name": "redemption_",
-        "type": "address"
+        "type": "address",
+        "internalType": "contract RedemptionManager"
       },
       {
-        "internalType": "contract IdentityRegistry",
         "name": "registry_",
-        "type": "address"
+        "type": "address",
+        "internalType": "contract IdentityRegistry"
       },
       {
-        "internalType": "contract RoleGateway",
         "name": "gateway_",
-        "type": "address"
+        "type": "address",
+        "internalType": "contract RoleGateway"
       }
     ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
+    "stateMutability": "nonpayable"
   },
   {
-    "inputs": [],
+    "type": "function",
     "name": "MAX_LIMIT",
+    "inputs": [],
     "outputs": [
       {
-        "internalType": "uint256",
         "name": "",
-        "type": "uint256"
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability": "view"
   },
   {
-    "inputs": [],
+    "type": "function",
     "name": "MAX_POSITION_IDS",
+    "inputs": [],
     "outputs": [
       {
-        "internalType": "uint256",
         "name": "",
-        "type": "uint256"
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability": "view"
   },
   {
-    "inputs": [],
+    "type": "function",
     "name": "MAX_SCAN",
+    "inputs": [],
     "outputs": [
       {
-        "internalType": "uint256",
         "name": "",
-        "type": "uint256"
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability": "view"
   },
   {
-    "inputs": [],
+    "type": "function",
     "name": "VERSION",
+    "inputs": [],
     "outputs": [
       {
-        "internalType": "string",
         "name": "",
-        "type": "string"
+        "type": "string",
+        "internalType": "string"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability": "view"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "cursor",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "limit",
-        "type": "uint256"
-      }
-    ],
+    "type": "function",
     "name": "activeListings",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "seller",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lotId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint32",
-            "name": "quantity",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint256",
-            "name": "pricePerBottle",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "paymentToken",
-            "type": "address"
-          },
-          {
-            "internalType": "bool",
-            "name": "active",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint256",
-            "name": "sellerBalance",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "sellerTransferable",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "sellerApproved",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint16",
-            "name": "royaltyBps",
-            "type": "uint16"
-          },
-          {
-            "internalType": "uint16",
-            "name": "feeBps",
-            "type": "uint16"
-          },
-          {
-            "internalType": "bool",
-            "name": "lotVerified",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct PalissageLens.ListingView[]",
-        "name": "items",
-        "type": "tuple[]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "nextCursor",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "id",
-        "type": "uint256"
+        "name": "cursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "limit",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
+    "outputs": [
+      {
+        "name": "items",
+        "type": "tuple[]",
+        "internalType": "struct PalissageLens.ListingView[]",
+        "components": [
+          {
+            "name": "id",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "seller",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "lotId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "quantity",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "pricePerBottle",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "paymentToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "active",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "sellerBalance",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "sellerTransferable",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "sellerApproved",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "royaltyBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "feeBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "lotVerified",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ]
+      },
+      {
+        "name": "nextCursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "allocation",
+    "inputs": [
+      {
+        "name": "id",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
     "outputs": [
       {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "offerId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lotId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "buyer",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "paymentToken",
-            "type": "address"
-          },
-          {
-            "internalType": "uint32",
-            "name": "quantity",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint256",
-            "name": "pricePerBottle",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "totalDue",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "paidAmount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "remaining",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint64",
-            "name": "createdAt",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint8",
-            "name": "state",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint64",
-            "name": "fullPaymentDeadline",
-            "type": "uint64"
-          },
-          {
-            "internalType": "bool",
-            "name": "overdue",
-            "type": "bool"
-          }
-        ],
+        "name": "view_",
+        "type": "tuple",
         "internalType": "struct PalissageLens.AllocationView",
-        "name": "view_",
-        "type": "tuple"
+        "components": [
+          {
+            "name": "id",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "offerId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "lotId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "buyer",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "paymentToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "quantity",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "pricePerBottle",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "totalDue",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "paidAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "remaining",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "createdAt",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "state",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "fullPaymentDeadline",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "overdue",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ]
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability": "view"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "buyer",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "cursor",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "limit",
-        "type": "uint256"
-      }
-    ],
+    "type": "function",
     "name": "allocationsOfBuyer",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "offerId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lotId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "buyer",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "paymentToken",
-            "type": "address"
-          },
-          {
-            "internalType": "uint32",
-            "name": "quantity",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint256",
-            "name": "pricePerBottle",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "totalDue",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "paidAmount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "remaining",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint64",
-            "name": "createdAt",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint8",
-            "name": "state",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint64",
-            "name": "fullPaymentDeadline",
-            "type": "uint64"
-          },
-          {
-            "internalType": "bool",
-            "name": "overdue",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct PalissageLens.AllocationView[]",
-        "name": "items",
-        "type": "tuple[]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "nextCursor",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "offerId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "cursor",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "limit",
-        "type": "uint256"
-      }
-    ],
-    "name": "allocationsOfOffer",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "offerId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lotId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "buyer",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "paymentToken",
-            "type": "address"
-          },
-          {
-            "internalType": "uint32",
-            "name": "quantity",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint256",
-            "name": "pricePerBottle",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "totalDue",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "paidAmount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "remaining",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint64",
-            "name": "createdAt",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint8",
-            "name": "state",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint64",
-            "name": "fullPaymentDeadline",
-            "type": "uint64"
-          },
-          {
-            "internalType": "bool",
-            "name": "overdue",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct PalissageLens.AllocationView[]",
-        "name": "items",
-        "type": "tuple[]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "nextCursor",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "gateway",
-    "outputs": [
-      {
-        "internalType": "contract RoleGateway",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "id",
-        "type": "uint256"
-      }
-    ],
-    "name": "listing",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "seller",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lotId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint32",
-            "name": "quantity",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint256",
-            "name": "pricePerBottle",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "paymentToken",
-            "type": "address"
-          },
-          {
-            "internalType": "bool",
-            "name": "active",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint256",
-            "name": "sellerBalance",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "sellerTransferable",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "sellerApproved",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint16",
-            "name": "royaltyBps",
-            "type": "uint16"
-          },
-          {
-            "internalType": "uint16",
-            "name": "feeBps",
-            "type": "uint16"
-          },
-          {
-            "internalType": "bool",
-            "name": "lotVerified",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct PalissageLens.ListingView",
-        "name": "view_",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "lotId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "cursor",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "limit",
-        "type": "uint256"
-      }
-    ],
-    "name": "listingsOfLot",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "seller",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lotId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint32",
-            "name": "quantity",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint256",
-            "name": "pricePerBottle",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "paymentToken",
-            "type": "address"
-          },
-          {
-            "internalType": "bool",
-            "name": "active",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint256",
-            "name": "sellerBalance",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "sellerTransferable",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "sellerApproved",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint16",
-            "name": "royaltyBps",
-            "type": "uint16"
-          },
-          {
-            "internalType": "uint16",
-            "name": "feeBps",
-            "type": "uint16"
-          },
-          {
-            "internalType": "bool",
-            "name": "lotVerified",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct PalissageLens.ListingView[]",
-        "name": "items",
-        "type": "tuple[]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "nextCursor",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "seller",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "cursor",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "limit",
-        "type": "uint256"
-      }
-    ],
-    "name": "listingsOfSeller",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "seller",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lotId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint32",
-            "name": "quantity",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint256",
-            "name": "pricePerBottle",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "paymentToken",
-            "type": "address"
-          },
-          {
-            "internalType": "bool",
-            "name": "active",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint256",
-            "name": "sellerBalance",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "sellerTransferable",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bool",
-            "name": "sellerApproved",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint16",
-            "name": "royaltyBps",
-            "type": "uint16"
-          },
-          {
-            "internalType": "uint16",
-            "name": "feeBps",
-            "type": "uint16"
-          },
-          {
-            "internalType": "bool",
-            "name": "lotVerified",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct PalissageLens.ListingView[]",
-        "name": "items",
-        "type": "tuple[]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "nextCursor",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "id",
-        "type": "uint256"
-      }
-    ],
-    "name": "lot",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "exists",
-        "type": "bool"
-      },
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "winery",
-            "type": "address"
-          },
-          {
-            "internalType": "uint8",
-            "name": "status",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "production",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint32",
-            "name": "totalBottles",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "mintedBottles",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "redeemedBottles",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint16",
-            "name": "vintage",
-            "type": "uint16"
-          },
-          {
-            "internalType": "uint16",
-            "name": "royaltyBps",
-            "type": "uint16"
-          },
-          {
-            "internalType": "uint32",
-            "name": "bottleSizeMl",
-            "type": "uint32"
-          },
-          {
-            "internalType": "bool",
-            "name": "exportAllowed",
-            "type": "bool"
-          },
-          {
-            "internalType": "address",
-            "name": "verifier",
-            "type": "address"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "docsHash",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "region",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "grapes",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "metadataURI",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "offeredBottles",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "circulating",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct PalissageLens.LotView",
-        "name": "view_",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "cursor",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "limit",
-        "type": "uint256"
-      }
-    ],
-    "name": "lots",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "winery",
-            "type": "address"
-          },
-          {
-            "internalType": "uint8",
-            "name": "status",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "production",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint32",
-            "name": "totalBottles",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "mintedBottles",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "redeemedBottles",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint16",
-            "name": "vintage",
-            "type": "uint16"
-          },
-          {
-            "internalType": "uint16",
-            "name": "royaltyBps",
-            "type": "uint16"
-          },
-          {
-            "internalType": "uint32",
-            "name": "bottleSizeMl",
-            "type": "uint32"
-          },
-          {
-            "internalType": "bool",
-            "name": "exportAllowed",
-            "type": "bool"
-          },
-          {
-            "internalType": "address",
-            "name": "verifier",
-            "type": "address"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "docsHash",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "region",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "grapes",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "metadataURI",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "offeredBottles",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "circulating",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct PalissageLens.LotView[]",
-        "name": "items",
-        "type": "tuple[]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "nextCursor",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "winery",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "cursor",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "limit",
-        "type": "uint256"
-      }
-    ],
-    "name": "lotsOfWinery",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "winery",
-            "type": "address"
-          },
-          {
-            "internalType": "uint8",
-            "name": "status",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "production",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint32",
-            "name": "totalBottles",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "mintedBottles",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "redeemedBottles",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint16",
-            "name": "vintage",
-            "type": "uint16"
-          },
-          {
-            "internalType": "uint16",
-            "name": "royaltyBps",
-            "type": "uint16"
-          },
-          {
-            "internalType": "uint32",
-            "name": "bottleSizeMl",
-            "type": "uint32"
-          },
-          {
-            "internalType": "bool",
-            "name": "exportAllowed",
-            "type": "bool"
-          },
-          {
-            "internalType": "address",
-            "name": "verifier",
-            "type": "address"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "docsHash",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "region",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "grapes",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "metadataURI",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "offeredBottles",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "circulating",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct PalissageLens.LotView[]",
-        "name": "items",
-        "type": "tuple[]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "nextCursor",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "id",
-        "type": "uint256"
-      }
-    ],
-    "name": "offer",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lotId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "winery",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "paymentToken",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "pricePerBottle",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint32",
-            "name": "quantity",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "reserved",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "available",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint64",
-            "name": "startTime",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint64",
-            "name": "endTime",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint16",
-            "name": "depositBps",
-            "type": "uint16"
-          },
-          {
-            "internalType": "uint64",
-            "name": "fullPaymentDeadline",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint8",
-            "name": "kind",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bool",
-            "name": "active",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint8",
-            "name": "phase",
-            "type": "uint8"
-          }
-        ],
-        "internalType": "struct PalissageLens.OfferView",
-        "name": "view_",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "cursor",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "limit",
-        "type": "uint256"
-      }
-    ],
-    "name": "offers",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lotId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "winery",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "paymentToken",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "pricePerBottle",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint32",
-            "name": "quantity",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "reserved",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "available",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint64",
-            "name": "startTime",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint64",
-            "name": "endTime",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint16",
-            "name": "depositBps",
-            "type": "uint16"
-          },
-          {
-            "internalType": "uint64",
-            "name": "fullPaymentDeadline",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint8",
-            "name": "kind",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bool",
-            "name": "active",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint8",
-            "name": "phase",
-            "type": "uint8"
-          }
-        ],
-        "internalType": "struct PalissageLens.OfferView[]",
-        "name": "items",
-        "type": "tuple[]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "nextCursor",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "lotId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "cursor",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "limit",
-        "type": "uint256"
-      }
-    ],
-    "name": "offersOfLot",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lotId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "winery",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "paymentToken",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "pricePerBottle",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint32",
-            "name": "quantity",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "reserved",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "available",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint64",
-            "name": "startTime",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint64",
-            "name": "endTime",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint16",
-            "name": "depositBps",
-            "type": "uint16"
-          },
-          {
-            "internalType": "uint64",
-            "name": "fullPaymentDeadline",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint8",
-            "name": "kind",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bool",
-            "name": "active",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint8",
-            "name": "phase",
-            "type": "uint8"
-          }
-        ],
-        "internalType": "struct PalissageLens.OfferView[]",
-        "name": "items",
-        "type": "tuple[]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "nextCursor",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "winery",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "cursor",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "limit",
-        "type": "uint256"
-      }
-    ],
-    "name": "offersOfWinery",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lotId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "winery",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "paymentToken",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "pricePerBottle",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint32",
-            "name": "quantity",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "reserved",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint32",
-            "name": "available",
-            "type": "uint32"
-          },
-          {
-            "internalType": "uint64",
-            "name": "startTime",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint64",
-            "name": "endTime",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint16",
-            "name": "depositBps",
-            "type": "uint16"
-          },
-          {
-            "internalType": "uint64",
-            "name": "fullPaymentDeadline",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint8",
-            "name": "kind",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bool",
-            "name": "active",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint8",
-            "name": "phase",
-            "type": "uint8"
-          }
-        ],
-        "internalType": "struct PalissageLens.OfferView[]",
-        "name": "items",
-        "type": "tuple[]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "nextCursor",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "wallet",
-        "type": "address"
-      }
-    ],
-    "name": "participant",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "wallet",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "identity",
-            "type": "address"
-          },
-          {
-            "internalType": "uint8",
-            "name": "gatewayRole",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint16",
-            "name": "country",
-            "type": "uint16"
-          },
-          {
-            "internalType": "bool",
-            "name": "registered",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "isVerified",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "kyc",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "kyb",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "wineryClaim",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "b2bClaim",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "tokenVerifier",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "tokenEnforcer",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "tokenAdmin",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "primaryVerifier",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "primaryPauser",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "secondaryPauser",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "redemptionVerifier",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "primaryAdmin",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "gatewayAdmin",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "gatewayOwner",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "canSend",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "canReceive",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct PalissageLens.ParticipantView",
-        "name": "view_",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "lotIds",
-        "type": "uint256[]"
-      }
-    ],
-    "name": "positions",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "lotId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "balance",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "frozen",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "transferable",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct PalissageLens.PositionView[]",
-        "name": "items",
-        "type": "tuple[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "primary",
-    "outputs": [
-      {
-        "internalType": "contract PrimaryMarket",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "paymentToken",
-        "type": "address"
-      }
-    ],
-    "name": "protocol",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "chainId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "string",
-            "name": "version",
-            "type": "string"
-          },
-          {
-            "internalType": "address",
-            "name": "wineLotToken",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "primaryMarket",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "secondaryMarket",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "redemptionManager",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "identityRegistry",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "trustedIssuersRegistry",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "roleGateway",
-            "type": "address"
-          },
-          {
-            "internalType": "uint16",
-            "name": "primaryFeeBps",
-            "type": "uint16"
-          },
-          {
-            "internalType": "uint16",
-            "name": "secondaryFeeBps",
-            "type": "uint16"
-          },
-          {
-            "internalType": "address",
-            "name": "primaryTreasury",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "secondaryTreasury",
-            "type": "address"
-          },
-          {
-            "internalType": "bool",
-            "name": "primaryPaused",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "secondaryPaused",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "testMode",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lotCount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "offerCount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "allocationCount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "listingCount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "redemptionCount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "paymentToken",
-            "type": "address"
-          },
-          {
-            "internalType": "uint8",
-            "name": "paymentDecimals",
-            "type": "uint8"
-          },
-          {
-            "internalType": "string",
-            "name": "paymentSymbol",
-            "type": "string"
-          },
-          {
-            "internalType": "bool",
-            "name": "paymentAllowedPrimary",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "paymentAllowedSecondary",
-            "type": "bool"
-          },
-          {
-            "internalType": "bool",
-            "name": "paymentMetadataOk",
-            "type": "bool"
-          }
-        ],
-        "internalType": "struct PalissageLens.ProtocolView",
-        "name": "view_",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "id",
-        "type": "uint256"
-      }
-    ],
-    "name": "redemption",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "buyer",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lotId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint32",
-            "name": "quantity",
-            "type": "uint32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "deliveryDataHash",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "shipmentDocsHash",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint64",
-            "name": "requestedAt",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint8",
-            "name": "state",
-            "type": "uint8"
-          },
-          {
-            "internalType": "address",
-            "name": "winery",
-            "type": "address"
-          },
-          {
-            "internalType": "uint8",
-            "name": "lotProduction",
-            "type": "uint8"
-          }
-        ],
-        "internalType": "struct PalissageLens.RedemptionView",
-        "name": "view_",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "redemptionManager",
-    "outputs": [
-      {
-        "internalType": "contract RedemptionManager",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "cursor",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "limit",
-        "type": "uint256"
-      }
-    ],
-    "name": "redemptions",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "buyer",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lotId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint32",
-            "name": "quantity",
-            "type": "uint32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "deliveryDataHash",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "shipmentDocsHash",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint64",
-            "name": "requestedAt",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint8",
-            "name": "state",
-            "type": "uint8"
-          },
-          {
-            "internalType": "address",
-            "name": "winery",
-            "type": "address"
-          },
-          {
-            "internalType": "uint8",
-            "name": "lotProduction",
-            "type": "uint8"
-          }
-        ],
-        "internalType": "struct PalissageLens.RedemptionView[]",
-        "name": "items",
-        "type": "tuple[]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "nextCursor",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
         "name": "buyer",
-        "type": "address"
+        "type": "address",
+        "internalType": "address"
       },
       {
-        "internalType": "uint256",
         "name": "cursor",
-        "type": "uint256"
+        "type": "uint256",
+        "internalType": "uint256"
       },
       {
-        "internalType": "uint256",
         "name": "limit",
-        "type": "uint256"
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
-    "name": "redemptionsOfBuyer",
     "outputs": [
       {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "id",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "buyer",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lotId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint32",
-            "name": "quantity",
-            "type": "uint32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "deliveryDataHash",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "shipmentDocsHash",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint64",
-            "name": "requestedAt",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint8",
-            "name": "state",
-            "type": "uint8"
-          },
-          {
-            "internalType": "address",
-            "name": "winery",
-            "type": "address"
-          },
-          {
-            "internalType": "uint8",
-            "name": "lotProduction",
-            "type": "uint8"
-          }
-        ],
-        "internalType": "struct PalissageLens.RedemptionView[]",
         "name": "items",
-        "type": "tuple[]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "nextCursor",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "winery",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "cursor",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "limit",
-        "type": "uint256"
-      }
-    ],
-    "name": "redemptionsOfWinery",
-    "outputs": [
-      {
+        "type": "tuple[]",
+        "internalType": "struct PalissageLens.AllocationView[]",
         "components": [
           {
-            "internalType": "uint256",
             "name": "id",
-            "type": "uint256"
+            "type": "uint256",
+            "internalType": "uint256"
           },
           {
-            "internalType": "address",
-            "name": "buyer",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lotId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint32",
-            "name": "quantity",
-            "type": "uint32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "deliveryDataHash",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "shipmentDocsHash",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint64",
-            "name": "requestedAt",
-            "type": "uint64"
-          },
-          {
-            "internalType": "uint8",
-            "name": "state",
-            "type": "uint8"
-          },
-          {
-            "internalType": "address",
-            "name": "winery",
-            "type": "address"
-          },
-          {
-            "internalType": "uint8",
-            "name": "lotProduction",
-            "type": "uint8"
-          }
-        ],
-        "internalType": "struct PalissageLens.RedemptionView[]",
-        "name": "items",
-        "type": "tuple[]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "nextCursor",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "registry",
-    "outputs": [
-      {
-        "internalType": "contract IdentityRegistry",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "secondary",
-    "outputs": [
-      {
-        "internalType": "contract SecondaryMarket",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "offerId",
-        "type": "uint256"
-      }
-    ],
-    "name": "settlement",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
             "name": "offerId",
-            "type": "uint256"
+            "type": "uint256",
+            "internalType": "uint256"
           },
           {
-            "internalType": "address",
-            "name": "winery",
-            "type": "address"
+            "name": "lotId",
+            "type": "uint256",
+            "internalType": "uint256"
           },
           {
-            "internalType": "address",
+            "name": "buyer",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
             "name": "paymentToken",
-            "type": "address"
+            "type": "address",
+            "internalType": "address"
           },
           {
-            "internalType": "uint256",
-            "name": "settledFunds",
-            "type": "uint256"
+            "name": "quantity",
+            "type": "uint32",
+            "internalType": "uint32"
           },
           {
-            "internalType": "uint256",
-            "name": "withdrawnGross",
-            "type": "uint256"
+            "name": "pricePerBottle",
+            "type": "uint256",
+            "internalType": "uint256"
           },
           {
-            "internalType": "uint256",
-            "name": "releasedBps",
-            "type": "uint256"
+            "name": "totalDue",
+            "type": "uint256",
+            "internalType": "uint256"
           },
           {
-            "internalType": "uint256",
-            "name": "withdrawable",
-            "type": "uint256"
+            "name": "paidAmount",
+            "type": "uint256",
+            "internalType": "uint256"
           },
           {
-            "internalType": "uint16",
+            "name": "remaining",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "createdAt",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "state",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "fullPaymentDeadline",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "overdue",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ]
+      },
+      {
+        "name": "nextCursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "allocationsOfOffer",
+    "inputs": [
+      {
+        "name": "offerId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "cursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "limit",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "items",
+        "type": "tuple[]",
+        "internalType": "struct PalissageLens.AllocationView[]",
+        "components": [
+          {
+            "name": "id",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "offerId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "lotId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "buyer",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "paymentToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "quantity",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "pricePerBottle",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "totalDue",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "paidAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "remaining",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "createdAt",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "state",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "fullPaymentDeadline",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "overdue",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ]
+      },
+      {
+        "name": "nextCursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "gateway",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract RoleGateway"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "listing",
+    "inputs": [
+      {
+        "name": "id",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "view_",
+        "type": "tuple",
+        "internalType": "struct PalissageLens.ListingView",
+        "components": [
+          {
+            "name": "id",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "seller",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "lotId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "quantity",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "pricePerBottle",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "paymentToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "active",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "sellerBalance",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "sellerTransferable",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "sellerApproved",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "royaltyBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "feeBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "lotVerified",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "listingsOfLot",
+    "inputs": [
+      {
+        "name": "lotId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "cursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "limit",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "items",
+        "type": "tuple[]",
+        "internalType": "struct PalissageLens.ListingView[]",
+        "components": [
+          {
+            "name": "id",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "seller",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "lotId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "quantity",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "pricePerBottle",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "paymentToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "active",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "sellerBalance",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "sellerTransferable",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "sellerApproved",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "royaltyBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "feeBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "lotVerified",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ]
+      },
+      {
+        "name": "nextCursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "listingsOfSeller",
+    "inputs": [
+      {
+        "name": "seller",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "cursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "limit",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "items",
+        "type": "tuple[]",
+        "internalType": "struct PalissageLens.ListingView[]",
+        "components": [
+          {
+            "name": "id",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "seller",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "lotId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "quantity",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "pricePerBottle",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "paymentToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "active",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "sellerBalance",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "sellerTransferable",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "sellerApproved",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "royaltyBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "feeBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "lotVerified",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ]
+      },
+      {
+        "name": "nextCursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "lot",
+    "inputs": [
+      {
+        "name": "id",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "exists",
+        "type": "bool",
+        "internalType": "bool"
+      },
+      {
+        "name": "view_",
+        "type": "tuple",
+        "internalType": "struct PalissageLens.LotView",
+        "components": [
+          {
+            "name": "id",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "winery",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "status",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "production",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "totalBottles",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "mintedBottles",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "redeemedBottles",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "vintage",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "royaltyBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "bottleSizeMl",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "exportAllowed",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "verifier",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "docsHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "region",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "grapes",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "metadataURI",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "offeredBottles",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "circulating",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "lots",
+    "inputs": [
+      {
+        "name": "cursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "limit",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "items",
+        "type": "tuple[]",
+        "internalType": "struct PalissageLens.LotView[]",
+        "components": [
+          {
+            "name": "id",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "winery",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "status",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "production",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "totalBottles",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "mintedBottles",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "redeemedBottles",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "vintage",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "royaltyBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "bottleSizeMl",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "exportAllowed",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "verifier",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "docsHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "region",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "grapes",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "metadataURI",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "offeredBottles",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "circulating",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "name": "nextCursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "lotsOfWinery",
+    "inputs": [
+      {
+        "name": "winery",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "cursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "limit",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "items",
+        "type": "tuple[]",
+        "internalType": "struct PalissageLens.LotView[]",
+        "components": [
+          {
+            "name": "id",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "winery",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "status",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "production",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "totalBottles",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "mintedBottles",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "redeemedBottles",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "vintage",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "royaltyBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "bottleSizeMl",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "exportAllowed",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "verifier",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "docsHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "region",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "grapes",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "metadataURI",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "offeredBottles",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "circulating",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "name": "nextCursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "offer",
+    "inputs": [
+      {
+        "name": "id",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "view_",
+        "type": "tuple",
+        "internalType": "struct PalissageLens.OfferView",
+        "components": [
+          {
+            "name": "id",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "lotId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "winery",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "paymentToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "pricePerBottle",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "quantity",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "reserved",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "available",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "startTime",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "endTime",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "depositBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "fullPaymentDeadline",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "kind",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "active",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "phase",
+            "type": "uint8",
+            "internalType": "uint8"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "offers",
+    "inputs": [
+      {
+        "name": "cursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "limit",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "items",
+        "type": "tuple[]",
+        "internalType": "struct PalissageLens.OfferView[]",
+        "components": [
+          {
+            "name": "id",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "lotId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "winery",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "paymentToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "pricePerBottle",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "quantity",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "reserved",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "available",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "startTime",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "endTime",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "depositBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "fullPaymentDeadline",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "kind",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "active",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "phase",
+            "type": "uint8",
+            "internalType": "uint8"
+          }
+        ]
+      },
+      {
+        "name": "nextCursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "offersOfLot",
+    "inputs": [
+      {
+        "name": "lotId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "cursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "limit",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "items",
+        "type": "tuple[]",
+        "internalType": "struct PalissageLens.OfferView[]",
+        "components": [
+          {
+            "name": "id",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "lotId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "winery",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "paymentToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "pricePerBottle",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "quantity",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "reserved",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "available",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "startTime",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "endTime",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "depositBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "fullPaymentDeadline",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "kind",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "active",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "phase",
+            "type": "uint8",
+            "internalType": "uint8"
+          }
+        ]
+      },
+      {
+        "name": "nextCursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "offersOfWinery",
+    "inputs": [
+      {
+        "name": "winery",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "cursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "limit",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "items",
+        "type": "tuple[]",
+        "internalType": "struct PalissageLens.OfferView[]",
+        "components": [
+          {
+            "name": "id",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "lotId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "winery",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "paymentToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "pricePerBottle",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "quantity",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "reserved",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "available",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "startTime",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "endTime",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "depositBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "fullPaymentDeadline",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "kind",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "active",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "phase",
+            "type": "uint8",
+            "internalType": "uint8"
+          }
+        ]
+      },
+      {
+        "name": "nextCursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "participant",
+    "inputs": [
+      {
+        "name": "wallet",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "view_",
+        "type": "tuple",
+        "internalType": "struct PalissageLens.ParticipantView",
+        "components": [
+          {
+            "name": "wallet",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "identity",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "gatewayRole",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "country",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "registered",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "isVerified",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "kyc",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "kyb",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "wineryClaim",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "b2bClaim",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "tokenVerifier",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "tokenEnforcer",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "tokenAdmin",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "primaryVerifier",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "primaryPauser",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "secondaryPauser",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "redemptionVerifier",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "primaryAdmin",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "gatewayAdmin",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "gatewayOwner",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "canSend",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "canReceive",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "positions",
+    "inputs": [
+      {
+        "name": "account",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "lotIds",
+        "type": "uint256[]",
+        "internalType": "uint256[]"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "items",
+        "type": "tuple[]",
+        "internalType": "struct PalissageLens.PositionView[]",
+        "components": [
+          {
+            "name": "lotId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "balance",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "frozen",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "transferable",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "primary",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract PrimaryMarket"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "protocol",
+    "inputs": [
+      {
+        "name": "paymentToken",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "view_",
+        "type": "tuple",
+        "internalType": "struct PalissageLens.ProtocolView",
+        "components": [
+          {
+            "name": "chainId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "version",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "wineLotToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "primaryMarket",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "secondaryMarket",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "redemptionManager",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "identityRegistry",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "trustedIssuersRegistry",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "roleGateway",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
             "name": "primaryFeeBps",
-            "type": "uint16"
+            "type": "uint16",
+            "internalType": "uint16"
           },
           {
+            "name": "secondaryFeeBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "primaryTreasury",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "secondaryTreasury",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "primaryPaused",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "secondaryPaused",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "testMode",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "lotCount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "offerCount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "allocationCount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "listingCount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "redemptionCount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "paymentToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "paymentDecimals",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "paymentSymbol",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "paymentAllowedPrimary",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "paymentAllowedSecondary",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "paymentMetadataOk",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "redemption",
+    "inputs": [
+      {
+        "name": "id",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "view_",
+        "type": "tuple",
+        "internalType": "struct PalissageLens.RedemptionView",
+        "components": [
+          {
+            "name": "id",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "buyer",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "lotId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "quantity",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "deliveryDataHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "shipmentDocsHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "requestedAt",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "state",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "winery",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "lotProduction",
+            "type": "uint8",
+            "internalType": "uint8"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "redemptionManager",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract RedemptionManager"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "redemptions",
+    "inputs": [
+      {
+        "name": "cursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "limit",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "items",
+        "type": "tuple[]",
+        "internalType": "struct PalissageLens.RedemptionView[]",
+        "components": [
+          {
+            "name": "id",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "buyer",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "lotId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "quantity",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "deliveryDataHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "shipmentDocsHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "requestedAt",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "state",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "winery",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "lotProduction",
+            "type": "uint8",
+            "internalType": "uint8"
+          }
+        ]
+      },
+      {
+        "name": "nextCursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "redemptionsOfBuyer",
+    "inputs": [
+      {
+        "name": "buyer",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "cursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "limit",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "items",
+        "type": "tuple[]",
+        "internalType": "struct PalissageLens.RedemptionView[]",
+        "components": [
+          {
+            "name": "id",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "buyer",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "lotId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "quantity",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "deliveryDataHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "shipmentDocsHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "requestedAt",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "state",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "winery",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "lotProduction",
+            "type": "uint8",
+            "internalType": "uint8"
+          }
+        ]
+      },
+      {
+        "name": "nextCursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "redemptionsOfWinery",
+    "inputs": [
+      {
+        "name": "winery",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "cursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "limit",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "items",
+        "type": "tuple[]",
+        "internalType": "struct PalissageLens.RedemptionView[]",
+        "components": [
+          {
+            "name": "id",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "buyer",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "lotId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "quantity",
+            "type": "uint32",
+            "internalType": "uint32"
+          },
+          {
+            "name": "deliveryDataHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "shipmentDocsHash",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "requestedAt",
+            "type": "uint64",
+            "internalType": "uint64"
+          },
+          {
+            "name": "state",
+            "type": "uint8",
+            "internalType": "uint8"
+          },
+          {
+            "name": "winery",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "lotProduction",
+            "type": "uint8",
+            "internalType": "uint8"
+          }
+        ]
+      },
+      {
+        "name": "nextCursor",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "registry",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract IdentityRegistry"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "secondary",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract SecondaryMarket"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "settlement",
+    "inputs": [
+      {
+        "name": "offerId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "view_",
+        "type": "tuple",
+        "internalType": "struct PalissageLens.SettlementView",
+        "components": [
+          {
+            "name": "offerId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "winery",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "paymentToken",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "settledFunds",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "withdrawnGross",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "releasedBps",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "withdrawable",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "primaryFeeBps",
+            "type": "uint16",
+            "internalType": "uint16"
+          },
+          {
+            "name": "milestones",
+            "type": "tuple[]",
+            "internalType": "struct PalissageLens.MilestoneView[]",
             "components": [
               {
-                "internalType": "uint16",
                 "name": "bps",
-                "type": "uint16"
+                "type": "uint16",
+                "internalType": "uint16"
               },
               {
-                "internalType": "bool",
                 "name": "released",
-                "type": "bool"
+                "type": "bool",
+                "internalType": "bool"
               },
               {
-                "internalType": "string",
                 "name": "description",
-                "type": "string"
+                "type": "string",
+                "internalType": "string"
               }
-            ],
-            "internalType": "struct PalissageLens.MilestoneView[]",
-            "name": "milestones",
-            "type": "tuple[]"
+            ]
           }
-        ],
-        "internalType": "struct PalissageLens.SettlementView",
-        "name": "view_",
-        "type": "tuple"
+        ]
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability": "view"
   },
   {
-    "inputs": [],
+    "type": "function",
     "name": "token",
+    "inputs": [],
     "outputs": [
       {
-        "internalType": "contract WineLotToken",
         "name": "",
-        "type": "address"
+        "type": "address",
+        "internalType": "contract WineLotToken"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability": "view"
   },
   {
+    "type": "error",
+    "name": "EntityNotFound",
     "inputs": [
       {
-        "internalType": "uint8",
         "name": "kind",
-        "type": "uint8"
+        "type": "uint8",
+        "internalType": "uint8"
       },
       {
-        "internalType": "uint256",
         "name": "id",
-        "type": "uint256"
+        "type": "uint256",
+        "internalType": "uint256"
       }
-    ],
-    "name": "EntityNotFound",
-    "type": "error"
+    ]
   },
   {
-    "inputs": [],
+    "type": "error",
     "name": "InvalidPageLimit",
-    "type": "error"
+    "inputs": []
   },
   {
+    "type": "error",
+    "name": "TooManyPositionIds",
     "inputs": [
       {
-        "internalType": "uint256",
         "name": "count",
-        "type": "uint256"
+        "type": "uint256",
+        "internalType": "uint256"
       }
-    ],
-    "name": "TooManyPositionIds",
-    "type": "error"
+    ]
   },
   {
-    "inputs": [],
+    "type": "error",
     "name": "ZeroAddress",
-    "type": "error"
+    "inputs": []
   }
 ]

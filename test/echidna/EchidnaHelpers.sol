@@ -79,10 +79,7 @@ contract EchidnaIdentityRegistry is IIdentityRegistry {
 }
 
 contract EchidnaActor is ERC1155Holder {
-    function createLot(WineLotToken token, IWineLotToken.WineLotInput calldata input)
-        external
-        returns (uint256 lotId)
-    {
+    function createLot(WineLotToken token, IWineLotToken.WineLotInput calldata input) external returns (uint256 lotId) {
         return token.createLot(input);
     }
 

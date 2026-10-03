@@ -1,0 +1,13 @@
+{
+  "chainId": 421614,
+  "notice": "Transactions requested through the actual browser interface using a controlled EIP-1193 test wallet. Public receipts prove execution; no private signing data is included.",
+  "transactions": {
+    "ui.eur.1": {
+      "hash": "0x94999aa837288f303009b862eb6c04073ce42572f60042062f6260594b69d419",
+      "sender": "0x0706aAE611F6C9C6b89708562FF4d08a9C5F6771",
+      "to": "0x191af3012e33228f2a6c6e4df33c81f87cddfeb4",
+      "status": "confirmed",
+      "blockNumber": "315305392"
+    }
+  }
+}

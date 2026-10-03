@@ -19,7 +19,7 @@ import {ClaimTopicsLib} from "../libraries/ClaimTopicsLib.sol";
 contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
-    string public constant VERSION = "1.0.0-mvp";
+    string public constant VERSION = "1.1.0";
 
     bytes32 public constant VERIFIER_ROLE = keccak256("VERIFIER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
@@ -99,6 +99,7 @@ contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
     error InvalidBps();
     error ZeroAmount();
     error ZeroAddress();
+    error PaymentAmountMismatch(uint256 expected, uint256 received);
 
     event PaymentTokenAllowed(address indexed token, bool allowed);
     event TreasuryUpdated(address indexed treasury);
@@ -284,6 +285,7 @@ contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
     {
         Offer storage offer = _activeOffer(offerId);
         if (!identityRegistry.hasValidClaim(msg.sender, ClaimTopicsLib.TOPIC_B2B_BUYER)) revert NotBuyer(msg.sender);
+        if (!allowedPaymentTokens[offer.paymentToken]) revert PaymentTokenNotAllowed(offer.paymentToken);
         if (block.timestamp < offer.startTime) revert OfferNotStarted(offerId);
         if (block.timestamp > offer.endTime) revert OfferEnded(offerId);
         if (quantity == 0) revert ZeroAmount();
@@ -299,7 +301,7 @@ contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
         bool fullPayment = payNow == totalDue;
         if (!fullPayment) {
             if (offer.depositBps == 0) revert DepositsDisabled(offerId);
-            uint256 minDeposit = (totalDue * offer.depositBps) / BPS_DENOMINATOR;
+            uint256 minDeposit = Math.mulDiv(totalDue, offer.depositBps, BPS_DENOMINATOR, Math.Rounding.Ceil);
             if (payNow < minDeposit || payNow > totalDue) revert PaymentBelowDeposit(offerId, payNow, minDeposit);
         }
 
@@ -328,7 +330,7 @@ contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
         });
 
         settledFunds[offerId] += payNow;
-        IERC20(offer.paymentToken).safeTransferFrom(msg.sender, address(this), payNow);
+        _collectPayment(offer.paymentToken, payNow);
 
         emit AllocationCreated(allocationId, offerId, msg.sender, quantity, totalDue);
         emit AllocationPayment(allocationId, payNow, payNow);
@@ -352,6 +354,7 @@ contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
         if (amount > remaining) revert PaymentExceedsDue(allocationId, amount, remaining);
 
         Offer storage offer = offers[allocation.offerId];
+        if (!allowedPaymentTokens[offer.paymentToken]) revert PaymentTokenNotAllowed(offer.paymentToken);
         // A partial payment mints nothing, so the token's own mint guard would not catch a
         // suspended lot here.
         _requireVerifiedLot(offer.lotId);
@@ -362,7 +365,7 @@ contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
         }
         allocation.paidAmount += amount;
         settledFunds[allocation.offerId] += amount;
-        IERC20(offer.paymentToken).safeTransferFrom(msg.sender, address(this), amount);
+        _collectPayment(offer.paymentToken, amount);
 
         emit AllocationPayment(allocationId, amount, allocation.paidAmount);
 
@@ -503,6 +506,16 @@ contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
     function _requireVerifiedLot(uint256 lotId) internal view {
         IWineLotToken.WineLot memory lot = wineLotToken.getLot(lotId);
         if (lot.status != IWineLotToken.LotStatus.Verified) revert LotNotVerified(lotId);
+    }
+
+    /// @dev Exact-transfer ERC-20 assets only: tax/rebase shortfalls must not become escrow credit.
+    function _collectPayment(address asset, uint256 amount) private {
+        IERC20 payment = IERC20(asset);
+        uint256 beforeBalance = payment.balanceOf(address(this));
+        payment.safeTransferFrom(msg.sender, address(this), amount);
+        uint256 afterBalance = payment.balanceOf(address(this));
+        uint256 received = afterBalance >= beforeBalance ? afterBalance - beforeBalance : 0;
+        if (received != amount) revert PaymentAmountMismatch(amount, received);
     }
 
     function _activeOffer(uint256 offerId) internal view returns (Offer storage offer) {

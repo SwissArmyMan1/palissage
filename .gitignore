@@ -21,6 +21,9 @@ npm-cache/
 /deployments/*.draft.json
 /deployments/*.seed-plan.json
 /deployments/*.seed-journal.json
+/deployments/*.release-journal.json
+/specifications/
+/arb.png
 
 # Personal correspondence, applications and working deck exports
 /*.pdf

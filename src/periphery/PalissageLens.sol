@@ -20,7 +20,7 @@ import {ClaimTopicsLib} from "../libraries/ClaimTopicsLib.sol";
 /// @dev `view` only, no storage beyond the six immutable addresses, no roles, holds no funds.
 ///      Nothing in the protocol depends on it.
 contract PalissageLens {
-    string public constant VERSION = "1.0.0-mvp";
+    string public constant VERSION = "1.1.0";
 
     /// @notice Maximum records returned by one paginated call.
     uint256 public constant MAX_LIMIT = 50;

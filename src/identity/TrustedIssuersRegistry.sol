@@ -7,7 +7,7 @@ import {IClaimIssuer} from "../interfaces/IClaimIssuer.sol";
 
 /// @title TrustedIssuersRegistry - claim issuers trusted by the protocol, per topic.
 contract TrustedIssuersRegistry is AccessControl, ITrustedIssuersRegistry {
-    string public constant VERSION = "1.0.0-mvp";
+    string public constant VERSION = "1.1.0";
 
     error IssuerAlreadyExists(address issuer);
     error IssuerDoesNotExist(address issuer);

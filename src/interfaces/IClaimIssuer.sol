@@ -15,7 +15,7 @@ interface IClaimIssuer is IIdentity {
 
     /// @notice Validates a claim about `subject`: the signer must hold a CLAIM key
     ///         in this issuer identity and the signature must not be revoked.
-    /// @dev signature = ECDSA over toEthSignedMessageHash(keccak256(abi.encode(subject, topic, data))).
+    /// @dev Signature binds chainId, issuer address, subject, topic and data (EIP-191).
     function isClaimValid(IIdentity subject, uint256 topic, bytes calldata signature, bytes calldata data)
         external
         view

@@ -63,9 +63,8 @@ contract IdentityTest is Fixtures {
     function test_IsClaimValid_FalseForWrongSigner() public {
         (, uint256 strangerKey) = makeAddrAndKey("stranger");
         bytes memory data = "";
-        bytes32 hash = keccak256(abi.encode(address(identity), ClaimTopicsLib.TOPIC_KYC, data));
-        (uint8 v, bytes32 r, bytes32 s) =
-            vm.sign(strangerKey, keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", hash)));
+        bytes32 hash = claimIssuer.claimDigest(IIdentity(address(identity)), ClaimTopicsLib.TOPIC_KYC, data);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(strangerKey, hash);
         bytes memory sig = abi.encodePacked(r, s, v);
         assertFalse(claimIssuer.isClaimValid(IIdentity(address(identity)), ClaimTopicsLib.TOPIC_KYC, sig, data));
     }

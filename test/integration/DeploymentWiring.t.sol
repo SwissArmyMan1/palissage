@@ -18,7 +18,7 @@ contract DeploymentWiringTest is Test {
     PalissageDeployment.Deployment internal d;
 
     function setUp() public {
-        vm.chainId(84532);
+        vm.chainId(421614);
         PalissageDeployment.Actors memory actors =
             PalissageDeployment.Actors({deployer: deployer, admin: admin, owner: gatewayOwner, treasury: treasury});
         vm.startPrank(deployer);
@@ -30,7 +30,7 @@ contract DeploymentWiringTest is Test {
         PalissageDeployment.Actors memory actors =
             PalissageDeployment.Actors({deployer: deployer, admin: admin, owner: admin, treasury: admin});
 
-        uint256[3] memory forbidden = [uint256(1), 8453, 42161];
+        uint256[3] memory forbidden = [uint256(1), 42161, 4663];
         for (uint256 i = 0; i < forbidden.length; i++) {
             vm.chainId(forbidden[i]);
             vm.expectRevert(abi.encodeWithSelector(PalissageDeployment.UnsupportedChain.selector, forbidden[i]));
@@ -161,7 +161,7 @@ contract DeploymentWiringTest is Test {
 
     function test_LensSeesTheDeploymentTheManifestDescribes() public view {
         PalissageLens.ProtocolView memory view_ = d.lens.protocol(address(d.paymentToken));
-        assertEq(view_.chainId, 84532);
+        assertEq(view_.chainId, 421614);
         assertEq(view_.primaryFeeBps, 300);
         assertEq(view_.secondaryFeeBps, 200);
         assertEq(view_.primaryTreasury, treasury);
@@ -178,15 +178,15 @@ contract DeploymentWiringTest is Test {
     }
 
     function test_AllTenContractsReportTheReleaseVersion() public view {
-        assertEq(d.trustedIssuers.VERSION(), "1.0.0-mvp");
-        assertEq(d.identityRegistry.VERSION(), "1.0.0-mvp");
-        assertEq(d.claimIssuer.VERSION(), "1.0.0-mvp");
-        assertEq(d.roleGateway.VERSION(), "1.0.0-mvp");
-        assertEq(d.token.VERSION(), "1.0.0-mvp");
-        assertEq(d.primaryMarket.VERSION(), "1.0.0-mvp");
-        assertEq(d.secondaryMarket.VERSION(), "1.0.0-mvp");
-        assertEq(d.redemptionManager.VERSION(), "1.0.0-mvp");
-        assertEq(d.lens.VERSION(), "1.0.0-mvp");
-        assertEq(d.paymentToken.VERSION(), "1.0.0-mvp");
+        assertEq(d.trustedIssuers.VERSION(), "1.1.0");
+        assertEq(d.identityRegistry.VERSION(), "1.1.0");
+        assertEq(d.claimIssuer.VERSION(), "1.1.0");
+        assertEq(d.roleGateway.VERSION(), "1.1.0");
+        assertEq(d.token.VERSION(), "1.1.0");
+        assertEq(d.primaryMarket.VERSION(), "1.1.0");
+        assertEq(d.secondaryMarket.VERSION(), "1.1.0");
+        assertEq(d.redemptionManager.VERSION(), "1.1.0");
+        assertEq(d.lens.VERSION(), "1.1.0");
+        assertEq(d.paymentToken.VERSION(), "1.1.0");
     }
 }

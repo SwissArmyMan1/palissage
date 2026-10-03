@@ -15,7 +15,7 @@ import {IWineLotToken} from "../interfaces/IWineLotToken.sol";
 ///         burns the tokens and updates the lot's redeemed counter.
 contract RedemptionManager is AccessControl, ReentrancyGuard, ERC1155Holder, EIP712 {
     using SignatureChecker for address;
-    string public constant VERSION = "1.0.0-mvp";
+    string public constant VERSION = "1.1.0";
 
     bytes32 public constant VERIFIER_ROLE = keccak256("VERIFIER_ROLE");
 

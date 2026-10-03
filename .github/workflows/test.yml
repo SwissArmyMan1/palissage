@@ -15,7 +15,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: false
+
+      - name: Install contract dependencies
+        run: git submodule update --init --recursive lib/forge-std lib/openzeppelin-contracts
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1

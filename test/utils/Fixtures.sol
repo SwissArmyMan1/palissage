@@ -2,7 +2,6 @@
 pragma solidity ^0.8.24;
 
 import {Test} from "forge-std/Test.sol";
-import {MessageHashUtils} from "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 
 import {Identity} from "../../src/identity/Identity.sol";
 import {ClaimIssuer} from "../../src/identity/ClaimIssuer.sol";
@@ -63,7 +62,9 @@ abstract contract Fixtures is Test {
 
         claimIssuer = new ClaimIssuer(issuerOwner);
         vm.prank(issuerOwner);
-        claimIssuer.addKey(keccak256(abi.encode(claimSigner)), ClaimTopicsLib.PURPOSE_CLAIM, ClaimTopicsLib.KEY_TYPE_ECDSA);
+        claimIssuer.addKey(
+            keccak256(abi.encode(claimSigner)), ClaimTopicsLib.PURPOSE_CLAIM, ClaimTopicsLib.KEY_TYPE_ECDSA
+        );
 
         uint256[] memory topics = new uint256[](5);
         for (uint256 i = 0; i < 5; i++) {
@@ -125,8 +126,7 @@ abstract contract Fixtures is Test {
     }
 
     function _signClaim(address identity, uint256 topic, bytes memory data) internal view returns (bytes memory sig) {
-        bytes32 dataHash = keccak256(abi.encode(identity, topic, data));
-        bytes32 ethSignedHash = MessageHashUtils.toEthSignedMessageHash(dataHash);
+        bytes32 ethSignedHash = claimIssuer.claimDigest(IIdentity(identity), topic, data);
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(claimSignerKey, ethSignedHash);
         return abi.encodePacked(r, s, v);
     }

@@ -133,7 +133,9 @@ contract RedemptionManagerTest is Fixtures {
         vm.prank(buyer);
         vm.expectRevert(
             abi.encodeWithSelector(
-                RedemptionManager.RedemptionNotInState.selector, redemptionId, RedemptionManager.RedemptionState.Requested
+                RedemptionManager.RedemptionNotInState.selector,
+                redemptionId,
+                RedemptionManager.RedemptionState.Requested
             )
         );
         redemptionManager.cancelRedemption(redemptionId);

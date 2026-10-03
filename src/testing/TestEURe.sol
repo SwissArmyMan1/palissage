@@ -8,15 +8,16 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 /// @notice Not a stablecoin, not redeemable, not Monerium EURe. Anyone can mint from the faucet.
 /// @dev The chain-id allowlist only guards the deploy script against an operator mistake.
 contract TestEURe is ERC20, Ownable {
-    string public constant VERSION = "1.0.0-mvp";
+    string public constant VERSION = "1.1.0";
 
     /// @notice Amount a single faucet claim mints (18 decimals).
     uint256 public constant FAUCET_AMOUNT = 5_000e18;
     /// @notice Minimum interval between two claims by the same address.
     uint256 public constant FAUCET_COOLDOWN = 1 days;
 
-    /// @notice Base Sepolia - the only public chain this token may exist on.
-    uint256 public constant BASE_SEPOLIA_CHAIN_ID = 84532;
+    /// @notice Supported public test networks. No mainnet deployment is permitted.
+    uint256 public constant ARBITRUM_SEPOLIA_CHAIN_ID = 421614;
+    uint256 public constant ROBINHOOD_TESTNET_CHAIN_ID = 46630;
     /// @notice Anvil / local fork, developer builds only.
     uint256 public constant LOCAL_CHAIN_ID = 31337;
 
@@ -29,7 +30,10 @@ contract TestEURe is ERC20, Ownable {
     event FaucetClaimed(address indexed account, uint256 amount);
 
     constructor(address owner_) ERC20("Palissage Test EUR", "tEURe") Ownable(owner_) {
-        if (block.chainid != BASE_SEPOLIA_CHAIN_ID && block.chainid != LOCAL_CHAIN_ID) {
+        if (
+            block.chainid != ARBITRUM_SEPOLIA_CHAIN_ID && block.chainid != ROBINHOOD_TESTNET_CHAIN_ID
+                && block.chainid != LOCAL_CHAIN_ID
+        ) {
             revert UnsupportedTestChain(block.chainid);
         }
     }

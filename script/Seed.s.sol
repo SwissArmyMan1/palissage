@@ -30,7 +30,7 @@ import {IWineLotToken} from "../src/interfaces/IWineLotToken.sol";
 ///
 /// Usage (one transaction):
 ///   SEED_PLAN=deployments/<id>.seed-plan.json forge script script/Seed.s.sol:Seed \
-///     --sig 'runStep(uint8,uint8)' 2 0 --rpc-url "$BASE_SEPOLIA_RPC_URL" \
+///     --sig 'runStep(uint8,uint8)' 2 0 --rpc-url "$ARBITRUM_SEPOLIA_RPC_URL" \
 ///     --account palissage-winery-1 --sender "$W1" --broadcast
 contract Seed is Script {
     error UnsupportedChain(uint256 chainId);
@@ -46,7 +46,9 @@ contract Seed is Script {
     string internal plan;
 
     modifier withPlan() {
-        if (block.chainid != 84532 && block.chainid != 31337) revert UnsupportedChain(block.chainid);
+        if (block.chainid != 421614 && block.chainid != 46630 && block.chainid != 31337) {
+            revert UnsupportedChain(block.chainid);
+        }
         plan = vm.readFile(vm.envString("SEED_PLAN"));
         uint256 planChainId = _uint(".chainId");
         if (planChainId != block.chainid) revert PlanChainMismatch(planChainId, block.chainid);

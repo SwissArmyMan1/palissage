@@ -104,12 +104,10 @@ contract PrimaryMarketEchidna {
         uint256 allocationId = 1 + (allocationSeed % count);
         (
             uint256 allocOfferId,
-            address buyer,
-            ,
+            address buyer,,
             uint256 pricePerBottle,
             uint256 totalDue,
-            uint256 paidAmount,
-            ,
+            uint256 paidAmount,,
             PrimaryMarket.AllocationState state
         ) = market.allocations(allocationId);
         if (allocOfferId != offerId || pricePerBottle != PRICE || state != PrimaryMarket.AllocationState.Reserved) {
@@ -176,13 +174,10 @@ contract PrimaryMarketEchidna {
         uint256 count = market.allocationCount();
         for (uint256 i = 1; i <= count; i++) {
             (
-                uint256 allocOfferId,
-                ,
-                uint32 quantity,
-                ,
+                uint256 allocOfferId,,
+                uint32 quantity,,
                 uint256 totalDue,
-                uint256 paidAmount,
-                ,
+                uint256 paidAmount,,
                 PrimaryMarket.AllocationState state
             ) = market.allocations(i);
             if (allocOfferId != offerId) continue;

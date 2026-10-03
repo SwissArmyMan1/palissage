@@ -15,7 +15,7 @@ import {ClaimTopicsLib} from "../libraries/ClaimTopicsLib.sol";
 /// @notice One tokenId per lot, balance denominated in bottles. Transfers run through
 ///         whitelisted agents (markets, redemption) so fees and royalties are not bypassed.
 contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
-    string public constant VERSION = "1.0.0-mvp";
+    string public constant VERSION = "1.1.0";
 
     bytes32 public constant VERIFIER_ROLE = keccak256("VERIFIER_ROLE");
     bytes32 public constant ENFORCER_ROLE = keccak256("ENFORCER_ROLE");

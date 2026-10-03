@@ -1,0 +1,154 @@
+{
+  "chainId": 46630,
+  "version": "1.1.0",
+  "asset": {
+    "address": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+    "symbol": "USDG",
+    "decimals": 6,
+    "issuer": "Paxos",
+    "currency": "USD"
+  },
+  "notice": "Official valueless test USDG and fictional bottles; this is execution evidence, not real commerce.",
+  "lotId": "7",
+  "offerId": "7",
+  "allocationId": "4",
+  "listingId": "3",
+  "redemptionId": "4",
+  "supply": "9",
+  "minted": 12,
+  "redeemed": 3,
+  "observedBlock": "128106380",
+  "actors": {
+    "winery": "0x1ceBd3D14221f5e0401401EfA39a0F4aC302A0F2",
+    "shop": "0x0706aAE611F6C9C6b89708562FF4d08a9C5F6771",
+    "buyer": "0xFc0c6AA09c7ef59F9aa5d9BbB36852bF87c13838",
+    "treasury": "0xDCf00f1A5600c6191Fbc8d333A4C004903580A85"
+  },
+  "paymentBalances": {
+    "winery": "11730000",
+    "shop": "66438000",
+    "buyer": "21400000",
+    "treasury": "432000"
+  },
+  "transactions": {
+    "usdg.lot": {
+      "hash": "0x68afe05db15ac37cafb0e16c410aa68ec6eae1efd104a411ecc242d0206e66bd",
+      "to": "0x0fef031115e60105c09458e4e28031daf62d1abd",
+      "sender": "0x1ceBd3D14221f5e0401401EfA39a0F4aC302A0F2",
+      "status": "confirmed",
+      "blockNumber": "128106066"
+    },
+    "usdg.verify": {
+      "hash": "0x8db57b8862aadd8c7f8611cfbfafb5eb0788d09e65ef378f014c658228896d6f",
+      "to": "0x0fef031115e60105c09458e4e28031daf62d1abd",
+      "sender": "0xDCf00f1A5600c6191Fbc8d333A4C004903580A85",
+      "status": "confirmed",
+      "blockNumber": "128106085"
+    },
+    "usdg.production": {
+      "hash": "0x320c8a3a2e1f86942d1fd474a58446d9583a864817c1eb4cd4ac2f45655336b1",
+      "to": "0x0fef031115e60105c09458e4e28031daf62d1abd",
+      "sender": "0x1ceBd3D14221f5e0401401EfA39a0F4aC302A0F2",
+      "status": "confirmed",
+      "blockNumber": "128106105"
+    },
+    "usdg.offer": {
+      "hash": "0x4fb2293a819e13fbacec5166845ee0a85b4e863dc35ebb4ba41f14ce24d87c1d",
+      "to": "0x98edc97b03ae9901d4af73f62dbf3c10f3927fa1",
+      "sender": "0x1ceBd3D14221f5e0401401EfA39a0F4aC302A0F2",
+      "status": "confirmed",
+      "blockNumber": "128106121"
+    },
+    "usdg.milestone": {
+      "hash": "0x7ce1e9aff9ba372080621e91c91b269ff71576b968f0b4d2757b7a099181117b",
+      "to": "0x98edc97b03ae9901d4af73f62dbf3c10f3927fa1",
+      "sender": "0x1ceBd3D14221f5e0401401EfA39a0F4aC302A0F2",
+      "status": "confirmed",
+      "blockNumber": "128106140"
+    },
+    "usdg.fundBuyer": {
+      "hash": "0x3d0417351a3bfac89d619a7024117be9c0a4a71eea068b7db7afb7a2c7b080dc",
+      "to": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+      "sender": "0x0706aAE611F6C9C6b89708562FF4d08a9C5F6771",
+      "status": "confirmed",
+      "blockNumber": "128106159"
+    },
+    "usdg.approvePrimary": {
+      "hash": "0x991abd6992f4822047b55b59c4a93418536272f08443956b73c173c4d73e302b",
+      "to": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+      "sender": "0x0706aAE611F6C9C6b89708562FF4d08a9C5F6771",
+      "status": "confirmed",
+      "blockNumber": "128106177"
+    },
+    "usdg.reserve": {
+      "hash": "0x2a6f24967807a346a74b14718e0c5c0820af2933d4f594932d89b5ae2d774357",
+      "to": "0x98edc97b03ae9901d4af73f62dbf3c10f3927fa1",
+      "sender": "0x0706aAE611F6C9C6b89708562FF4d08a9C5F6771",
+      "status": "confirmed",
+      "blockNumber": "128106194"
+    },
+    "usdg.confirmMilestone": {
+      "hash": "0xe5f4da9d836990269f1884d7a4c5620d20947444bc897009dc6314cd9da95c96",
+      "to": "0x98edc97b03ae9901d4af73f62dbf3c10f3927fa1",
+      "sender": "0xDCf00f1A5600c6191Fbc8d333A4C004903580A85",
+      "status": "confirmed",
+      "blockNumber": "128106211"
+    },
+    "usdg.withdraw": {
+      "hash": "0xf453292c66a7450fbce3225d8216e0a17cb1d8239ed13fde4b1527ed4e78142e",
+      "to": "0x98edc97b03ae9901d4af73f62dbf3c10f3927fa1",
+      "sender": "0x1ceBd3D14221f5e0401401EfA39a0F4aC302A0F2",
+      "status": "confirmed",
+      "blockNumber": "128106232"
+    },
+    "usdg.list": {
+      "hash": "0x6fef94b392bf8883199adede5270f694275cf4727f3010ed2dcf39eaa1c3209e",
+      "to": "0x4f0862a4346a3eb88545f66b3e0b423966f6ace0",
+      "sender": "0x0706aAE611F6C9C6b89708562FF4d08a9C5F6771",
+      "status": "confirmed",
+      "blockNumber": "128106252"
+    },
+    "usdg.approveSecondary": {
+      "hash": "0x5e1cd3e6bc2821cd4710b0e5025bf70276dff082d7c86427dfb4bcf4149c2d44",
+      "to": "0x7E955252E15c84f5768B83c41a71F9eba181802F",
+      "sender": "0xFc0c6AA09c7ef59F9aa5d9BbB36852bF87c13838",
+      "status": "confirmed",
+      "blockNumber": "128106274"
+    },
+    "usdg.buy": {
+      "hash": "0x5d207e6c79d890b9703d42fc1c8f7a2c9ed830b7ccd4b92f06f644652425d1e5",
+      "to": "0x4f0862a4346a3eb88545f66b3e0b423966f6ace0",
+      "sender": "0xFc0c6AA09c7ef59F9aa5d9BbB36852bF87c13838",
+      "status": "confirmed",
+      "blockNumber": "128106291"
+    },
+    "usdg.approveRedemption": {
+      "hash": "0x186229c0b03c6fc3db72427219e54f9b82e922db2d4181b0c305e628e0ba82a2",
+      "to": "0x0fef031115e60105c09458e4e28031daf62d1abd",
+      "sender": "0xFc0c6AA09c7ef59F9aa5d9BbB36852bF87c13838",
+      "status": "confirmed",
+      "blockNumber": "128106312"
+    },
+    "usdg.redeem": {
+      "hash": "0xd9e124479682f61a505372773dbde230185331a11185481e1df4c93b00c4a90c",
+      "to": "0x67c05db79223707635f9f386c57227afe1c782ae",
+      "sender": "0xFc0c6AA09c7ef59F9aa5d9BbB36852bF87c13838",
+      "status": "confirmed",
+      "blockNumber": "128106328"
+    },
+    "usdg.ship": {
+      "hash": "0x30d493e4e13a78dec156c1ad749af224162a6a40ad9005324266ecf253e85e32",
+      "to": "0x67c05db79223707635f9f386c57227afe1c782ae",
+      "sender": "0x1ceBd3D14221f5e0401401EfA39a0F4aC302A0F2",
+      "status": "confirmed",
+      "blockNumber": "128106344"
+    },
+    "usdg.delivery": {
+      "hash": "0x511f374a767f8cde1a5fde53da380f917dfd00ab6f1fb58e912be69d6be837c9",
+      "to": "0x67c05db79223707635f9f386c57227afe1c782ae",
+      "sender": "0xFc0c6AA09c7ef59F9aa5d9BbB36852bF87c13838",
+      "status": "confirmed",
+      "blockNumber": "128106366"
+    }
+  }
+}

@@ -67,7 +67,8 @@ contract RedemptionManagerEchidna {
 
         try buyer.requestRedemption(
             manager, lotId, uint32(_amount(quantitySeed, balance > 50 ? 50 : balance)), deliveryDataHash
-        ) {} catch {}
+        ) {}
+            catch {}
     }
 
     function markShipped(uint256 redemptionSeed, bytes32 shipmentDocsHash) external {

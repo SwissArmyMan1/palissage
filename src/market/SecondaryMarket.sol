@@ -17,7 +17,7 @@ import {ClaimTopicsLib} from "../libraries/ClaimTopicsLib.sol";
 contract SecondaryMarket is AccessControl, Pausable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
-    string public constant VERSION = "1.0.0-mvp";
+    string public constant VERSION = "1.1.0";
 
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 
@@ -182,6 +182,7 @@ contract SecondaryMarket is AccessControl, Pausable, ReentrancyGuard {
         if (block.timestamp > deadline) revert DeadlineExpired(deadline);
         Listing storage listing = _activeListing(listingId);
         if (!identityRegistry.hasValidClaim(msg.sender, ClaimTopicsLib.TOPIC_B2B_BUYER)) revert NotBuyer(msg.sender);
+        if (!allowedPaymentTokens[listing.paymentToken]) revert PaymentTokenNotAllowed(listing.paymentToken);
         if (msg.sender == listing.seller) revert SelfPurchase(listingId);
         if (quantity == 0) revert ZeroAmount();
         if (listing.pricePerBottle > maxPricePerBottle) {

@@ -23,7 +23,7 @@ interface IVerifierRoleManager {
 /// @dev Privileged component: registry agent, trusted issuer for every role topic and admin on
 ///      the token. In production {testMode} stays off and these powers are scoped down.
 contract RoleGateway is Ownable {
-    string public constant VERSION = "1.0.0-mvp";
+    string public constant VERSION = "1.1.0";
 
     enum Role {
         None,

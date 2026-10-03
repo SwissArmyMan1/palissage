@@ -19,8 +19,9 @@ import {IClaimIssuer} from "../src/interfaces/IClaimIssuer.sol";
 /// @dev Split from the script itself so the wiring can be exercised by
 ///      `test/integration/DeploymentWiring.t.sol` without a broadcast.
 library PalissageDeployment {
-    /// @notice Base Sepolia, the only public network this release may be deployed to.
-    uint256 internal constant BASE_SEPOLIA_CHAIN_ID = 84532;
+    /// @notice Public test networks supported by this release.
+    uint256 internal constant ARBITRUM_SEPOLIA_CHAIN_ID = 421614;
+    uint256 internal constant ROBINHOOD_TESTNET_CHAIN_ID = 46630;
     /// @notice Anvil / local fork, developer builds only.
     uint256 internal constant LOCAL_CHAIN_ID = 31337;
 
@@ -49,7 +50,10 @@ library PalissageDeployment {
 
     /// @dev An allowlist, not a denylist, checked before the first contract is created.
     function requireSupportedChain() internal view {
-        if (block.chainid != BASE_SEPOLIA_CHAIN_ID && block.chainid != LOCAL_CHAIN_ID) {
+        if (
+            block.chainid != ARBITRUM_SEPOLIA_CHAIN_ID && block.chainid != ROBINHOOD_TESTNET_CHAIN_ID
+                && block.chainid != LOCAL_CHAIN_ID
+        ) {
             revert UnsupportedChain(block.chainid);
         }
     }
@@ -160,7 +164,7 @@ library PalissageDeployment {
     }
 }
 
-/// @notice Deploys the protocol to Base Sepolia (or a local chain) and writes an address draft.
+/// @notice Deploys to Arbitrum Sepolia, Robinhood Testnet or a local chain, writing an address draft.
 ///
 /// The draft is not a manifest: nothing in it has been checked against receipts, source
 /// verification or wiring yet. `chain-release.mjs collect` pulls in the broadcast receipts,
@@ -176,7 +180,7 @@ library PalissageDeployment {
 ///                   (used only to name the addresses file this script writes)
 ///
 /// Usage:
-///   forge script script/Deploy.s.sol:Deploy --rpc-url "$BASE_SEPOLIA_RPC_URL" \
+///   forge script script/Deploy.s.sol:Deploy --rpc-url "$ARBITRUM_SEPOLIA_RPC_URL" \
 ///     --account palissage-operator --sender "$DEPLOYER" --broadcast --slow
 contract Deploy is Script {
     using PalissageDeployment for PalissageDeployment.Actors;

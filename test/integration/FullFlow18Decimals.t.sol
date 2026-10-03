@@ -21,8 +21,8 @@ contract FullFlow18DecimalsTest is Fixtures {
     uint32 internal constant REDEEMED = 60;
 
     function setUp() public override {
+        vm.chainId(421614);
         super.setUp();
-        vm.chainId(84532);
         teure = new TestEURe(admin);
 
         vm.startPrank(admin);

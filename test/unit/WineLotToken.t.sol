@@ -27,9 +27,7 @@ contract WineLotTokenTest is Fixtures {
     function test_CreateLot_RevertsForNonWinery() public {
         vm.prank(buyer);
         vm.expectRevert(abi.encodeWithSelector(WineLotToken.NotWinery.selector, buyer));
-        token.createLot(
-            IWineLotToken.WineLotInput(100, 2024, 0, 750, true, "n", "r", "g", "ipfs://x")
-        );
+        token.createLot(IWineLotToken.WineLotInput(100, 2024, 0, 750, true, "n", "r", "g", "ipfs://x"));
     }
 
     function test_CreateLot_StoresWineData() public view {
@@ -47,9 +45,7 @@ contract WineLotTokenTest is Fixtures {
 
     function test_VerifyLot_OnlyVerifier() public {
         vm.prank(winery);
-        uint256 draft = token.createLot(
-            IWineLotToken.WineLotInput(10, 2024, 0, 750, true, "n", "r", "g", "u")
-        );
+        uint256 draft = token.createLot(IWineLotToken.WineLotInput(10, 2024, 0, 750, true, "n", "r", "g", "u"));
         bytes32 role = token.VERIFIER_ROLE();
         vm.prank(outsider);
         vm.expectRevert(
