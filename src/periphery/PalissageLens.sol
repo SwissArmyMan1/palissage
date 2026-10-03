@@ -13,30 +13,21 @@ import {RoleGateway} from "../identity/RoleGateway.sol";
 import {IWineLotToken} from "../interfaces/IWineLotToken.sol";
 import {ClaimTopicsLib} from "../libraries/ClaimTopicsLib.sol";
 
-/// @title PalissageLens - read-only projection of the protocol state for the interface.
-/// @notice Bundles the reads a screen needs into one call and adds the derived values the
-///         interface must never invent for itself (offer phase, remaining balance, transferable
-///         amount, permissions per contract).
-/// @dev `view` only, no storage beyond the six immutable addresses, no roles, holds no funds.
-///      Nothing in the protocol depends on it.
 contract PalissageLens {
     string public constant VERSION = "1.1.0";
 
-    /// @notice Maximum records returned by one paginated call.
     uint256 public constant MAX_LIMIT = 50;
-    /// @notice Ids examined per call. Not a cap on the collection - continue with `nextCursor`.
+
+    // IDs scanned per page; nextCursor continues the collection.
     uint256 public constant MAX_SCAN = 500;
-    /// @notice Maximum lot ids accepted by {positions} in one call.
+
     uint256 public constant MAX_POSITION_IDS = 50;
 
-    /// @dev Same values the protocol contracts expose, hashed here to save ten external calls.
     bytes32 private constant VERIFIER_ROLE = keccak256("VERIFIER_ROLE");
     bytes32 private constant ENFORCER_ROLE = keccak256("ENFORCER_ROLE");
     bytes32 private constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 private constant DEFAULT_ADMIN_ROLE = bytes32(0);
 
-    /// @dev Entity kinds used by {EntityNotFound}: 0 Lot, 1 Offer, 2 Allocation, 3 Listing,
-    ///      4 Redemption.
     uint8 private constant KIND_LOT = 0;
     uint8 private constant KIND_OFFER = 1;
     uint8 private constant KIND_ALLOCATION = 2;
@@ -47,10 +38,6 @@ contract PalissageLens {
     error InvalidPageLimit();
     error TooManyPositionIds(uint256 count);
     error EntityNotFound(uint8 kind, uint256 id);
-
-    // ---------------------------------------------------------------------
-    // Views returned to the interface
-    // ---------------------------------------------------------------------
 
     struct LotView {
         uint256 id;
@@ -70,9 +57,9 @@ contract PalissageLens {
         string region;
         string grapes;
         string metadataURI;
-        /// @dev Bottles committed to active primary offers.
+
         uint256 offeredBottles;
-        /// @dev ERC-1155 supply in circulation right now (minted minus redeemed).
+
         uint256 circulating;
     }
 
@@ -91,7 +78,8 @@ contract PalissageLens {
         uint64 fullPaymentDeadline;
         uint8 kind;
         bool active;
-        /// @dev 0 Scheduled, 1 Open, 2 SoldOut, 3 Ended, 4 Cancelled.
+
+        // 0 Scheduled, 1 Open, 2 SoldOut, 3 Ended, 4 Cancelled.
         uint8 phase;
     }
 
@@ -221,10 +209,6 @@ contract PalissageLens {
         bool paymentMetadataOk;
     }
 
-    // ---------------------------------------------------------------------
-    // Immutable wiring
-    // ---------------------------------------------------------------------
-
     WineLotToken public immutable token;
     PrimaryMarket public immutable primary;
     SecondaryMarket public immutable secondary;
@@ -253,14 +237,6 @@ contract PalissageLens {
         gateway = gateway_;
     }
 
-    // ---------------------------------------------------------------------
-    // Environment and participants
-    // ---------------------------------------------------------------------
-
-    /// @notice One call describing the deployment: fees, treasuries, pauses, counters and the
-    ///         payment token as both markets actually see it.
-    /// @param paymentToken Token the interface pays with; unreadable metadata gives
-    ///        `paymentMetadataOk == false`.
     function protocol(address paymentToken) external view returns (ProtocolView memory view_) {
         view_.chainId = block.chainid;
         view_.version = VERSION;
@@ -292,9 +268,6 @@ contract PalissageLens {
         (view_.paymentDecimals, view_.paymentSymbol, view_.paymentMetadataOk) = _paymentMetadata(paymentToken);
     }
 
-    /// @notice Everything that decides what one wallet may do: registry state, gateway role,
-    ///         claims and the role held on each individual contract.
-    /// @dev The three verifier roles sit on three contracts and are independent of each other.
     function participant(address wallet) external view returns (ParticipantView memory view_) {
         view_.wallet = wallet;
         view_.identity = address(registry.identityOf(wallet));
@@ -324,11 +297,6 @@ contract PalissageLens {
         view_.canReceive = token.canReceive(wallet);
     }
 
-    // ---------------------------------------------------------------------
-    // Lots
-    // ---------------------------------------------------------------------
-
-    /// @notice `exists` is separate so a missing id is not shown as an empty Draft.
     function lot(uint256 id) external view returns (bool exists, LotView memory view_) {
         exists = token.lotExists(id);
         if (!exists) return (false, view_);
@@ -346,10 +314,6 @@ contract PalissageLens {
     {
         return _lotsFiltered(winery, cursor, limit);
     }
-
-    // ---------------------------------------------------------------------
-    // Offers
-    // ---------------------------------------------------------------------
 
     function offer(uint256 id) external view returns (OfferView memory view_) {
         _requireOffer(id);
@@ -380,10 +344,6 @@ contract PalissageLens {
         return _offersFiltered(0, winery, cursor, limit);
     }
 
-    // ---------------------------------------------------------------------
-    // Allocations
-    // ---------------------------------------------------------------------
-
     function allocation(uint256 id) external view returns (AllocationView memory view_) {
         _requireAllocation(id);
         return _allocationView(id);
@@ -405,16 +365,11 @@ contract PalissageLens {
         return _allocationsFiltered(address(0), offerId, cursor, limit);
     }
 
-    // ---------------------------------------------------------------------
-    // Listings
-    // ---------------------------------------------------------------------
-
     function listing(uint256 id) external view returns (ListingView memory view_) {
         _requireListing(id);
         return _listingView(id);
     }
 
-    /// @notice Only listings still open for purchase.
     function activeListings(uint256 cursor, uint256 limit)
         external
         view
@@ -423,7 +378,6 @@ contract PalissageLens {
         return _listingsFiltered(address(0), 0, true, cursor, limit);
     }
 
-    /// @notice Every listing of `seller`, cancelled and sold out included. Filter on `active`.
     function listingsOfSeller(address seller, uint256 cursor, uint256 limit)
         external
         view
@@ -432,7 +386,6 @@ contract PalissageLens {
         return _listingsFiltered(seller, 0, false, cursor, limit);
     }
 
-    /// @notice Every listing of `lotId`, in the same sense as {listingsOfSeller}.
     function listingsOfLot(uint256 lotId, uint256 cursor, uint256 limit)
         external
         view
@@ -441,16 +394,11 @@ contract PalissageLens {
         return _listingsFiltered(address(0), lotId, false, cursor, limit);
     }
 
-    // ---------------------------------------------------------------------
-    // Redemptions
-    // ---------------------------------------------------------------------
-
     function redemption(uint256 id) external view returns (RedemptionView memory view_) {
         _requireRedemption(id);
         return _redemptionView(id);
     }
 
-    /// @notice The operations queue: every redemption, in id order.
     function redemptions(uint256 cursor, uint256 limit)
         external
         view
@@ -475,13 +423,7 @@ contract PalissageLens {
         return _redemptionsFiltered(address(0), winery, cursor, limit);
     }
 
-    // ---------------------------------------------------------------------
-    // Positions and settlement
-    // ---------------------------------------------------------------------
-
-    /// @notice Wallet balance, frozen amount and unfrozen remainder per lot.
-    /// @dev `transferable` is the unfrozen balance only - lot status, both parties' eligibility
-    ///      and the operator approval still apply. Simulate the call for the real answer.
+    /// @notice Unfrozen balances only; transfer eligibility and operator approval still apply.
     function positions(address account, uint256[] calldata lotIds) external view returns (PositionView[] memory items) {
         uint256 count = lotIds.length;
         if (count > MAX_POSITION_IDS) revert TooManyPositionIds(count);
@@ -497,8 +439,6 @@ contract PalissageLens {
         }
     }
 
-    /// @notice Escrow state of one offer: what has settled, what has been released and what the
-    ///         winery may withdraw right now.
     function settlement(uint256 offerId) external view returns (SettlementView memory view_) {
         _requireOffer(offerId);
         (, address winery, address paymentToken,,,,,,,,,) = primary.offers(offerId);
@@ -521,10 +461,6 @@ contract PalissageLens {
         }
         view_.milestones = milestones;
     }
-
-    // ---------------------------------------------------------------------
-    // Internal: single-entity projections
-    // ---------------------------------------------------------------------
 
     function _lotView(uint256 id) internal view returns (LotView memory view_) {
         IWineLotToken.WineLot memory record = token.getLot(id);
@@ -582,17 +518,16 @@ contract PalissageLens {
         view_.phase = _phase(active, startTime, endTime, quantity, reserved);
     }
 
-    /// @dev Fixed priority: cancelled > ended > scheduled > sold out.
     function _phase(bool active, uint64 startTime, uint64 endTime, uint32 quantity, uint32 reserved)
         internal
         view
         returns (uint8)
     {
-        if (!active) return 4; // Cancelled
-        if (block.timestamp > endTime) return 3; // Ended
-        if (block.timestamp < startTime) return 0; // Scheduled
-        if (reserved >= quantity) return 2; // SoldOut
-        return 1; // Open
+        if (!active) return 4;
+        if (block.timestamp > endTime) return 3;
+        if (block.timestamp < startTime) return 0;
+        if (reserved >= quantity) return 2;
+        return 1;
     }
 
     function _allocationView(uint256 id) internal view returns (AllocationView memory view_) {
@@ -622,7 +557,7 @@ contract PalissageLens {
         view_.lotId = lotId;
         view_.paymentToken = paymentToken;
         view_.fullPaymentDeadline = deadline;
-        // Clock only: the state becomes Defaulted when the winery calls claimDefault.
+
         view_.overdue = state == PrimaryMarket.AllocationState.Reserved && block.timestamp > deadline;
     }
 
@@ -642,7 +577,7 @@ contract PalissageLens {
         uint256 frozen = token.getFrozenTokens(seller, lotId);
         view_.sellerBalance = balance;
         view_.sellerTransferable = balance > frozen ? balance - frozen : 0;
-        // Listings escrow nothing, so the purchase needs this approval to go through.
+
         view_.sellerApproved = token.isApprovedForAll(seller, address(secondary));
 
         IWineLotToken.WineLot memory record = token.getLot(lotId);
@@ -676,11 +611,6 @@ contract PalissageLens {
         view_.lotProduction = uint8(record.production);
     }
 
-    // ---------------------------------------------------------------------
-    // Internal: paginated scans
-    // ---------------------------------------------------------------------
-
-    /// @dev Ids start at 1, `cursor == 0` means from the beginning.
     function _pageBounds(uint256 cursor, uint256 limit, uint256 count)
         internal
         pure
@@ -689,13 +619,12 @@ contract PalissageLens {
         if (limit == 0) revert InvalidPageLimit();
         take = limit > MAX_LIMIT ? MAX_LIMIT : limit;
         start = cursor < 1 ? 1 : cursor;
-        if (start > count) return (start, 0, take); // nothing left to scan
+        if (start > count) return (start, 0, take);
         last = start + MAX_SCAN - 1;
         if (last > count) last = count;
     }
 
-    /// @dev Next id to examine, or 0 once the collection is exhausted. Always advances, even
-    ///      for a page that matched nothing.
+    // Zero marks the end; advance even when a page has no matching records.
     function _nextCursor(uint256 id, uint256 last, uint256 count) internal pure returns (uint256) {
         if (last == 0) return 0;
         uint256 examined = id > last ? last : id;
@@ -714,13 +643,13 @@ contract PalissageLens {
         uint256 id = start;
         for (; id <= last; id++) {
             LotView memory item = _lotView(id);
-            // A zero winery means the id was never created.
+
             if (item.winery == address(0)) continue;
             if (winery != address(0) && item.winery != winery) continue;
             buffer[found++] = item;
             if (found == take) break;
         }
-        // Trim the page-sized buffer to what actually matched (never grows it).
+
         assembly ("memory-safe") {
             mstore(buffer, found)
         }
@@ -745,7 +674,7 @@ contract PalissageLens {
             buffer[found++] = item;
             if (found == take) break;
         }
-        // Trim the page-sized buffer to what actually matched (never grows it).
+
         assembly ("memory-safe") {
             mstore(buffer, found)
         }
@@ -770,7 +699,7 @@ contract PalissageLens {
             buffer[found++] = item;
             if (found == take) break;
         }
-        // Trim the page-sized buffer to what actually matched (never grows it).
+
         assembly ("memory-safe") {
             mstore(buffer, found)
         }
@@ -796,7 +725,7 @@ contract PalissageLens {
             buffer[found++] = item;
             if (found == take) break;
         }
-        // Trim the page-sized buffer to what actually matched (never grows it).
+
         assembly ("memory-safe") {
             mstore(buffer, found)
         }
@@ -822,16 +751,12 @@ contract PalissageLens {
             buffer[found++] = item;
             if (found == take) break;
         }
-        // Trim the page-sized buffer to what actually matched (never grows it).
+
         assembly ("memory-safe") {
             mstore(buffer, found)
         }
         return (buffer, _nextCursor(id, last, count));
     }
-
-    // ---------------------------------------------------------------------
-    // Internal: helpers
-    // ---------------------------------------------------------------------
 
     function _hasRole(address target, bytes32 role, address account) internal view returns (bool) {
         return IAccessControl(target).hasRole(role, account);
@@ -859,7 +784,6 @@ contract PalissageLens {
         }
         ok = decimalsOk && symbolOk;
         if (!ok) {
-            // Report nothing rather than half a token description.
             tokenDecimals = 0;
             symbol = "";
         }

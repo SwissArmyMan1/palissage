@@ -11,9 +11,6 @@ import {IERC7943MultiToken} from "../interfaces/IERC7943.sol";
 import {IIdentityRegistry} from "../interfaces/IIdentityRegistry.sol";
 import {ClaimTopicsLib} from "../libraries/ClaimTopicsLib.sol";
 
-/// @title WineLotToken - ERC-1155 + ERC-7943 wine lot token.
-/// @notice One tokenId per lot, balance denominated in bottles. Transfers run through
-///         whitelisted agents (markets, redemption) so fees and royalties are not bypassed.
 contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
     string public constant VERSION = "1.1.0";
 
@@ -23,7 +20,7 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
     bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
     bytes32 public constant TRANSFER_AGENT_ROLE = keccak256("TRANSFER_AGENT_ROLE");
 
-    uint16 public constant MAX_ROYALTY_BPS = 1000; // 10%
+    uint16 public constant MAX_ROYALTY_BPS = 1000;
 
     error LotDoesNotExist(uint256 lotId);
     error LotNotInStatus(uint256 lotId, LotStatus expected);
@@ -46,13 +43,11 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
 
     IIdentityRegistry public identityRegistry;
 
-    /// @notice Protocol contracts (markets, redemption) exempt from identity verification.
     mapping(address => bool) public isSystemAddress;
 
     mapping(uint256 => WineLot) private _lots;
     uint256 private _lotCount;
 
-    /// @dev account => tokenId => frozen amount (absolute, may exceed balance).
     mapping(address => mapping(uint256 => uint256)) private _frozenTokens;
 
     constructor(address admin, IIdentityRegistry identityRegistry_) ERC1155("") {
@@ -60,10 +55,6 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
         identityRegistry = identityRegistry_;
     }
-
-    // ---------------------------------------------------------------------
-    // Admin
-    // ---------------------------------------------------------------------
 
     function setIdentityRegistry(IIdentityRegistry registry) external onlyRole(DEFAULT_ADMIN_ROLE) {
         if (address(registry) == address(0)) revert ZeroAddress();
@@ -77,11 +68,6 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
         emit SystemAddressUpdated(account, isSystem);
     }
 
-    // ---------------------------------------------------------------------
-    // Lot lifecycle
-    // ---------------------------------------------------------------------
-
-    /// @inheritdoc IWineLotToken
     function createLot(WineLotInput calldata input) external returns (uint256 lotId) {
         if (!identityRegistry.hasValidClaim(msg.sender, ClaimTopicsLib.TOPIC_WINERY)) revert NotWinery(msg.sender);
         if (input.totalBottles == 0) revert ZeroAmount();
@@ -105,7 +91,6 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
         emit LotCreated(lotId, msg.sender, input.totalBottles, input.vintage);
     }
 
-    /// @inheritdoc IWineLotToken
     function verifyLot(uint256 lotId, bytes32 docsHash) external onlyRole(VERIFIER_ROLE) {
         WineLot storage lot = _existingLot(lotId);
         if (lot.status != LotStatus.Draft) revert LotNotInStatus(lotId, LotStatus.Draft);
@@ -116,7 +101,6 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
         emit LotStatusChanged(lotId, LotStatus.Verified);
     }
 
-    /// @inheritdoc IWineLotToken
     function setProductionStatus(uint256 lotId, ProductionStatus production) external {
         WineLot storage lot = _existingLot(lotId);
         if (lot.winery != msg.sender) revert NotLotWinery(lotId, msg.sender);
@@ -125,8 +109,6 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
         emit ProductionStatusChanged(lotId, production);
     }
 
-    /// @inheritdoc IWineLotToken
-    /// @dev URI only. `docsHash` is verifier-attested, changing it means re-verification.
     function updateLotMetadata(uint256 lotId, string calldata metadataURI) external {
         WineLot storage lot = _existingLot(lotId);
         if (lot.winery != msg.sender) revert NotLotWinery(lotId, msg.sender);
@@ -135,7 +117,6 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
         emit URI(metadataURI, lotId);
     }
 
-    /// @inheritdoc IWineLotToken
     function suspendLot(uint256 lotId) external onlyRole(VERIFIER_ROLE) {
         WineLot storage lot = _existingLot(lotId);
         if (lot.status != LotStatus.Verified) revert LotNotInStatus(lotId, LotStatus.Verified);
@@ -143,7 +124,6 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
         emit LotStatusChanged(lotId, LotStatus.Suspended);
     }
 
-    /// @inheritdoc IWineLotToken
     function unsuspendLot(uint256 lotId) external onlyRole(VERIFIER_ROLE) {
         WineLot storage lot = _existingLot(lotId);
         if (lot.status != LotStatus.Suspended) revert LotNotInStatus(lotId, LotStatus.Suspended);
@@ -151,7 +131,6 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
         emit LotStatusChanged(lotId, LotStatus.Verified);
     }
 
-    /// @inheritdoc IWineLotToken
     function closeLot(uint256 lotId) external onlyRole(DEFAULT_ADMIN_ROLE) {
         WineLot storage lot = _existingLot(lotId);
         if (lot.mintedBottles != lot.redeemedBottles) revert LotNotFullyRedeemed(lotId);
@@ -159,43 +138,28 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
         emit LotStatusChanged(lotId, LotStatus.Closed);
     }
 
-    // ---------------------------------------------------------------------
-    // Mint / burn (markets and redemption only)
-    // ---------------------------------------------------------------------
-
-    /// @inheritdoc IWineLotToken
     function mint(address to, uint256 lotId, uint256 amount) external onlyRole(MINTER_ROLE) {
         if (amount == 0) revert ZeroAmount();
         _mint(to, lotId, amount, "");
     }
 
-    /// @inheritdoc IWineLotToken
     function burnFrom(address from, uint256 lotId, uint256 amount) external onlyRole(BURNER_ROLE) {
         if (amount == 0) revert ZeroAmount();
         _burn(from, lotId, amount);
     }
 
-    // ---------------------------------------------------------------------
-    // ERC-7943
-    // ---------------------------------------------------------------------
-
-    /// @inheritdoc IERC7943MultiToken
     function canSend(address account) public view returns (bool allowed) {
         return isSystemAddress[account] || identityRegistry.isVerified(account);
     }
 
-    /// @inheritdoc IERC7943MultiToken
     function canReceive(address account) public view returns (bool allowed) {
         return isSystemAddress[account] || identityRegistry.isVerified(account);
     }
 
-    /// @inheritdoc IERC7943MultiToken
     function getFrozenTokens(address account, uint256 tokenId) public view returns (uint256 amount) {
         return _frozenTokens[account][tokenId];
     }
 
-    /// @inheritdoc IERC7943MultiToken
-    /// @dev No operator context here, so the transfer-agent restriction is not reflected.
     function canTransfer(address from, address to, uint256 tokenId, uint256 amount)
         public
         view
@@ -207,7 +171,6 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
         return amount <= _unfrozenBalance(from, tokenId);
     }
 
-    /// @inheritdoc IERC7943MultiToken
     function setFrozenTokens(address account, uint256 tokenId, uint256 amount)
         external
         onlyRole(ENFORCER_ROLE)
@@ -218,14 +181,13 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
         return true;
     }
 
-    /// @inheritdoc IERC7943MultiToken
+    /// @notice Bypasses holder consent and lot status; receiver eligibility still applies.
     function forcedTransfer(address from, address to, uint256 tokenId, uint256 amount)
         external
         onlyRole(ENFORCER_ROLE)
         returns (bool result)
     {
-        // Zero on either side lands in the mint/burn path of super._update and skips
-        // the role checks and supply accounting done in _update.
+        // Zero endpoints would bypass mint/burn authorization and supply accounting.
         if (from == address(0)) revert ZeroAddress();
         if (to == address(0)) revert TransferToZeroViaForce();
         if (amount == 0) revert ZeroAmount();
@@ -235,7 +197,7 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
         uint256 balance = balanceOf(from, tokenId);
         uint256 unfrozen = _unfrozenBalance(from, tokenId);
         if (amount > unfrozen && amount <= balance) {
-            // Unfreeze just enough for the enforcement action, per ERC-7943.
+            // ERC-7943 enforcement unfreezes only the amount needed.
             uint256 newFrozen = balance - amount;
             _frozenTokens[from][tokenId] = newFrozen;
             emit Frozen(from, tokenId, newFrozen);
@@ -245,28 +207,21 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
         uint256[] memory values = new uint256[](1);
         ids[0] = tokenId;
         values[0] = amount;
-        // Skips the checks in _update; the base still reverts on insufficient balance.
+
         super._update(from, to, ids, values);
 
         emit ForcedTransfer(from, to, tokenId, amount);
         return true;
     }
 
-    // ---------------------------------------------------------------------
-    // Views
-    // ---------------------------------------------------------------------
-
-    /// @inheritdoc IWineLotToken
     function getLot(uint256 lotId) external view returns (WineLot memory lot) {
         return _lots[lotId];
     }
 
-    /// @inheritdoc IWineLotToken
     function lotExists(uint256 lotId) public view returns (bool exists) {
         return _lots[lotId].winery != address(0);
     }
 
-    /// @inheritdoc IWineLotToken
     function lotCount() external view returns (uint256 count) {
         return _lotCount;
     }
@@ -284,10 +239,6 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
         return interfaceId == type(IERC7943MultiToken).interfaceId || super.supportsInterface(interfaceId);
     }
 
-    // ---------------------------------------------------------------------
-    // Transfer restrictions (single choke point)
-    // ---------------------------------------------------------------------
-
     function _update(address from, address to, uint256[] memory ids, uint256[] memory values)
         internal
         override
@@ -302,7 +253,6 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
             if (lot.winery == address(0)) revert LotDoesNotExist(id);
 
             if (from == address(0)) {
-                // Mint: only by MINTER_ROLE, into verified lots, to allowed receivers, capped.
                 if (!hasRole(MINTER_ROLE, operator)) revert NotMinter(operator);
                 if (lot.status != LotStatus.Verified) revert LotNotInStatus(id, LotStatus.Verified);
                 if (!canReceive(to)) revert ERC7943CannotReceive(to);
@@ -310,13 +260,11 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
                 if (amount > available) revert MintExceedsTotalBottles(id, amount, available);
                 lot.mintedBottles += uint32(amount);
             } else if (to == address(0)) {
-                // Burn: redemption only.
                 if (!hasRole(BURNER_ROLE, operator)) revert NotBurner(operator);
                 uint256 unfrozen = _unfrozenBalance(from, id);
                 if (amount > unfrozen) revert ERC7943InsufficientUnfrozenBalance(from, id, amount, unfrozen);
                 lot.redeemedBottles += uint32(amount);
             } else {
-                // Transfer: only via whitelisted agents, between allowed users, on live lots.
                 if (!hasRole(TRANSFER_AGENT_ROLE, operator)) revert NotTransferAgent(operator);
                 if (!canSend(from)) revert ERC7943CannotSend(from);
                 if (!canReceive(to)) revert ERC7943CannotReceive(to);

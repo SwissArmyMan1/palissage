@@ -15,14 +15,10 @@ import {PalissageLens} from "../src/periphery/PalissageLens.sol";
 import {TestEURe} from "../src/testing/TestEURe.sol";
 import {IClaimIssuer} from "../src/interfaces/IClaimIssuer.sol";
 
-/// @notice Deployment of the ten static Palissage contracts and their wiring.
-/// @dev Split from the script itself so the wiring can be exercised by
-///      `test/integration/DeploymentWiring.t.sol` without a broadcast.
 library PalissageDeployment {
-    /// @notice Public test networks supported by this release.
     uint256 internal constant ARBITRUM_SEPOLIA_CHAIN_ID = 421614;
     uint256 internal constant ROBINHOOD_TESTNET_CHAIN_ID = 46630;
-    /// @notice Anvil / local fork, developer builds only.
+
     uint256 internal constant LOCAL_CHAIN_ID = 31337;
 
     error UnsupportedChain(uint256 chainId);
@@ -48,7 +44,6 @@ library PalissageDeployment {
         TestEURe paymentToken;
     }
 
-    /// @dev An allowlist, not a denylist, checked before the first contract is created.
     function requireSupportedChain() internal view {
         if (
             block.chainid != ARBITRUM_SEPOLIA_CHAIN_ID && block.chainid != ROBINHOOD_TESTNET_CHAIN_ID
@@ -65,25 +60,20 @@ library PalissageDeployment {
         if (actors.treasury == address(0)) revert ZeroActorAddress("TREASURY");
     }
 
-    /// @notice Deploys every contract and applies the wiring matrix of chain-mvp 09 §2.
-    /// @dev The caller must already be broadcasting (or pranking) as `actors.deployer`.
+    // Caller must broadcast or prank as actors.deployer.
     function deploy(Actors memory actors) internal returns (Deployment memory d) {
         requireSupportedChain();
         requireActors(actors);
 
-        // 1-2. Identity layer.
         d.trustedIssuers = new TrustedIssuersRegistry(actors.deployer);
         d.identityRegistry = new IdentityRegistry(actors.deployer, d.trustedIssuers);
 
-        // 3. RWA token.
         d.token = new WineLotToken(actors.deployer, d.identityRegistry);
 
-        // 4-6. Markets and redemption.
         d.primaryMarket = new PrimaryMarket(actors.deployer, d.token, d.identityRegistry, actors.treasury);
         d.secondaryMarket = new SecondaryMarket(actors.deployer, d.token, d.identityRegistry, actors.treasury);
         d.redemptionManager = new RedemptionManager(actors.deployer, d.token);
 
-        // 7. Test payment token - a faucet, not money. Its constructor repeats the chain guard.
         d.paymentToken = new TestEURe(actors.admin);
 
         _wireToken(d);
@@ -92,22 +82,17 @@ library PalissageDeployment {
         d.primaryMarket.setPaymentTokenAllowed(address(d.paymentToken), true);
         d.secondaryMarket.setPaymentTokenAllowed(address(d.paymentToken), true);
 
-        // 8-9. Claim issuer and the sandbox gateway, both trusted for every role topic.
         d.claimIssuer = new ClaimIssuer(actors.admin);
         d.roleGateway = new RoleGateway(actors.deployer, d.identityRegistry, IVerifierRoleManager(address(d.token)));
         _wireIssuers(d);
 
-        // Gateway admin, which also grants the token verifier role. `assumeRole` cannot do
-        // this - admin is not self-assignable.
         d.roleGateway.assignRole(actors.admin, RoleGateway.Role.Admin);
 
-        // 10. Read projection over the finished wiring.
         d.lens = new PalissageLens(
             d.token, d.primaryMarket, d.secondaryMarket, d.redemptionManager, d.identityRegistry, d.roleGateway
         );
 
         _handOver(d, actors);
-        // testMode stays false: self-service opens only after the seed is verified.
     }
 
     function _wireToken(Deployment memory d) private {
@@ -117,12 +102,12 @@ library PalissageDeployment {
         token.grantRole(token.TRANSFER_AGENT_ROLE(), address(d.primaryMarket));
         token.grantRole(token.TRANSFER_AGENT_ROLE(), address(d.secondaryMarket));
         token.grantRole(token.TRANSFER_AGENT_ROLE(), address(d.redemptionManager));
-        // ENFORCER_ROLE so the manager can return its escrow even while the lot is suspended.
+
         token.grantRole(token.ENFORCER_ROLE(), address(d.redemptionManager));
         token.setSystemAddress(address(d.redemptionManager), true);
     }
 
-    /// @dev The three verifier roles are independent of each other, so each is granted here.
+    // Token, primary-market and redemption verifier roles are independent.
     function _wireOperatorRoles(Deployment memory d, address admin) private {
         d.primaryMarket.grantRole(d.primaryMarket.VERIFIER_ROLE(), admin);
         d.primaryMarket.grantRole(d.primaryMarket.PAUSER_ROLE(), admin);
@@ -133,7 +118,7 @@ library PalissageDeployment {
     function _wireIssuers(Deployment memory d) private {
         uint256[] memory topics = new uint256[](5);
         for (uint256 i = 0; i < 5; i++) {
-            topics[i] = i + 1; // KYC, KYB, WINERY, B2B_BUYER, VERIFIER
+            topics[i] = i + 1;
         }
         d.trustedIssuers.addTrustedIssuer(IClaimIssuer(address(d.claimIssuer)), topics);
         d.trustedIssuers.addTrustedIssuer(IClaimIssuer(address(d.roleGateway)), topics);
@@ -141,7 +126,6 @@ library PalissageDeployment {
         d.token.grantRole(d.token.DEFAULT_ADMIN_ROLE(), address(d.roleGateway));
     }
 
-    /// @dev The deployer gives up a role only once the replacement already holds it.
     function _handOver(Deployment memory d, Actors memory actors) private {
         if (actors.owner != actors.deployer) d.roleGateway.transferOwnership(actors.owner);
 
@@ -164,29 +148,10 @@ library PalissageDeployment {
     }
 }
 
-/// @notice Deploys to Arbitrum Sepolia, Robinhood Testnet or a local chain, writing an address draft.
-///
-/// The draft is not a manifest: nothing in it has been checked against receipts, source
-/// verification or wiring yet. `chain-release.mjs collect` pulls in the broadcast receipts,
-/// `verify-deployment.mjs` checks the result, and only then is a manifest published. The
-/// interface never reads this file.
-///
-/// Environment (addresses only - the signer comes from a Foundry keystore):
-///   DEPLOYER      - broadcasting account; must match `--sender`
-///   ADMIN         - protocol admin, operator (O); defaults to DEPLOYER
-///   OWNER         - RoleGateway owner, the only account that may open test mode; defaults to ADMIN
-///   TREASURY      - protocol fee receiver; defaults to ADMIN
-///   DEPLOYMENT_ID - identifier from `chain-release.mjs plan`; defaults to a chain-scoped name
-///                   (used only to name the addresses file this script writes)
-///
-/// Usage:
-///   forge script script/Deploy.s.sol:Deploy --rpc-url "$ARBITRUM_SEPOLIA_RPC_URL" \
-///     --account palissage-operator --sender "$DEPLOYER" --broadcast --slow
 contract Deploy is Script {
     using PalissageDeployment for PalissageDeployment.Actors;
 
     function run() external {
-        // Fail before anything is created if the RPC points at the wrong network.
         PalissageDeployment.requireSupportedChain();
 
         address deployer = vm.envAddress("DEPLOYER");
@@ -234,7 +199,6 @@ contract Deploy is Script {
         vm.serializeString(root, "actors", actorsJson);
         string memory json = vm.serializeString(root, "contracts", contractsJson);
 
-        // Distinct from the release CLI's own `<deploymentId>.draft.json` - different steps.
         string memory path = string.concat("deployments/", deploymentId, ".addresses.json");
         vm.writeJson(json, path);
         console.log("Addresses written to:", path);

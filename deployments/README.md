@@ -4,6 +4,8 @@
 
 `schema/deployment.schema.json` describes the version 2 release format and its supported chain IDs. Schema validation checks the record's structure; the release verifier separately checks receipts, code and state against the network.
 
+`sourceCommit` pins the source revision of the published addresses. Build that revision for repeat verification; the current branch's comment cleanup produces different compiler metadata.
+
 `explorerSourceVerified` and `sourceExplorerUrl` record the separate source-publication result per contract. `palissage-<chainId>.flow-evidence.json` contains real fixture transaction hashes and observed final bottle accounting. The seed is fictional and uses valueless tEURe.
 
 Supported networks are Arbitrum Sepolia (421614) and Robinhood Testnet (46630). They have independent inventory. Official test USDG is allowed on both markets, and its address and metadata are checked against the selected chain. Workflow evidence states which asset was actually used.

@@ -4,10 +4,7 @@ pragma solidity ^0.8.24;
 import {IIdentity} from "../interfaces/IIdentity.sol";
 import {ClaimTopicsLib} from "../libraries/ClaimTopicsLib.sol";
 
-/// @title Identity - ERC-734 (Key Holder) + ERC-735 (Claim Holder) implementation.
-/// @notice One contract per participant. Keys are keccak256(abi.encode(address)).
-///         Claim signatures are validated by readers (IdentityRegistry / ClaimIssuer),
-///         not at write time - OnchainID model.
+// Keys are keccak256(abi.encode(address)); the registry validates claim signatures.
 contract Identity is IIdentity {
     struct Key {
         uint256[] purposes;
@@ -59,10 +56,6 @@ contract Identity is IIdentity {
         emit KeyAdded(key, ClaimTopicsLib.PURPOSE_MANAGEMENT, ClaimTopicsLib.KEY_TYPE_ECDSA);
     }
 
-    // ---------------------------------------------------------------------
-    // ERC-734
-    // ---------------------------------------------------------------------
-
     function getKey(bytes32 key) external view returns (uint256[] memory purposes, uint256 keyType, bytes32 key_) {
         Key storage k = _keys[key];
         return (k.purposes, k.keyType, k.key);
@@ -73,7 +66,6 @@ contract Identity is IIdentity {
         if (k.key == 0) return false;
         uint256 len = k.purposes.length;
         for (uint256 i = 0; i < len; i++) {
-            // MANAGEMENT keys implicitly hold every purpose.
             if (k.purposes[i] == ClaimTopicsLib.PURPOSE_MANAGEMENT || k.purposes[i] == purpose) return true;
         }
         return false;
@@ -181,10 +173,6 @@ contract Identity is IIdentity {
         }
     }
 
-    // ---------------------------------------------------------------------
-    // ERC-735
-    // ---------------------------------------------------------------------
-
     function getClaim(bytes32 claimId)
         external
         view
@@ -230,7 +218,6 @@ contract Identity is IIdentity {
         Claim storage c = _claims[claimId];
         if (c.issuer == address(0)) revert ClaimDoesNotExist(claimId);
 
-        // Issuer may always retract its own claim; otherwise a CLAIM/MANAGEMENT key is required.
         if (msg.sender != c.issuer) {
             bytes32 senderKey = keccak256(abi.encode(msg.sender));
             if (!keyHasPurpose(senderKey, ClaimTopicsLib.PURPOSE_CLAIM)) revert NotAuthorized(msg.sender);
@@ -251,10 +238,6 @@ contract Identity is IIdentity {
         delete _claims[claimId];
         return true;
     }
-
-    // ---------------------------------------------------------------------
-    // Modifiers
-    // ---------------------------------------------------------------------
 
     modifier onlyManager() {
         if (

@@ -5,7 +5,6 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {ITrustedIssuersRegistry} from "../interfaces/ITrustedIssuersRegistry.sol";
 import {IClaimIssuer} from "../interfaces/IClaimIssuer.sol";
 
-/// @title TrustedIssuersRegistry - claim issuers trusted by the protocol, per topic.
 contract TrustedIssuersRegistry is AccessControl, ITrustedIssuersRegistry {
     string public constant VERSION = "1.1.0";
 
@@ -22,7 +21,6 @@ contract TrustedIssuersRegistry is AccessControl, ITrustedIssuersRegistry {
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
     }
 
-    /// @inheritdoc ITrustedIssuersRegistry
     function addTrustedIssuer(IClaimIssuer issuer, uint256[] calldata claimTopics)
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
@@ -37,7 +35,6 @@ contract TrustedIssuersRegistry is AccessControl, ITrustedIssuersRegistry {
         emit TrustedIssuerAdded(issuer, claimTopics);
     }
 
-    /// @inheritdoc ITrustedIssuersRegistry
     function removeTrustedIssuer(IClaimIssuer issuer) external onlyRole(DEFAULT_ADMIN_ROLE) {
         if (!_isTrusted[address(issuer)]) revert IssuerDoesNotExist(address(issuer));
 
@@ -54,7 +51,6 @@ contract TrustedIssuersRegistry is AccessControl, ITrustedIssuersRegistry {
         emit TrustedIssuerRemoved(issuer);
     }
 
-    /// @inheritdoc ITrustedIssuersRegistry
     function updateIssuerClaimTopics(IClaimIssuer issuer, uint256[] calldata claimTopics)
         external
         onlyRole(DEFAULT_ADMIN_ROLE)
@@ -65,22 +61,18 @@ contract TrustedIssuersRegistry is AccessControl, ITrustedIssuersRegistry {
         emit ClaimTopicsUpdated(issuer, claimTopics);
     }
 
-    /// @inheritdoc ITrustedIssuersRegistry
     function getTrustedIssuers() external view returns (IClaimIssuer[] memory issuers) {
         return _issuers;
     }
 
-    /// @inheritdoc ITrustedIssuersRegistry
     function isTrustedIssuer(address issuer) external view returns (bool trusted) {
         return _isTrusted[issuer];
     }
 
-    /// @inheritdoc ITrustedIssuersRegistry
     function getTrustedIssuerClaimTopics(IClaimIssuer issuer) external view returns (uint256[] memory topics) {
         return _issuerTopics[address(issuer)];
     }
 
-    /// @inheritdoc ITrustedIssuersRegistry
     function hasClaimTopic(address issuer, uint256 topic) external view returns (bool has) {
         uint256[] storage topics = _issuerTopics[issuer];
         uint256 len = topics.length;

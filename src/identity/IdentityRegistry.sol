@@ -8,8 +8,6 @@ import {IClaimIssuer} from "../interfaces/IClaimIssuer.sol";
 import {IIdentity} from "../interfaces/IIdentity.sol";
 import {ClaimTopicsLib} from "../libraries/ClaimTopicsLib.sol";
 
-/// @title IdentityRegistry - binds wallets to ERC-734/735 identities and answers
-///        compliance queries (isVerified / hasValidClaim) against trusted issuers.
 contract IdentityRegistry is AccessControl, IIdentityRegistry {
     string public constant VERSION = "1.1.0";
 
@@ -26,7 +24,6 @@ contract IdentityRegistry is AccessControl, IIdentityRegistry {
     mapping(address => IIdentity) private _identities;
     mapping(address => uint16) private _countries;
 
-    /// @notice Topics a wallet must hold a valid claim for to pass `isVerified`. Default: [KYC].
     uint256[] private _requiredClaimTopics;
 
     constructor(address admin, ITrustedIssuersRegistry trustedIssuers) {
@@ -36,23 +33,17 @@ contract IdentityRegistry is AccessControl, IIdentityRegistry {
         _requiredClaimTopics.push(ClaimTopicsLib.TOPIC_KYC);
     }
 
-    // ---------------------------------------------------------------------
-    // Admin / agent
-    // ---------------------------------------------------------------------
-
     function setTrustedIssuersRegistry(ITrustedIssuersRegistry registry) external onlyRole(DEFAULT_ADMIN_ROLE) {
         if (address(registry) == address(0)) revert ZeroAddress();
         trustedIssuersRegistry = registry;
         emit TrustedIssuersRegistryUpdated(address(registry));
     }
 
-    /// @inheritdoc IIdentityRegistry
     function setRequiredClaimTopics(uint256[] calldata topics) external onlyRole(DEFAULT_ADMIN_ROLE) {
         _requiredClaimTopics = topics;
         emit RequiredClaimTopicsUpdated(topics);
     }
 
-    /// @inheritdoc IIdentityRegistry
     function registerIdentity(address wallet, IIdentity identity, uint16 country)
         external
         onlyRole(REGISTRY_AGENT_ROLE)
@@ -65,7 +56,6 @@ contract IdentityRegistry is AccessControl, IIdentityRegistry {
         emit CountryUpdated(wallet, country);
     }
 
-    /// @inheritdoc IIdentityRegistry
     function updateIdentity(address wallet, IIdentity identity) external onlyRole(REGISTRY_AGENT_ROLE) {
         if (address(identity) == address(0)) revert ZeroAddress();
         IIdentity old = _identities[wallet];
@@ -74,14 +64,12 @@ contract IdentityRegistry is AccessControl, IIdentityRegistry {
         emit IdentityUpdated(wallet, old, identity);
     }
 
-    /// @inheritdoc IIdentityRegistry
     function updateCountry(address wallet, uint16 country) external onlyRole(REGISTRY_AGENT_ROLE) {
         if (address(_identities[wallet]) == address(0)) revert WalletNotRegistered(wallet);
         _countries[wallet] = country;
         emit CountryUpdated(wallet, country);
     }
 
-    /// @inheritdoc IIdentityRegistry
     function deleteIdentity(address wallet) external onlyRole(REGISTRY_AGENT_ROLE) {
         IIdentity identity = _identities[wallet];
         if (address(identity) == address(0)) revert WalletNotRegistered(wallet);
@@ -90,21 +78,14 @@ contract IdentityRegistry is AccessControl, IIdentityRegistry {
         emit IdentityRemoved(wallet, identity);
     }
 
-    // ---------------------------------------------------------------------
-    // Views
-    // ---------------------------------------------------------------------
-
-    /// @inheritdoc IIdentityRegistry
     function identityOf(address wallet) external view returns (IIdentity identity) {
         return _identities[wallet];
     }
 
-    /// @inheritdoc IIdentityRegistry
     function countryOf(address wallet) external view returns (uint16 country) {
         return _countries[wallet];
     }
 
-    /// @inheritdoc IIdentityRegistry
     function containsWallet(address wallet) external view returns (bool registered) {
         return address(_identities[wallet]) != address(0);
     }
@@ -113,7 +94,6 @@ contract IdentityRegistry is AccessControl, IIdentityRegistry {
         return _requiredClaimTopics;
     }
 
-    /// @inheritdoc IIdentityRegistry
     function isVerified(address wallet) external view returns (bool verified) {
         IIdentity identity = _identities[wallet];
         if (address(identity) == address(0)) return false;
@@ -125,15 +105,12 @@ contract IdentityRegistry is AccessControl, IIdentityRegistry {
         return true;
     }
 
-    /// @inheritdoc IIdentityRegistry
     function hasValidClaim(address wallet, uint256 topic) external view returns (bool has) {
         IIdentity identity = _identities[wallet];
         if (address(identity) == address(0)) return false;
         return _hasValidClaim(identity, topic);
     }
 
-    /// @dev A claim is valid when its issuer is trusted for the topic and the issuer
-    ///      confirms the signature (CLAIM-purpose signer, not revoked).
     function _hasValidClaim(IIdentity identity, uint256 topic) internal view returns (bool) {
         bytes32[] memory claimIds = identity.getClaimIdsByTopic(topic);
         ITrustedIssuersRegistry issuersRegistry = trustedIssuersRegistry;

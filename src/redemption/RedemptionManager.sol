@@ -9,17 +9,12 @@ import {SignatureChecker} from "@openzeppelin/contracts/utils/cryptography/Signa
 
 import {IWineLotToken} from "../interfaces/IWineLotToken.sol";
 
-/// @title RedemptionManager - burns lot tokens against physical delivery.
-/// @notice Tokens are escrowed at request time, the winery attaches shipment documents,
-///         and the buyer (or a verifier, as dispute fallback) confirms delivery, which
-///         burns the tokens and updates the lot's redeemed counter.
 contract RedemptionManager is AccessControl, ReentrancyGuard, ERC1155Holder, EIP712 {
     using SignatureChecker for address;
     string public constant VERSION = "1.1.0";
 
     bytes32 public constant VERIFIER_ROLE = keccak256("VERIFIER_ROLE");
 
-    /// @dev Typehash of the buyer's authorization to recover their escrow to a new wallet.
     bytes32 private constant RECOVER_TYPEHASH =
         keccak256("RecoverEscrow(uint256 redemptionId,address newWallet,uint256 deadline)");
 
@@ -34,8 +29,8 @@ contract RedemptionManager is AccessControl, ReentrancyGuard, ERC1155Holder, EIP
         address buyer;
         uint256 lotId;
         uint32 quantity;
-        bytes32 deliveryDataHash; // hash of offchain delivery data (address, incoterms, contacts)
-        bytes32 shipmentDocsHash; // hash of shipping documents, set by the winery
+        bytes32 deliveryDataHash;
+        bytes32 shipmentDocsHash;
         uint64 requestedAt;
         RedemptionState state;
     }
@@ -71,7 +66,6 @@ contract RedemptionManager is AccessControl, ReentrancyGuard, ERC1155Holder, EIP
         wineLotToken = token;
     }
 
-    /// @notice Escrows `quantity` lot tokens and opens a redemption for physical delivery.
     function requestRedemption(uint256 lotId, uint32 quantity, bytes32 deliveryDataHash)
         external
         nonReentrant
@@ -97,7 +91,6 @@ contract RedemptionManager is AccessControl, ReentrancyGuard, ERC1155Holder, EIP
         emit RedemptionRequested(redemptionId, lotId, msg.sender, quantity, deliveryDataHash);
     }
 
-    /// @notice Winery attaches shipment documents once the bottles leave the warehouse.
     function markShipped(uint256 redemptionId, bytes32 shipmentDocsHash) external {
         Redemption storage redemption = redemptions[redemptionId];
         if (redemption.state != RedemptionState.Requested) {
@@ -111,8 +104,7 @@ contract RedemptionManager is AccessControl, ReentrancyGuard, ERC1155Holder, EIP
         emit RedemptionShipped(redemptionId, shipmentDocsHash);
     }
 
-    /// @notice Burns the escrowed tokens, completing the redemption. Callable by the
-    ///         buyer after shipment, or by a verifier at any open stage (dispute fallback).
+    /// @notice Buyer confirms after shipment; a verifier may resolve either open state.
     function confirmDelivery(uint256 redemptionId) external nonReentrant {
         Redemption storage redemption = redemptions[redemptionId];
         if (redemption.state != RedemptionState.Requested && redemption.state != RedemptionState.Shipped) {
@@ -131,8 +123,6 @@ contract RedemptionManager is AccessControl, ReentrancyGuard, ERC1155Holder, EIP
         emit Redeemed(redemptionId, redemption.lotId, redemption.buyer, redemption.quantity);
     }
 
-    /// @notice Dispute fallback: a verifier returns the escrow to the buyer while the
-    ///         redemption is open. After `markShipped` the buyer has no other way out.
     function refundRedemption(uint256 redemptionId) external nonReentrant onlyRole(VERIFIER_ROLE) {
         Redemption storage redemption = redemptions[redemptionId];
         if (redemption.state != RedemptionState.Requested && redemption.state != RedemptionState.Shipped) {
@@ -145,13 +135,7 @@ contract RedemptionManager is AccessControl, ReentrancyGuard, ERC1155Holder, EIP
         emit RedemptionRefunded(redemptionId, msg.sender);
     }
 
-    /// @notice Dispute fallback for a buyer who lost transfer eligibility while escrowed: the
-    ///         refund paths run through `forcedTransfer`, which still checks `canReceive`, so a
-    ///         revoked buyer can no longer be refunded and only the irreversible
-    ///         `confirmDelivery` would be left. This sends the escrow to a compliant wallet.
-    /// @dev The verifier only executes, it does not pick the destination: `newWallet` must be
-    ///      authorized by the buyer with an EIP-712 `RecoverEscrow` signature binding the
-    ///      redemption, the destination and an expiry. Cancelling makes it single-use.
+    /// @notice Recover escrow to a compliant wallet authorized by the buyer's EIP-712 signature.
     function recoverEscrow(uint256 redemptionId, address newWallet, uint256 deadline, bytes calldata buyerSig)
         external
         nonReentrant
@@ -175,7 +159,6 @@ contract RedemptionManager is AccessControl, ReentrancyGuard, ERC1155Holder, EIP
         emit RedemptionRecovered(redemptionId, newWallet, msg.sender);
     }
 
-    /// @notice EIP-712 digest the buyer signs to authorize `recoverEscrow` to `newWallet`.
     function recoveryDigest(uint256 redemptionId, address newWallet, uint256 deadline)
         public
         view
@@ -184,7 +167,6 @@ contract RedemptionManager is AccessControl, ReentrancyGuard, ERC1155Holder, EIP
         return _hashTypedDataV4(keccak256(abi.encode(RECOVER_TYPEHASH, redemptionId, newWallet, deadline)));
     }
 
-    /// @notice Buyer withdraws a redemption that has not been shipped yet; tokens return.
     function cancelRedemption(uint256 redemptionId) external nonReentrant {
         Redemption storage redemption = redemptions[redemptionId];
         if (redemption.state != RedemptionState.Requested) {
@@ -198,9 +180,7 @@ contract RedemptionManager is AccessControl, ReentrancyGuard, ERC1155Holder, EIP
         emit RedemptionCancelled(redemptionId);
     }
 
-    /// @dev `forcedTransfer`, not the standard path: a refund has to work exactly when the lot
-    ///      is suspended, which the standard path rejects. `canReceive` is still enforced.
-    ///      Requires ENFORCER_ROLE on the token.
+    // Forced transfer permits refunds on suspended lots; receiver eligibility still applies.
     function _returnEscrow(address buyer, uint256 lotId, uint32 quantity) internal {
         wineLotToken.forcedTransfer(address(this), buyer, lotId, quantity);
     }
