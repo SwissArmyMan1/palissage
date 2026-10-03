@@ -116,6 +116,7 @@ contract SecondaryMarket is AccessControl, Pausable, ReentrancyGuard {
         _unpause();
     }
 
+    /// @notice Listings hold no tokens; the seller's available balance is checked again on purchase.
     function list(uint256 lotId, uint32 quantity, uint256 pricePerBottle, address paymentToken)
         external
         whenNotPaused

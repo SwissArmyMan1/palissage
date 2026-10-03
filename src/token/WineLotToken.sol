@@ -256,6 +256,7 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
                 if (!hasRole(MINTER_ROLE, operator)) revert NotMinter(operator);
                 if (lot.status != LotStatus.Verified) revert LotNotInStatus(id, LotStatus.Verified);
                 if (!canReceive(to)) revert ERC7943CannotReceive(to);
+                // The cap counts all mints; redemption never restores capacity.
                 uint256 available = lot.totalBottles - lot.mintedBottles;
                 if (amount > available) revert MintExceedsTotalBottles(id, amount, available);
                 lot.mintedBottles += uint32(amount);

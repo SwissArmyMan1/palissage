@@ -125,6 +125,7 @@ contract IdentityRegistry is AccessControl, IIdentityRegistry {
             try IClaimIssuer(issuer).isClaimValid(identity, topic, sig, data) returns (bool valid) {
                 if (valid) return true;
             } catch {
+                // A reverting issuer cannot validate this claim; try the remaining claims.
                 continue;
             }
         }

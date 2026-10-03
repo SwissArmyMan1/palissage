@@ -123,6 +123,7 @@ contract RedemptionManager is AccessControl, ReentrancyGuard, ERC1155Holder, EIP
         emit Redeemed(redemptionId, redemption.lotId, redemption.buyer, redemption.quantity);
     }
 
+    /// @notice Return escrowed wine tokens to the buyer; this does not refund the purchase payment.
     function refundRedemption(uint256 redemptionId) external nonReentrant onlyRole(VERIFIER_ROLE) {
         Redemption storage redemption = redemptions[redemptionId];
         if (redemption.state != RedemptionState.Requested && redemption.state != RedemptionState.Shipped) {

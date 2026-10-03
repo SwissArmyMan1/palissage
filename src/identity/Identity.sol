@@ -61,6 +61,7 @@ contract Identity is IIdentity {
         return (k.purposes, k.keyType, k.key);
     }
 
+    // Management keys satisfy every purpose.
     function keyHasPurpose(bytes32 key, uint256 purpose) public view returns (bool exists) {
         Key storage k = _keys[key];
         if (k.key == 0) return false;
@@ -218,6 +219,7 @@ contract Identity is IIdentity {
         Claim storage c = _claims[claimId];
         if (c.issuer == address(0)) revert ClaimDoesNotExist(claimId);
 
+        // An issuer can retract its own claim without a key on this identity.
         if (msg.sender != c.issuer) {
             bytes32 senderKey = keccak256(abi.encode(msg.sender));
             if (!keyHasPurpose(senderKey, ClaimTopicsLib.PURPOSE_CLAIM)) revert NotAuthorized(msg.sender);

@@ -94,6 +94,7 @@ contract RoleGateway is Ownable {
         }
 
         if (address(identity) != address(0)) {
+            // Remove obsolete gateway claims when switching roles.
             _setClaim(identity, ClaimTopicsLib.TOPIC_KYC, needKyc);
             _setClaim(identity, ClaimTopicsLib.TOPIC_WINERY, needWinery);
             _setClaim(identity, ClaimTopicsLib.TOPIC_B2B_BUYER, needBuyer);

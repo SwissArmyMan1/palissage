@@ -257,6 +257,7 @@ contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
         emit MilestonesSet(offerId, bps.length);
     }
 
+    /// @notice Deposits reserve bottles; tokens are minted only after full payment.
     function reserve(uint256 offerId, uint32 quantity, uint256 payNow)
         external
         whenNotPaused
@@ -391,6 +392,7 @@ contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
             revert DeadlineNotReached(allocationId, offer.fullPaymentDeadline);
         }
 
+        // A suspended lot blocks payment, so it must also block deposit forfeiture.
         _requireVerifiedLot(offer.lotId);
 
         uint256 forfeited = allocation.paidAmount;
