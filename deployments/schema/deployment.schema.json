@@ -1,248 +1,529 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://palissage.example/schema/deployment.schema.json",
-  "title": "Palissage deployment manifest",
-  "description": "The published description of one deployment: the single source of contract addresses for the interface. A draft does not validate against this schema — it has status 'draft' and exists before receipts, source verification and the read-only wiring check. See chain-mvp 09 §1.",
+  "$id": "https://palissage.net/schema/deployment.schema.json",
+  "title": "Palissage 1.1.0 deployment manifest",
+  "description": "Version 2 public release record for Arbitrum Sepolia or Robinhood Testnet. Structural validation is separate from receipt, runtime, wiring and explorer source verification. A verified record is not an independent security audit.",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "schemaVersion",
-    "status",
     "deploymentId",
     "chainId",
-    "transportKind",
     "protocolVersion",
+    "status",
+    "verifiedAtBlock",
+    "verification",
+    "deployer",
     "explorerUrl",
-    "sourceCommit",
-    "build",
-    "startBlock",
-    "t0",
-    "validatedAtBlock",
-    "validatedBlockHash",
     "contracts",
-    "paymentToken",
-    "actors",
-    "expected",
-    "seed",
-    "metadata",
-    "evidence",
-    "limitations"
+    "runtimeCodeHashes",
+    "assets",
+    "roleGrants"
   ],
-  "$defs": {
-    "address": {
-      "type": "string",
-      "pattern": "^0x[0-9a-fA-F]{40}$",
-      "not": { "const": "0x0000000000000000000000000000000000000000" },
-      "description": "20 bytes, never the zero address: an incomplete deployment must not read as a working one."
-    },
-    "hash": { "type": "string", "pattern": "^0x[0-9a-fA-F]{64}$" },
-    "hex": { "type": "string", "pattern": "^0x[0-9a-fA-F]*$" },
-    "uint": {
-      "type": "string",
-      "pattern": "^(0|[1-9][0-9]*)$",
-      "description": "Decimal string: a JSON number cannot hold a uint256 exactly."
-    },
-    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
-    "httpsUrl": { "type": "string", "pattern": "^https://" },
-    "assetUrl": {
-      "type": "string",
-      "pattern": "^(/|https://)",
-      "description": "A path served with this build, or an https origin. Never javascript:, data: or plain http:."
-    },
-    "deployedContract": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "address",
-        "source",
-        "creationTx",
-        "creationBlock",
-        "runtimeCodeHash",
-        "constructorArgs",
-        "abiSha256",
-        "version",
-        "verification"
-      ],
-      "properties": {
-        "address": { "$ref": "#/$defs/address" },
-        "source": {
-          "type": "string",
-          "pattern": "^src/.+\\.sol:[A-Za-z_][A-Za-z0-9_]*$",
-          "description": "Fully qualified source name, e.g. src/token/WineLotToken.sol:WineLotToken."
-        },
-        "creationTx": { "$ref": "#/$defs/hash" },
-        "creationBlock": { "$ref": "#/$defs/uint" },
-        "runtimeCodeHash": {
-          "$ref": "#/$defs/hash",
-          "description": "keccak256 of the actual eth_getCode, immutable values included. Not the artifact's deployedBytecode, which still has empty immutable slots."
-        },
-        "constructorArgs": { "$ref": "#/$defs/hex" },
-        "abiSha256": {
-          "$ref": "#/$defs/sha256",
-          "description": "SHA-256 of the generated ABI JSON bytes, tying what the interface decodes to what was deployed."
-        },
-        "version": { "const": "1.0.0-mvp" },
-        "verification": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["status", "url"],
-          "properties": {
-            "status": { "const": "verified" },
-            "url": { "$ref": "#/$defs/httpsUrl" }
-          }
-        }
-      }
-    }
-  },
   "properties": {
-    "schemaVersion": { "const": 1 },
-    "status": {
-      "const": "published",
-      "description": "Published only after receipts, source verification, the wiring check and the seed."
+    "schemaVersion": {
+      "const": 2
     },
     "deploymentId": {
       "type": "string",
-      "pattern": "^palissage-[a-z0-9-]+-[0-9]{8}-[0-9a-f]{8}-[0-9]+$",
-      "description": "palissage-<network>-<UTC date>-<commit8>-<nonce>. Unique per deployment; namespaces every identifier."
+      "pattern": "^palissage-(421614|46630)-v1\\.1\\.0$"
     },
-    "chainId": { "enum": [84532, 31337] },
-    "transportKind": { "enum": ["public_testnet", "local_fork"] },
-    "protocolVersion": { "const": "1.0.0-mvp" },
-    "explorerUrl": { "$ref": "#/$defs/httpsUrl" },
-    "sourceCommit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
-    "build": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["forgeVersion", "solcVersion", "evmVersion", "optimizerRuns", "viaIR", "dependencyRevisions"],
-      "properties": {
-        "forgeVersion": { "type": "string", "minLength": 1 },
-        "solcVersion": { "type": "string", "minLength": 1 },
-        "evmVersion": { "type": "string", "minLength": 1 },
-        "optimizerRuns": { "type": "integer", "minimum": 0 },
-        "viaIR": { "type": "boolean" },
-        "dependencyRevisions": {
-          "type": "object",
-          "minProperties": 1,
-          "additionalProperties": { "type": "string", "minLength": 1 },
-          "description": "Submodule revisions of the build; an incomplete list makes the build irreproducible."
-        }
-      }
+    "chainId": {
+      "enum": [
+        421614,
+        46630
+      ]
     },
-    "startBlock": {
-      "$ref": "#/$defs/uint",
-      "description": "min(creationBlock) — where history reading starts. Not the block the seed ended at."
+    "protocolVersion": {
+      "const": "1.1.0"
     },
-    "t0": { "$ref": "#/$defs/uint", "description": "Timestamp of startBlock, recorded once and never recomputed." },
-    "validatedAtBlock": { "$ref": "#/$defs/uint" },
-    "validatedBlockHash": { "$ref": "#/$defs/hash" },
+    "status": {
+      "const": "verified"
+    },
+    "verifiedAtBlock": {
+      "$ref": "#/$defs/uint"
+    },
+    "verification": {
+      "type": "string",
+      "minLength": 1
+    },
+    "deployer": {
+      "$ref": "#/$defs/address"
+    },
+    "explorerUrl": {
+      "$ref": "#/$defs/httpsUrl"
+    },
     "contracts": {
       "type": "object",
       "additionalProperties": false,
       "required": [
         "trustedIssuersRegistry",
         "identityRegistry",
-        "claimIssuer",
-        "roleGateway",
         "wineLotToken",
         "primaryMarket",
         "secondaryMarket",
         "redemptionManager",
-        "palissageLens",
-        "testEURe"
+        "testEURe",
+        "claimIssuer",
+        "roleGateway",
+        "palissageLens"
       ],
-      "description": "Ten static contracts. The Identity contracts are created dynamically by the gateway and are not listed here.",
       "properties": {
-        "trustedIssuersRegistry": { "$ref": "#/$defs/deployedContract" },
-        "identityRegistry": { "$ref": "#/$defs/deployedContract" },
-        "claimIssuer": { "$ref": "#/$defs/deployedContract" },
-        "roleGateway": { "$ref": "#/$defs/deployedContract" },
-        "wineLotToken": { "$ref": "#/$defs/deployedContract" },
-        "primaryMarket": { "$ref": "#/$defs/deployedContract" },
-        "secondaryMarket": { "$ref": "#/$defs/deployedContract" },
-        "redemptionManager": { "$ref": "#/$defs/deployedContract" },
-        "palissageLens": { "$ref": "#/$defs/deployedContract" },
-        "testEURe": { "$ref": "#/$defs/deployedContract" }
+        "trustedIssuersRegistry": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/deployedContract"
+            },
+            {
+              "properties": {
+                "name": {
+                  "const": "TrustedIssuersRegistry"
+                }
+              }
+            }
+          ]
+        },
+        "identityRegistry": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/deployedContract"
+            },
+            {
+              "properties": {
+                "name": {
+                  "const": "IdentityRegistry"
+                }
+              }
+            }
+          ]
+        },
+        "wineLotToken": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/deployedContract"
+            },
+            {
+              "properties": {
+                "name": {
+                  "const": "WineLotToken"
+                }
+              }
+            }
+          ]
+        },
+        "primaryMarket": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/deployedContract"
+            },
+            {
+              "properties": {
+                "name": {
+                  "const": "PrimaryMarket"
+                }
+              }
+            }
+          ]
+        },
+        "secondaryMarket": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/deployedContract"
+            },
+            {
+              "properties": {
+                "name": {
+                  "const": "SecondaryMarket"
+                }
+              }
+            }
+          ]
+        },
+        "redemptionManager": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/deployedContract"
+            },
+            {
+              "properties": {
+                "name": {
+                  "const": "RedemptionManager"
+                }
+              }
+            }
+          ]
+        },
+        "testEURe": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/deployedContract"
+            },
+            {
+              "properties": {
+                "name": {
+                  "const": "TestEURe"
+                }
+              }
+            }
+          ]
+        },
+        "claimIssuer": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/deployedContract"
+            },
+            {
+              "properties": {
+                "name": {
+                  "const": "ClaimIssuer"
+                }
+              }
+            }
+          ]
+        },
+        "roleGateway": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/deployedContract"
+            },
+            {
+              "properties": {
+                "name": {
+                  "const": "RoleGateway"
+                }
+              }
+            }
+          ]
+        },
+        "palissageLens": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/deployedContract"
+            },
+            {
+              "properties": {
+                "name": {
+                  "const": "PalissageLens"
+                }
+              }
+            }
+          ]
+        }
       }
     },
-    "paymentToken": {
+    "runtimeCodeHashes": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["kind", "address", "symbol", "decimals", "faucetAmount", "cooldownSeconds"],
-      "description": "A faucet test asset. Not a stablecoin, not redeemable, not Monerium EURe.",
+      "required": [
+        "trustedIssuersRegistry",
+        "identityRegistry",
+        "wineLotToken",
+        "primaryMarket",
+        "secondaryMarket",
+        "redemptionManager",
+        "testEURe",
+        "claimIssuer",
+        "roleGateway",
+        "palissageLens"
+      ],
       "properties": {
-        "kind": { "const": "test-faucet" },
-        "address": { "$ref": "#/$defs/address" },
-        "symbol": { "const": "tEURe" },
-        "decimals": { "const": 18 },
-        "faucetAmount": { "const": "5000000000000000000000" },
-        "cooldownSeconds": { "const": 86400 }
+        "trustedIssuersRegistry": {
+          "$ref": "#/$defs/hash"
+        },
+        "identityRegistry": {
+          "$ref": "#/$defs/hash"
+        },
+        "wineLotToken": {
+          "$ref": "#/$defs/hash"
+        },
+        "primaryMarket": {
+          "$ref": "#/$defs/hash"
+        },
+        "secondaryMarket": {
+          "$ref": "#/$defs/hash"
+        },
+        "redemptionManager": {
+          "$ref": "#/$defs/hash"
+        },
+        "testEURe": {
+          "$ref": "#/$defs/hash"
+        },
+        "claimIssuer": {
+          "$ref": "#/$defs/hash"
+        },
+        "roleGateway": {
+          "$ref": "#/$defs/hash"
+        },
+        "palissageLens": {
+          "$ref": "#/$defs/hash"
+        }
       }
     },
-    "actors": {
+    "assets": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["deployer", "owner", "admin", "treasury"],
+      "required": [
+        "eur",
+        "usdg"
+      ],
       "properties": {
-        "deployer": { "$ref": "#/$defs/address" },
-        "owner": { "$ref": "#/$defs/address" },
-        "admin": { "$ref": "#/$defs/address" },
-        "treasury": { "$ref": "#/$defs/address" }
+        "eur": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/asset"
+            },
+            {
+              "properties": {
+                "symbol": {
+                  "const": "tEURe"
+                },
+                "decimals": {
+                  "const": 18
+                }
+              }
+            }
+          ]
+        },
+        "usdg": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/asset"
+            },
+            {
+              "properties": {
+                "symbol": {
+                  "const": "USDG"
+                },
+                "decimals": {
+                  "const": 6
+                }
+              }
+            }
+          ]
+        }
       }
     },
-    "expected": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["primaryFeeBps", "secondaryFeeBps", "testMode"],
-      "description": "Values the read-only verifier compares against the chain. The interface always shows what it actually reads.",
-      "properties": {
-        "primaryFeeBps": { "const": 300 },
-        "secondaryFeeBps": { "const": 200 },
-        "testMode": { "type": "boolean" }
-      }
-    },
-    "seed": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["version", "url", "sha256", "status", "completedBlock"],
-      "properties": {
-        "version": { "const": "palissage-testnet-seed-v1" },
-        "url": { "$ref": "#/$defs/assetUrl" },
-        "sha256": { "$ref": "#/$defs/sha256" },
-        "status": { "const": "complete" },
-        "completedBlock": { "$ref": "#/$defs/uint" }
-      }
-    },
-    "metadata": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["catalogUrl", "catalogSha256", "origin"],
-      "properties": {
-        "catalogUrl": { "$ref": "#/$defs/assetUrl" },
-        "catalogSha256": { "$ref": "#/$defs/sha256" },
-        "origin": { "type": "string", "minLength": 1 }
-      }
-    },
-    "evidence": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["reportUrl", "reportSha256"],
-      "properties": {
-        "reportUrl": { "$ref": "#/$defs/assetUrl" },
-        "reportSha256": { "$ref": "#/$defs/sha256" }
-      }
-    },
-    "limitations": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["privateWorkflow", "realKyb", "physicalShipping", "mainnetWrites", "audited"],
-      "description": "What this release does not do. Stated in the manifest so the interface can show it where it matters instead of in one footer.",
-      "properties": {
-        "privateWorkflow": { "const": false },
-        "realKyb": { "const": false },
-        "physicalShipping": { "const": false },
-        "mainnetWrites": { "const": false },
-        "audited": { "const": false }
+    "roleGrants": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "contract",
+          "role",
+          "account"
+        ],
+        "properties": {
+          "contract": {
+            "enum": [
+              "trustedIssuersRegistry",
+              "identityRegistry",
+              "wineLotToken",
+              "primaryMarket",
+              "secondaryMarket",
+              "redemptionManager",
+              "testEURe",
+              "claimIssuer",
+              "roleGateway",
+              "palissageLens"
+            ]
+          },
+          "role": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]*$"
+          },
+          "account": {
+            "$ref": "#/$defs/address"
+          }
+        }
       }
     }
-  }
+  },
+  "$defs": {
+    "address": {
+      "type": "string",
+      "pattern": "^0x[0-9a-fA-F]{40}$",
+      "not": {
+        "const": "0x0000000000000000000000000000000000000000"
+      }
+    },
+    "hash": {
+      "type": "string",
+      "pattern": "^0x[0-9a-fA-F]{64}$"
+    },
+    "uint": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)$"
+    },
+    "httpsUrl": {
+      "type": "string",
+      "pattern": "^https://[^\\s]+$"
+    },
+    "deployedContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "address",
+        "creationTx",
+        "creationBlock",
+        "constructorArgs",
+        "abiHash",
+        "runtimeCodeHash",
+        "compiler",
+        "sourceHashes"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "address": {
+          "$ref": "#/$defs/address"
+        },
+        "creationTx": {
+          "$ref": "#/$defs/hash"
+        },
+        "creationBlock": {
+          "$ref": "#/$defs/uint"
+        },
+        "constructorArgs": {
+          "type": "string",
+          "pattern": "^0x([0-9a-fA-F]{2})*$"
+        },
+        "abiHash": {
+          "$ref": "#/$defs/hash"
+        },
+        "runtimeCodeHash": {
+          "$ref": "#/$defs/hash"
+        },
+        "compiler": {
+          "const": "0.8.28+commit.7893614a"
+        },
+        "sourceHashes": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {
+            "pattern": "^(src|lib)/.+\\.sol$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/hash"
+          }
+        },
+        "explorerSourceVerified": {
+          "type": "boolean"
+        },
+        "sourceExplorerUrl": {
+          "$ref": "#/$defs/httpsUrl"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "explorerSourceVerified"
+            ],
+            "properties": {
+              "explorerSourceVerified": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "sourceExplorerUrl"
+            ]
+          }
+        }
+      ]
+    },
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "address",
+        "symbol",
+        "decimals",
+        "primaryAllowed",
+        "secondaryAllowed"
+      ],
+      "properties": {
+        "address": {
+          "$ref": "#/$defs/address"
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "decimals": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255
+        },
+        "primaryAllowed": {
+          "const": true
+        },
+        "secondaryAllowed": {
+          "const": true
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "chainId": {
+            "const": 421614
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "deploymentId": {
+            "const": "palissage-421614-v1.1.0"
+          },
+          "assets": {
+            "properties": {
+              "usdg": {
+                "properties": {
+                  "address": {
+                    "const": "0xFFC95faa3d63Cde504a05B567C600B78C0b41892"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "chainId": {
+            "const": 46630
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "deploymentId": {
+            "const": "palissage-46630-v1.1.0"
+          },
+          "assets": {
+            "properties": {
+              "usdg": {
+                "properties": {
+                  "address": {
+                    "const": "0x7E955252E15c84f5768B83c41a71F9eba181802F"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
 }

@@ -1,6 +1,8 @@
 # Published deployments
 
-`palissage-<chainId>.manifest.json` is the public release record. `status: verified` means creation receipts, compiled runtime, source hashes, immutable wiring, privileged roles and enabled payment metadata passed the release verifier at `snapshotBlock`. It does not mean an independent audit.
+`palissage-<chainId>.manifest.json` is the public release record. `status: verified` means creation receipts, compiled runtime, source hashes, immutable wiring, privileged roles and enabled payment metadata passed the release verifier at `verifiedAtBlock`. It does not mean an independent audit.
+
+`schema/deployment.schema.json` describes the version 2 release format and its supported chain IDs. Schema validation checks the record's structure; the release verifier separately checks receipts, code and state against the network.
 
 `explorerSourceVerified` and `sourceExplorerUrl` record the separate source-publication result per contract. `palissage-<chainId>.flow-evidence.json` contains real fixture transaction hashes and observed final bottle accounting. The seed is fictional and uses valueless tEURe.
 
