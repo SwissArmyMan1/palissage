@@ -3,10 +3,12 @@ import { resolve } from 'node:path';
 import { root, artifact, writeJson } from './release-lib.mjs';
 const chainId = Number(process.argv[2]);
 if (![421614, 46630].includes(chainId)) throw new Error('Unsupported chain.');
-const path = resolve(root, 'deployments', `palissage-${chainId}.manifest.json`);
+const identities = process.argv.includes('--identities');
+const path = resolve(root, 'deployments', `palissage-${chainId}.${identities ? 'identities' : 'manifest'}.json`);
 const manifest = JSON.parse(readFileSync(path, 'utf8'));
 const explorer = chainId === 421614 ? 'https://arbitrum-sepolia.blockscout.com' : 'https://explorer.testnet.chain.robinhood.com';
 const pause = (ms) => new Promise((done) => setTimeout(done, ms));
+let verified = 0;
 for (const contract of Object.values(manifest.contracts)) {
   const compiled = artifact(contract.name);
   const [source, name] = Object.entries(compiled.metadata.settings.compilationTarget)[0];
@@ -41,9 +43,10 @@ for (const contract of Object.values(manifest.contracts)) {
     contract.explorerSourceVerified = true;
     contract.sourceExplorerUrl = explorer + '/address/' + contract.address + '?tab=contract';
     writeJson(path, manifest);
+    verified++;
     console.log(name + ': source confirmed.');
   } catch (error) { console.log(name + ': ' + error.message); }
 }
-const verified = Object.values(manifest.contracts).filter((contract) => contract.explorerSourceVerified).length;
-console.log('Explorer verified: ' + verified + '/10.');
-if (verified !== 10) process.exitCode = 1;
+const expected = Object.keys(manifest.contracts).length;
+console.log('Explorer sources confirmed in this run: ' + verified + '/' + expected + '.');
+if (verified !== expected) process.exitCode = 1;

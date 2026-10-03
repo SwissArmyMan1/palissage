@@ -32,7 +32,8 @@
         "src/interfaces/ITrustedIssuersRegistry.sol": "0x359002a531e2a2f07346868a0adcd3b6ea2dc6b9d1c8f860172b91f439bed5ac"
       },
       "explorerSourceVerified": true,
-      "sourceExplorerUrl": "https://arbitrum-sepolia.blockscout.com/address/0x9b826155728e81ea8a9593873f34a3dd74abc69b?tab=contract"
+      "sourceExplorerUrl": "https://sepolia.arbiscan.io/address/0x9b826155728e81ea8a9593873f34a3dd74abc69b#code",
+      "explorerVerificationKind": "exact-match"
     },
     "identityRegistry": {
       "name": "IdentityRegistry",
@@ -59,7 +60,8 @@
         "src/libraries/ClaimTopicsLib.sol": "0xcd8e73e9f88b54ded84b8a70dae792d5249fe987088c39b8dbaa460ac4555ae2"
       },
       "explorerSourceVerified": true,
-      "sourceExplorerUrl": "https://arbitrum-sepolia.blockscout.com/address/0x2e437d9d52ece33fa59ad5ff13e0c7106ba93e1f?tab=contract"
+      "sourceExplorerUrl": "https://sepolia.arbiscan.io/address/0x2e437d9d52ece33fa59ad5ff13e0c7106ba93e1f#code",
+      "explorerVerificationKind": "exact-match"
     },
     "wineLotToken": {
       "name": "WineLotToken",
@@ -100,7 +102,8 @@
         "src/token/WineLotToken.sol": "0x57e0bd8cd760a207b642dceca09350ecb59ff6824bea4a9df9d731b3ee392bfe"
       },
       "explorerSourceVerified": true,
-      "sourceExplorerUrl": "https://arbitrum-sepolia.blockscout.com/address/0x9bc6bca932359c336c13b0ea9d4b249774882a7b?tab=contract"
+      "sourceExplorerUrl": "https://sepolia.arbiscan.io/address/0x9bc6bca932359c336c13b0ea9d4b249774882a7b#code",
+      "explorerVerificationKind": "exact-match"
     },
     "primaryMarket": {
       "name": "PrimaryMarket",
@@ -139,7 +142,8 @@
         "src/market/PrimaryMarket.sol": "0x0a244bb6b901fc30959cc00aa378950513bae2172f7ddf8c3f803c807cdf8055"
       },
       "explorerSourceVerified": true,
-      "sourceExplorerUrl": "https://arbitrum-sepolia.blockscout.com/address/0x191af3012e33228f2a6c6e4df33c81f87cddfeb4?tab=contract"
+      "sourceExplorerUrl": "https://sepolia.arbiscan.io/address/0x191af3012e33228f2a6c6e4df33c81f87cddfeb4#code",
+      "explorerVerificationKind": "exact-match"
     },
     "secondaryMarket": {
       "name": "SecondaryMarket",
@@ -175,7 +179,8 @@
         "src/market/SecondaryMarket.sol": "0xc94d5c0b11a4d01d45593b038865fb66757ae302d977da9751ef72d16b60b0c2"
       },
       "explorerSourceVerified": true,
-      "sourceExplorerUrl": "https://arbitrum-sepolia.blockscout.com/address/0x6515e7162e973529420d1e44ab1f7a6b34f37a42?tab=contract"
+      "sourceExplorerUrl": "https://sepolia.arbiscan.io/address/0x6515e7162e973529420d1e44ab1f7a6b34f37a42#code",
+      "explorerVerificationKind": "exact-match"
     },
     "redemptionManager": {
       "name": "RedemptionManager",
@@ -216,7 +221,8 @@
         "src/redemption/RedemptionManager.sol": "0x82e29de0cfa9d6cb3dc067bc76d07675617b28670799c5cf9abde1a9de8f1293"
       },
       "explorerSourceVerified": true,
-      "sourceExplorerUrl": "https://arbitrum-sepolia.blockscout.com/address/0x7a8fbcd3c566baf7f58049933be64f7e61413d4c?tab=contract"
+      "sourceExplorerUrl": "https://sepolia.arbiscan.io/address/0x7a8fbcd3c566baf7f58049933be64f7e61413d4c#code",
+      "explorerVerificationKind": "exact-match"
     },
     "testEURe": {
       "name": "TestEURe",
@@ -237,7 +243,8 @@
         "src/testing/TestEURe.sol": "0xac92d4edce5caf53fc2b6b88e3f6411d758c8b21b93c09869913f0e8f64c6d95"
       },
       "explorerSourceVerified": true,
-      "sourceExplorerUrl": "https://arbitrum-sepolia.blockscout.com/address/0xe390ee524b4507a9dd3be640b2c8138bfa1e94b4?tab=contract"
+      "sourceExplorerUrl": "https://sepolia.arbiscan.io/address/0xe390ee524b4507a9dd3be640b2c8138bfa1e94b4#code",
+      "explorerVerificationKind": "exact-match"
     },
     "claimIssuer": {
       "name": "ClaimIssuer",
@@ -266,7 +273,8 @@
         "src/libraries/ClaimTopicsLib.sol": "0xcd8e73e9f88b54ded84b8a70dae792d5249fe987088c39b8dbaa460ac4555ae2"
       },
       "explorerSourceVerified": true,
-      "sourceExplorerUrl": "https://arbitrum-sepolia.blockscout.com/address/0xd9714867075d0edaa000587c649bbf9525257efd?tab=contract"
+      "sourceExplorerUrl": "https://sepolia.arbiscan.io/address/0xd9714867075d0edaa000587c649bbf9525257efd#code",
+      "explorerVerificationKind": "exact-match"
     },
     "roleGateway": {
       "name": "RoleGateway",
@@ -289,7 +297,8 @@
         "src/libraries/ClaimTopicsLib.sol": "0xcd8e73e9f88b54ded84b8a70dae792d5249fe987088c39b8dbaa460ac4555ae2"
       },
       "explorerSourceVerified": true,
-      "sourceExplorerUrl": "https://arbitrum-sepolia.blockscout.com/address/0xfc62b6faedc073766d85a860c31d92740b35e1a5?tab=contract"
+      "sourceExplorerUrl": "https://sepolia.arbiscan.io/address/0xfc62b6faedc073766d85a860c31d92740b35e1a5#code",
+      "explorerVerificationKind": "exact-match"
     },
     "palissageLens": {
       "name": "PalissageLens",
@@ -360,7 +369,8 @@
         "src/token/WineLotToken.sol": "0x57e0bd8cd760a207b642dceca09350ecb59ff6824bea4a9df9d731b3ee392bfe"
       },
       "explorerSourceVerified": true,
-      "sourceExplorerUrl": "https://arbitrum-sepolia.blockscout.com/address/0x524976f78992406ed5dc09bea34962c70dce0478?tab=contract"
+      "sourceExplorerUrl": "https://sepolia.arbiscan.io/address/0x524976f78992406ed5dc09bea34962c70dce0478#code",
+      "explorerVerificationKind": "exact-match"
     }
   },
   "runtimeCodeHashes": {

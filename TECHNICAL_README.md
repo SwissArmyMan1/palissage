@@ -54,6 +54,7 @@ node script/release.mjs preflight 421614
 node script/release.mjs deploy 421614
 node script/demo.mjs 421614
 node script/verify-sources.mjs 421614
+node script/verify-arbiscan.mjs
 ```
 
 Use `46630` for Robinhood. `RPC_URL` can select an endpoint; its actual chain ID is checked. `MAX_TEST_ETH_SPEND` bounds one runner invocation. The demo funds three controlled test actors and performs the documented fixture trades. Review these scripts before running against a new account.
@@ -62,7 +63,11 @@ A local, ignored journal stores transaction hash, sender, nonce and receipt befo
 
 The verifier compares creation calldata and runtime bytecode against current compiler artifacts, masks only declared immutable slots, checks immutable references and role wiring, and observes the Lens at a fresh block. Publication updates the public manifest, ABIs and `UI/web/src/chain/deployments.json`. Rebuilding changed source does not update a live deployment: a new deployment and new journal are required.
 
-Explorer source verification is tracked separately from receipt/runtime/wiring verification. Arbitrum uses Blockscout for source publication; Robinhood uses its official Blockscout explorer. A manifest field is set only after the explorer confirms the contract name and verified source.
+Explorer source verification is tracked separately from receipt/runtime/wiring verification. `verify-arbiscan.mjs` publishes the Arbitrum Sepolia release to Arbiscan through Etherscan V2, using `ETHERSCAN_API_KEY` or the existing `API_KEY` in the local `.env`. It sends the exact standard JSON compiler input and constructor arguments, waits for verification, then reads back the published sources and compiler settings. The key is never logged or copied into the public manifest.
+
+`verify-sources.mjs 421614` separately publishes to Arbitrum Blockscout; `verify-sources.mjs 46630` publishes to the official Robinhood explorer. Verification on one explorer does not establish verification on another. A manifest field is set only after that explorer confirms the source record, and a runner's final count includes only confirmations obtained in the current run.
+
+The fixture participants also have dynamically created Identity contracts. `node script/collect-identities.mjs <chainId>` confirms their registration receipts, exact runtime and gateway management key, then writes `palissage-<chainId>.identities.json`. Verify those addresses with `node script/verify-arbiscan.mjs --identities` and `node script/verify-sources.mjs 46630 --identities` respectively. Collection is read-only on-chain; explorer verification submits source, not a transaction.
 
 ## Frontend transaction boundary
 

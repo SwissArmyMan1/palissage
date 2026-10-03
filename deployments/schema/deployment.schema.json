@@ -415,6 +415,9 @@
         "explorerSourceVerified": {
           "type": "boolean"
         },
+        "explorerVerificationKind": {
+          "enum": ["exact-match", "similar-match"]
+        },
         "sourceExplorerUrl": {
           "$ref": "#/$defs/httpsUrl"
         }

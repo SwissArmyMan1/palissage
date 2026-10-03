@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "chainId": 421614,
+  "status": "verified",
+  "observedBlock": "315357348",
+  "notice": "Fixture participant identities created internally by RoleGateway; registration receipts, exact runtime and gateway management key checked on-chain. Explorer source verification is recorded separately per address.",
+  "contracts": {
+    "winery": {
+      "name": "Identity",
+      "address": "0xa43261E652e51543410B310a6F505EF57437642D",
+      "wallet": "0x1ceBd3D14221f5e0401401EfA39a0F4aC302A0F2",
+      "creationTx": "0x251adf134be1f6e2109b6520f28c51f3e09bb50c1080cca9e348e8eadb3df2ec",
+      "creationBlock": "315298279",
+      "constructorArgs": "0x000000000000000000000000fc62b6faedc073766d85a860c31d92740b35e1a5",
+      "compiler": "0.8.28+commit.7893614a",
+      "sourceHashes": {
+        "src/identity/Identity.sol": "0x83205e5bc7da3f496adaa0e95b5209b1cc0c181e7750ab23a8d84e55d1d3bac4",
+        "src/interfaces/IERC734.sol": "0x9b294674f44ae1f01d90fa0c2df0060027bb11224066d9fce5b7a8ae239ced46",
+        "src/interfaces/IERC735.sol": "0xcf1f383d4f383ccddababdf2e1af125305c42f30597cfcbee0241eca3c436f83",
+        "src/interfaces/IIdentity.sol": "0xc4ff7991552ecb1e52a802754b53f4a5264112f61eca70f07285437437690b17",
+        "src/libraries/ClaimTopicsLib.sol": "0xcd8e73e9f88b54ded84b8a70dae792d5249fe987088c39b8dbaa460ac4555ae2"
+      },
+      "runtimeCodeHash": "0xffe0f03982ffd8d88b12da779bda9c8466ee23a97b4897c4c3a316bf7b28844e",
+      "explorerSourceVerified": true,
+      "sourceExplorerUrl": "https://sepolia.arbiscan.io/address/0xa43261E652e51543410B310a6F505EF57437642D#code",
+      "explorerVerificationKind": "exact-match"
+    },
+    "shop": {
+      "name": "Identity",
+      "address": "0x90BE988a89d985C630ca95Fd8f2089E5FdA73D0E",
+      "wallet": "0x0706aAE611F6C9C6b89708562FF4d08a9C5F6771",
+      "creationTx": "0xc8153c56947f58252646c10cdea0cd00063a279ead9803b8ae8d4d6010741af1",
+      "creationBlock": "315298286",
+      "constructorArgs": "0x000000000000000000000000fc62b6faedc073766d85a860c31d92740b35e1a5",
+      "compiler": "0.8.28+commit.7893614a",
+      "sourceHashes": {
+        "src/identity/Identity.sol": "0x83205e5bc7da3f496adaa0e95b5209b1cc0c181e7750ab23a8d84e55d1d3bac4",
+        "src/interfaces/IERC734.sol": "0x9b294674f44ae1f01d90fa0c2df0060027bb11224066d9fce5b7a8ae239ced46",
+        "src/interfaces/IERC735.sol": "0xcf1f383d4f383ccddababdf2e1af125305c42f30597cfcbee0241eca3c436f83",
+        "src/interfaces/IIdentity.sol": "0xc4ff7991552ecb1e52a802754b53f4a5264112f61eca70f07285437437690b17",
+        "src/libraries/ClaimTopicsLib.sol": "0xcd8e73e9f88b54ded84b8a70dae792d5249fe987088c39b8dbaa460ac4555ae2"
+      },
+      "runtimeCodeHash": "0xffe0f03982ffd8d88b12da779bda9c8466ee23a97b4897c4c3a316bf7b28844e",
+      "matchedSourceAddress": "0xa43261E652e51543410B310a6F505EF57437642D",
+      "explorerVerificationKind": "similar-match",
+      "explorerSourceVerified": true,
+      "sourceExplorerUrl": "https://sepolia.arbiscan.io/address/0x90BE988a89d985C630ca95Fd8f2089E5FdA73D0E#code"
+    },
+    "buyer": {
+      "name": "Identity",
+      "address": "0x9DAB3c633D3616a9262bd78eD233815FBa7a05E1",
+      "wallet": "0xFc0c6AA09c7ef59F9aa5d9BbB36852bF87c13838",
+      "creationTx": "0x7796dd9e734dd57adae66fef3281c1edb19485b636615f2ca4125abbdc46e1da",
+      "creationBlock": "315298295",
+      "constructorArgs": "0x000000000000000000000000fc62b6faedc073766d85a860c31d92740b35e1a5",
+      "compiler": "0.8.28+commit.7893614a",
+      "sourceHashes": {
+        "src/identity/Identity.sol": "0x83205e5bc7da3f496adaa0e95b5209b1cc0c181e7750ab23a8d84e55d1d3bac4",
+        "src/interfaces/IERC734.sol": "0x9b294674f44ae1f01d90fa0c2df0060027bb11224066d9fce5b7a8ae239ced46",
+        "src/interfaces/IERC735.sol": "0xcf1f383d4f383ccddababdf2e1af125305c42f30597cfcbee0241eca3c436f83",
+        "src/interfaces/IIdentity.sol": "0xc4ff7991552ecb1e52a802754b53f4a5264112f61eca70f07285437437690b17",
+        "src/libraries/ClaimTopicsLib.sol": "0xcd8e73e9f88b54ded84b8a70dae792d5249fe987088c39b8dbaa460ac4555ae2"
+      },
+      "runtimeCodeHash": "0xffe0f03982ffd8d88b12da779bda9c8466ee23a97b4897c4c3a316bf7b28844e",
+      "matchedSourceAddress": "0xa43261E652e51543410B310a6F505EF57437642D",
+      "explorerVerificationKind": "similar-match",
+      "explorerSourceVerified": true,
+      "sourceExplorerUrl": "https://sepolia.arbiscan.io/address/0x9DAB3c633D3616a9262bd78eD233815FBa7a05E1#code"
+    }
+  }
+}

@@ -10,4 +10,8 @@ Supported networks are Arbitrum Sepolia (421614) and Robinhood Testnet (46630). 
 
 `abis/` contains ABIs exported from the exact release artifacts. The frontend manifest is regenerated only after verification succeeds.
 
+`palissage-<chainId>.identities.json` lists the three fixture participants' contracts created internally by RoleGateway. It records their registration receipts, exact runtime, constructor argument and separately confirmed explorer source URLs. These dynamic identities are additional to the ten protocol contracts in each main manifest.
+
+The Arbitrum protocol contracts have Arbiscan Exact Match verification. Arbiscan publishes two repeated fixture Identity addresses through Similar Match to the first verified Identity; `explorerVerificationKind` and `matchedSourceAddress` preserve that distinction. Their source and ABI are visible, and their runtime and gateway management key are checked separately on-chain. [Etherscan verification types](https://info.etherscan.com/types-of-contract-verification/) explains these explorer labels.
+
 Ignored `*.release-journal.json`, drafts and plans are local operational records. Never commit a mnemonic, private key, signed raw transaction or private RPC credential.
