@@ -6,21 +6,28 @@ solc_version = "0.8.28"
 optimizer = true
 optimizer_runs = 200
 via_ir = true
-# Compiler settings are pinned for reproducible verification.
+# Pinned, not defaulted: the compiler's default target moves with the toolchain, and a release
+# whose bytecode changes when forge is upgraded cannot be reproduced from its source commit.
+# Cancun is supported by both target testnets and pins the compiler's opcode target.
 evm_version = "cancun"
 remappings = [
     "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
     "forge-std/=lib/forge-std/src/",
 ]
+# Deployment drafts and seed journals are written here by the scripts; the published manifest is
+# produced afterwards by the post-receipt verifier (runbook 04 §4, artifacts 09 §1).
 fs_permissions = [{ access = "read-write", path = "./deployments" }]
 
 [profile.default.fuzz]
 runs = 256
 
 [fmt]
-# Preserve contract layout; check formatting in scripts and tests.
+# Keep deployed contract source byte-for-byte reproducible against explorer
+# metadata. Format scripts and tests without rewriting the release source.
 ignore = ["src/**"]
 
+# Referenced by .github/workflows/test.yml (FOUNDRY_PROFILE: ci). Without this section Foundry
+# silently fell back to the default profile.
 [profile.ci]
 verbosity = 3
 
@@ -34,3 +41,5 @@ robinhood_testnet = "${ROBINHOOD_TESTNET_RPC_URL}"
 [etherscan]
 arbitrum_sepolia = { key = "${ETHERSCAN_API_KEY}", chain = 421614 }
 robinhood_testnet = { key = "", chain = 46630, url = "https://explorer.testnet.chain.robinhood.com/api/" }
+
+# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

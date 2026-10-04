@@ -24,10 +24,6 @@
     "schemaVersion": {
       "const": 2
     },
-    "sourceCommit": {
-      "type": "string",
-      "pattern": "^[0-9a-f]{40}$"
-    },
     "deploymentId": {
       "type": "string",
       "pattern": "^palissage-(421614|46630)-v1\\.1\\.0$"

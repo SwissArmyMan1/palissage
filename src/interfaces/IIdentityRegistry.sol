@@ -3,6 +3,7 @@ pragma solidity ^0.8.24;
 
 import {IIdentity} from "./IIdentity.sol";
 
+/// @title IIdentityRegistry - wallet ↔ identity binding and compliance verification.
 interface IIdentityRegistry {
     event IdentityRegistered(address indexed wallet, IIdentity indexed identity);
     event IdentityRemoved(address indexed wallet, IIdentity indexed identity);
@@ -20,8 +21,9 @@ interface IIdentityRegistry {
     function countryOf(address wallet) external view returns (uint16 country);
     function containsWallet(address wallet) external view returns (bool registered);
 
-    /// @notice Requires valid claims for every configured topic.
+    /// @notice Wallet has a registered identity holding a valid claim for EVERY required topic.
     function isVerified(address wallet) external view returns (bool verified);
 
+    /// @notice Wallet's identity holds at least one valid claim for `topic` from a trusted issuer.
     function hasValidClaim(address wallet, uint256 topic) external view returns (bool has);
 }

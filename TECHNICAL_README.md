@@ -2,8 +2,6 @@
 
 Palissage `1.1.0` is an EVM testnet prototype with separate deployments on Arbitrum Sepolia and Robinhood Testnet. Solidity 0.8.28, Cancun, optimizer 200 runs and the IR pipeline are pinned in `foundry.toml`.
 
-Source for the published `1.1.0` addresses is pinned at commit `c3a6213e35a3a49dbff2bee5ac4d489f2c35c050` in each manifest's `sourceCommit`. Current sources have shorter comments; use the pinned revision to reproduce or verify those deployed artifacts. Comments affect Solidity metadata even when executable behavior is unchanged.
-
 ## Architecture
 
 | Contract | Responsibility |

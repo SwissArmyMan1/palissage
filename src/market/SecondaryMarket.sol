@@ -11,6 +11,9 @@ import {IWineLotToken} from "../interfaces/IWineLotToken.sol";
 import {IIdentityRegistry} from "../interfaces/IIdentityRegistry.sol";
 import {ClaimTopicsLib} from "../libraries/ClaimTopicsLib.sol";
 
+/// @title SecondaryMarket - whitelisted B2B resale of wine lot allocations.
+/// @notice Sellers list lazily (tokens stay in their wallet, market is an approved
+///         operator); each purchase pays the protocol fee and the winery royalty.
 contract SecondaryMarket is AccessControl, Pausable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
@@ -19,12 +22,12 @@ contract SecondaryMarket is AccessControl, Pausable, ReentrancyGuard {
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 
     uint16 public constant BPS_DENOMINATOR = 10000;
-    uint16 public constant MAX_FEE_BPS = 1000;
+    uint16 public constant MAX_FEE_BPS = 1000; // 10%
 
     struct Listing {
         address seller;
         uint256 lotId;
-        uint32 quantity;
+        uint32 quantity; // remaining
         uint256 pricePerBottle;
         address paymentToken;
         bool active;
@@ -73,7 +76,7 @@ contract SecondaryMarket is AccessControl, Pausable, ReentrancyGuard {
     IIdentityRegistry public immutable identityRegistry;
 
     address public treasury;
-    uint16 public secondaryFeeBps = 200;
+    uint16 public secondaryFeeBps = 200; // 2%
 
     mapping(address => bool) public allowedPaymentTokens;
 
@@ -89,6 +92,10 @@ contract SecondaryMarket is AccessControl, Pausable, ReentrancyGuard {
         identityRegistry = registry;
         treasury = treasury_;
     }
+
+    // ---------------------------------------------------------------------
+    // Admin
+    // ---------------------------------------------------------------------
 
     function setPaymentTokenAllowed(address token, bool allowed) external onlyRole(DEFAULT_ADMIN_ROLE) {
         if (token == address(0)) revert ZeroAddress();
@@ -116,7 +123,10 @@ contract SecondaryMarket is AccessControl, Pausable, ReentrancyGuard {
         _unpause();
     }
 
-    /// @notice Listings hold no tokens; the seller's available balance is checked again on purchase.
+    // ---------------------------------------------------------------------
+    // Listings
+    // ---------------------------------------------------------------------
+
     function list(uint256 lotId, uint32 quantity, uint256 pricePerBottle, address paymentToken)
         external
         whenNotPaused
@@ -159,7 +169,11 @@ contract SecondaryMarket is AccessControl, Pausable, ReentrancyGuard {
         emit ListingCancelled(listingId);
     }
 
-    /// @notice maxPricePerBottle and deadline protect against repricing and stale purchases.
+    /// @notice Buys `quantity` bottles from a listing. Funds split: protocol fee ->
+    ///         treasury, winery royalty -> lot creator, remainder -> seller. Tokens move
+    ///         seller -> buyer with this market acting as the transfer agent.
+    /// @param maxPricePerBottle Slippage bound against the seller raising the price first.
+    /// @param deadline Latest timestamp the buyer accepts for the trade.
     function buy(uint256 listingId, uint32 quantity, uint256 maxPricePerBottle, uint256 deadline)
         external
         whenNotPaused

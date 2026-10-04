@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 import {IERC1155} from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import {IERC7943MultiToken} from "./IERC7943.sol";
 
+/// @title IWineLotToken - wine lot RWA token: one tokenId per lot, balance = bottles.
 interface IWineLotToken is IERC1155, IERC7943MultiToken {
     enum LotStatus {
         Draft,
@@ -22,7 +23,8 @@ interface IWineLotToken is IERC1155, IERC7943MultiToken {
         ReadyForDelivery
     }
 
-    // One token unit represents one bottle; documents are anchored by docsHash.
+    /// @notice Full onchain wine lot record. Extended data (photos, documents,
+    ///         redemption rules) lives in the JSON behind `metadataURI`, anchored by `docsHash`.
     struct WineLot {
         address winery;
         LotStatus status;

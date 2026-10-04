@@ -2,8 +2,7 @@
 
 Release: `1.1.0`. Checked October 3, 2026.
 
-- Foundry: 183 tests pass in the CI profile with 1024 fuzz runs. Compiler target is Solidity 0.8.28 / Cancun, optimizer 200 / IR. Published manifests pin the deployed source revision in `sourceCommit`; configured formatting checks cover scripts and tests.
-- Comment cleanup: code tokens and all 21 compiler ABIs are unchanged. Compiled runtime matches the pinned source after excluding compiler metadata, including embedded Identity metadata. The current branch and deployed addresses therefore have different metadata hashes; repeat verification uses the pinned source revision.
+- Foundry: 183 tests pass in the CI profile with 1024 fuzz runs. Compiler target is Solidity 0.8.28 / Cancun, optimizer 200 / IR. Deployed contract source is preserved byte-for-byte for explorer metadata; configured formatting checks cover scripts and tests.
 - Frontend: TypeScript build, tour-target checks and ESLint pass. `npm audit --omit=dev` reports zero advisories with the committed lockfile. Compatible dependency updates and explicit patched transitive overrides remove the reported runtime advisories.
 - Both chains: ten creation receipts, compiled runtimes, immutable references, privileged grants, treasuries and both accepted payment-token metadata were checked. All twenty contract sources are confirmed by their explorers.
 - Arbiscan: all ten Arbitrum protocol addresses have Exact Match verification through Etherscan V2; the published source, compiler settings and constructor arguments were read back after verification. Robinhood: all ten official-explorer source records were reconfirmed. Three fixture Identity contracts per chain also expose source; Arbiscan labels two repeated Identity addresses Similar Match, explicitly recorded separately from Exact Match. Their registration receipts, exact runtime and gateway management key were checked independently on-chain.
