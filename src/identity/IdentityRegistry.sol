@@ -36,9 +36,7 @@ contract IdentityRegistry is AccessControl, IIdentityRegistry {
         _requiredClaimTopics.push(ClaimTopicsLib.TOPIC_KYC);
     }
 
-    // ---------------------------------------------------------------------
     // Admin / agent
-    // ---------------------------------------------------------------------
 
     function setTrustedIssuersRegistry(ITrustedIssuersRegistry registry) external onlyRole(DEFAULT_ADMIN_ROLE) {
         if (address(registry) == address(0)) revert ZeroAddress();
@@ -90,9 +88,7 @@ contract IdentityRegistry is AccessControl, IIdentityRegistry {
         emit IdentityRemoved(wallet, identity);
     }
 
-    // ---------------------------------------------------------------------
     // Views
-    // ---------------------------------------------------------------------
 
     /// @inheritdoc IIdentityRegistry
     function identityOf(address wallet) external view returns (IIdentity identity) {

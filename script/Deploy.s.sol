@@ -20,6 +20,7 @@ import {IClaimIssuer} from "../src/interfaces/IClaimIssuer.sol";
 ///      `test/integration/DeploymentWiring.t.sol` without a broadcast.
 library PalissageDeployment {
     /// @notice Public test networks supported by this release.
+    uint256 internal constant AVALANCHE_FUJI_CHAIN_ID = 43113;
     uint256 internal constant ARBITRUM_SEPOLIA_CHAIN_ID = 421614;
     uint256 internal constant ROBINHOOD_TESTNET_CHAIN_ID = 46630;
     /// @notice Anvil / local fork, developer builds only.
@@ -52,7 +53,7 @@ library PalissageDeployment {
     function requireSupportedChain() internal view {
         if (
             block.chainid != ARBITRUM_SEPOLIA_CHAIN_ID && block.chainid != ROBINHOOD_TESTNET_CHAIN_ID
-                && block.chainid != LOCAL_CHAIN_ID
+                && block.chainid != AVALANCHE_FUJI_CHAIN_ID && block.chainid != LOCAL_CHAIN_ID
         ) {
             revert UnsupportedChain(block.chainid);
         }

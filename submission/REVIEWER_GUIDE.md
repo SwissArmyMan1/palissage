@@ -1,41 +1,32 @@
-# Arbitrum Open House Singapore submission
+# Palissage on Avalanche Fuji
 
-Palissage is an existing project adapted for this buildathon. It provides direct B2B wine trading: winery inventory, professional-buyer allocations, payment escrow, restricted resale with winery royalties and delivery redemption. En Primeur deposits support optional future-production sales.
+Palissage is a B2B wine trading platform and RWA project connecting wineries directly with professional buyers. Tokenized wine allocations provide a shared record of inventory, primary settlement, restricted resale with winery royalties and delivery redemption. En Primeur deposits support optional future-production sales.
 
-## Rule alignment
+## Demo status
 
-The [official HackQuest event page](https://www.hackquest.io/vi/hackathons/Arbitrum-Open-House-Singapore-Online-Buildathon?tab=custom-dfc39bda-c613-4658-8df9-f35b527dace5) allows existing projects and requires deployment on an Arbitrum chain, with Arbitrum Sepolia and Robinhood listed among the options. It states that at least one third of prizes is reserved for Robinhood projects and at least one third for Arbitrum projects, with additional consideration for USDG integration. Dual-network frontend support is a project choice; the page does not state that every entry must support both.
-
-Palissage publishes two independent deployments and supports both in the interface. USDG uses the [official Paxos testnet addresses](https://docs.paxos.com/guides/stablecoin/usdg/testnet); it is a selectable payment asset in both markets and is shown with its own currency and precision.
-
-The event timeline displays registration ending October 2 and project submission ending October 4, 2026; the displayed time zone was not independently established. Registration and final submission must be checked in the entrant's HackQuest account. This repository is not evidence that the entrant has registered or submitted. The linked Singapore terms PDF was unavailable during preparation; the entrant must read and accept the actual terms in the registration flow.
+The demonstration targets Avalanche Fuji C-Chain, chain ID `43113`. Gas uses test AVAX and payments use Palissage tEURe with 18 decimals. The Fuji deployment and trade workflow have been exercised locally. Public Fuji deployment, explorer verification and publication of the Fuji-enabled site remain pending in this checkout.
 
 ## Demo routes
 
-- [Wallet-free guided tour](https://palissage.net/demo): explicit local simulation; no chain transactions.
-- [Arbitrum readiness](https://palissage.net/app/testnet?chain=421614&asset=eur).
-- [Robinhood readiness](https://palissage.net/app/testnet?chain=46630&asset=eur).
-- [Robinhood USDG](https://palissage.net/app/testnet?chain=46630&asset=usdg).
-- [Deployment status and addresses](https://palissage.net/network).
+- [Guided simulation](https://palissage.net/demo?chain=43113&asset=eur) runs locally in the browser with a simulation banner.
+- [Fuji readiness](https://palissage.net/app/testnet?chain=43113&asset=eur) is the wallet entry point after the Fuji deployment and site are published.
+- [Fuji status and addresses](https://palissage.net/network?chain=43113&asset=eur) shows the selected deployment's readiness.
 
-Use the network picker to switch. Inventory, identity and balances belong to the selected network. A prepared form is discarded on switching.
+## Wallet workflow after publication
 
-## Live workflow
+1. Connect a wallet on Avalanche Fuji and obtain test AVAX. Claim tEURe in readiness. Once gateway test mode is enabled, self-assign Winery or Shop.
+2. The winery creates a lot. A token verifier checks it before sale. Demo lots represent fictional inventory.
+3. The winery publishes a Standard or En Primeur offer with tEURe prices, dates and milestones. A shop approves tEURe and reserves. Full payment mints bottle units.
+4. The primary-market verifier confirms a milestone and the winery withdraws released payment. The shop can list bottles for resale. A verified buyer purchases, with platform fees and winery royalties paid from the sale.
+5. Once production is ReadyForDelivery, a holder requests delivery. The winery marks shipment and the buyer confirms receipt, burning the escrowed bottle units. A redemption verifier can resolve an open dispute by returning the bottle units.
 
-1. Connect a wallet with test ETH. Claim tEURe in readiness or obtain test USDG from Paxos. Self-assign Winery or Shop through the gateway.
-2. Winery creates a lot. Verification requires a token verifier; the public fixture lots are already verified as explicitly fictional demo data.
-3. Winery publishes a Standard or En Primeur offer, with payment asset, dates and milestones. A shop approves that asset and reserves; paying the remainder mints bottle tokens.
-4. The primary-market verifier confirms a milestone; the winery withdraws released payment. The shop can approve the secondary market and list bottles; another verified buyer purchases with royalty and platform fee deductions.
-5. Once production is ReadyForDelivery, a holder approves redemption escrow and requests delivery. Winery marks shipment; buyer confirms receipt and escrowed bottles burn. Requested redemptions may be cancelled, and a redemption verifier can resolve an open dispute with a refund.
+Operator privileges require explicit grants. Token verification, primary milestone verification and redemption dispute verification are separate roles. The guided simulation provides access to the operator screens for review.
 
-No public account can self-assign the operator role. Token verification, primary milestone verification and redemption dispute verification are distinct grants. Use the local operator tour to review those screens without access to the deployer wallet.
+## Review materials
 
-## Independently checkable evidence
+- [Technical guide](../TECHNICAL_README.md) covers the contract architecture, build and Fuji deployment.
+- [Deployment records](../deployments/README.md) describe the receipts, addresses and accounting expected for the public Fuji release.
+- [Validation record](VALIDATION.md) identifies local checks and remaining public verification.
+- [Internal security review](SECURITY_REVIEW.md) covers the trust model and regression tests.
 
-Each manifest includes exact addresses, creation transaction hashes, compiled source hashes and observed runtime hashes. The separate workflow file lists transaction hashes, participants, fixture IDs and final accounting. Open each hash in the relevant explorer; reading through PalissageLens does not create a transaction.
-
-- [Arbitrum deployment](../deployments/palissage-421614.manifest.json) and [workflow](../deployments/palissage-421614.flow-evidence.json).
-- [Robinhood deployment](../deployments/palissage-46630.manifest.json) and [workflow](../deployments/palissage-46630.flow-evidence.json).
-- [Security review](SECURITY_REVIEW.md) and [technical guide](../TECHNICAL_README.md).
-
-The six-lot seed uses tEURe. A separate USDG lot demonstrates primary settlement, resale royalties and delivery burn with the official Paxos token: [Arbitrum USDG receipts](../deployments/palissage-421614.usdg-evidence.json) and [Robinhood USDG receipts](../deployments/palissage-46630.usdg-evidence.json). Each file names its actual asset and participants.
+The prototype demonstrates software execution using fictional lots and valueless test assets. A commercial pilot still requires winery and buyer onboarding, legal and logistics arrangements, and validation of repeat orders and total delivered cost.

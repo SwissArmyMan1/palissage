@@ -30,17 +30,19 @@ contract TestEUReTest is Test {
 
     // ------------------------------------------------------------ chain guard
 
-    function test_Constructor_AllowsBothTestnetsAndLocal() public {
+    function test_Constructor_AllowsTestnetsAndLocal() public {
         vm.chainId(421614);
         assertEq(new TestEURe(owner).decimals(), 18);
         vm.chainId(46630);
+        assertEq(new TestEURe(owner).decimals(), 18);
+        vm.chainId(43113);
         assertEq(new TestEURe(owner).decimals(), 18);
         vm.chainId(31337);
         assertEq(new TestEURe(owner).decimals(), 18);
     }
 
     function test_Constructor_RejectsOtherChains() public {
-        uint256[3] memory forbidden = [uint256(1), 42161, 4663];
+        uint256[4] memory forbidden = [uint256(1), 42161, 4663, 43114];
         for (uint256 i = 0; i < forbidden.length; i++) {
             vm.chainId(forbidden[i]);
             vm.expectRevert(abi.encodeWithSelector(TestEURe.UnsupportedTestChain.selector, forbidden[i]));

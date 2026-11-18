@@ -1,6 +1,6 @@
 # Technical guide
 
-Palissage `1.1.0` is an EVM testnet prototype with separate deployments on Arbitrum Sepolia and Robinhood Testnet. Solidity 0.8.28, Cancun, optimizer 200 runs and the IR pipeline are pinned in `foundry.toml`.
+Palissage `1.1.0` is a B2B wine trading and RWA prototype targeting Avalanche Fuji C-Chain (43113). Gas uses test AVAX and demo settlement uses Palissage tEURe with 18 decimals. Solidity 0.8.28, Cancun, optimizer 200 runs and the IR pipeline are pinned in `foundry.toml`.
 
 ## Architecture
 
@@ -14,63 +14,63 @@ Palissage `1.1.0` is an EVM testnet prototype with separate deployments on Arbit
 | PrimaryMarket | Primary offers, deposits, full settlement, escrow, milestones, withdrawal, cancellation and default |
 | SecondaryMarket | Non-custodial listings, payment checks, platform fees and winery royalties |
 | RedemptionManager | Bottle escrow, shipment, delivery burn, cancellation, verifier refund and signed recovery |
-| PalissageLens | Bounded read aggregation for the interface; it performs no writes |
+| PalissageLens | Bounded read aggregation for the interface |
 | TestEURe | Valueless 18-decimal test payment token with a daily faucet |
 
-Each lot has one token ID. Full payment mints bottles; a deposit alone does not. Redeemed supply is burned and does not restore lifetime mint capacity. Secondary sale payments go directly to seller, treasury and winery. Milestones release primary payment escrow; the verifier controls release and cancellation is constrained by funds still backing escrow.
+Each lot has one token ID. Full payment mints bottles. Redeemed supply is burned while lifetime mint capacity remains consumed. Secondary sale payments go directly to seller, treasury and winery. Milestones release primary payment escrow. The verifier controls release and cancellation is constrained by funds still backing escrow.
 
-The gateway Admin role grants token verification. Primary milestone verification and redemption dispute verification are separate contract roles, checked separately by the interface. An admin can trust issuers, enable payment assets and enforce transfers. These privileges are part of the trust model, not permissionless guarantees.
+The gateway Admin role grants token verification. Primary milestone verification and redemption dispute verification are separate contract roles, checked separately by the interface. An admin can trust issuers, enable payment assets and enforce transfers. The trust model depends on these privileged accounts.
 
-Signed ClaimIssuer claims use `claimDigest(subject, topic, data)` on the intended chain and issuer address. Clients must read that digest rather than reproduce an old domain-free message. Redemption recovery uses its separate EIP-712 domain and deadline. Do not put private shipment details or personal identity data directly on-chain; demonstration hashes refer to public fixtures.
+Signed ClaimIssuer claims use `claimDigest(subject, topic, data)` on the intended chain and issuer address. Clients read that digest before signing. Redemption recovery uses its separate EIP-712 domain and deadline. Keep private shipment details and personal identity data off-chain. Demonstration hashes refer to fictional fixtures.
 
 ## Build and check
 
-Install Foundry, Node.js 22+ and the frontend dependencies:
+Install Foundry and initialize the contract dependencies.
 
 ```sh
-git submodule update --init --recursive
-npm ci --prefix UI/web
+git submodule update --init --recursive lib/forge-std lib/openzeppelin-contracts
 forge fmt --check
 forge build --sizes
 forge test
-npm run lint --prefix UI/web
-npm run build --prefix UI/web
 ```
 
 Unit, fuzz and integration tests cover identity, transfers, market accounting, ERC-7943 controls, malicious ERC-20/ERC-1155 callbacks, full payment, royalties, delivery and refunds. The CI profile increases fuzz runs to 1024. [Security review](submission/SECURITY_REVIEW.md) records the release findings, invariants and limitations.
 
-`test/echidna` contains optional harnesses. Their presence is not evidence of an executed Echidna campaign; release validation uses the reported Foundry runs and on-chain receipts.
+`test/echidna` contains optional harnesses. The [validation record](submission/VALIDATION.md) describes the executed checks and current Fuji deployment status.
 
-## Deploy a testnet release
+## Deploy on Avalanche Fuji
 
-Only chain IDs 421614, 46630 and local 31337 are permitted by the Solidity deployment/faucet scripts. The resumable Node release runner permits only the two public testnets.
+The contract deployment entry point is `script/Deploy.s.sol:Deploy`. Create an encrypted Foundry keystore for a dedicated testnet signer and fund its address with test AVAX. Set `DEPLOYER` to that address. `ADMIN`, `OWNER` and `TREASURY` can specify the protocol operator, gateway owner and fee receiver. Their defaults are defined in the script.
 
 ```sh
-cp .env.example .env
-# Export PRIVATE_KEY or MNEMONIC in a private local shell.
-# Set FORGE if the forge executable is outside PATH.
+export FUJI_RPC_URL=https://api.avax-test.network/ext/bc/C/rpc
+cast wallet import palissage-fuji --interactive
+export DEPLOYER=$(cast wallet address --account palissage-fuji)
+cast chain-id --rpc-url "$FUJI_RPC_URL"
 forge build
-node script/release.mjs preflight 421614
-node script/release.mjs deploy 421614
-node script/demo.mjs 421614
-node script/verify-sources.mjs 421614
-node script/verify-arbiscan.mjs
+forge script script/Deploy.s.sol:Deploy --rpc-url "$FUJI_RPC_URL" \
+  --account palissage-fuji --sender "$DEPLOYER"
 ```
 
-Use `46630` for Robinhood. `RPC_URL` can select an endpoint; its actual chain ID is checked. `MAX_TEST_ETH_SPEND` bounds one runner invocation. The demo funds three controlled test actors and performs the documented fixture trades. Review these scripts before running against a new account.
+The RPC must return chain ID `43113`. The script command above simulates deployment. After reviewing the signer, addresses and simulation, the following command sends public Fuji transactions.
 
-A local, ignored journal stores transaction hash, sender, nonce and receipt before proceeding. A resumed step checks its receipt; it never silently submits a duplicate create, mint or purchase. An uncertain transaction must be reconciled before continuing. Private keys and signed raw transactions are never journalled. Preserve the journal locally: it is needed to reproduce the current release verification and to resume safely.
+```sh
+forge script script/Deploy.s.sol:Deploy --rpc-url "$FUJI_RPC_URL" \
+  --account palissage-fuji --sender "$DEPLOYER" --broadcast --slow
+```
 
-The verifier compares creation calldata and runtime bytecode against current compiler artifacts, masks only declared immutable slots, checks immutable references and role wiring, and observes the Lens at a fresh block. Publication updates the public manifest, ABIs and `UI/web/src/chain/deployments.json`. Rebuilding changed source does not update a live deployment: a new deployment and new journal are required.
+The script deploys ten protocol contracts, wires their roles and enables tEURe in both markets. It writes draft addresses to `deployments/palissage-43113.addresses.json`. Keep the Foundry broadcast receipts locally and reconcile any pending transaction before resuming a broadcast. Gateway test mode starts disabled and requires the gateway owner's explicit activation.
 
-Explorer source verification is tracked separately from receipt/runtime/wiring verification. `verify-arbiscan.mjs` publishes the Arbitrum Sepolia release to Arbiscan through Etherscan V2, using `ETHERSCAN_API_KEY` or the existing `API_KEY` in the local `.env`. It sends the exact standard JSON compiler input and constructor arguments, waits for verification, then reads back the published sources and compiler settings. The key is never logged or copied into the public manifest.
+Before importing addresses into the frontend, verify confirmed creation receipts, runtime bytecode, immutable references, privileged grants, payment metadata and Lens wiring on Fuji. Submit the exact compiler input and constructor arguments to the Fuji explorer and record its source-verification result. The [deployment record guide](deployments/README.md) describes the expected release artifacts.
 
-`verify-sources.mjs 421614` separately publishes to Arbitrum Blockscout; `verify-sources.mjs 46630` publishes to the official Robinhood explorer. Verification on one explorer does not establish verification on another. A manifest field is set only after that explorer confirms the source record, and a runner's final count includes only confirmations obtained in the current run.
-
-The fixture participants also have dynamically created Identity contracts. `node script/collect-identities.mjs <chainId>` confirms their registration receipts, exact runtime and gateway management key, then writes `palissage-<chainId>.identities.json`. Verify those addresses with `node script/verify-arbiscan.mjs --identities` and `node script/verify-sources.mjs 46630 --identities` respectively. Collection is read-only on-chain; explorer verification submits source, not a transaction.
+`script/Seed.s.sol` runs individual fixture stages from a local `SEED_PLAN` for the target chain. Its `runStep(stage, itemIndex)` entry point requires the corresponding operator or actor signer. Retain confirmed fixture IDs and receipts when continuing a seed. The Fuji UI becomes writable after a verified chain ID 43113 record is published into `UI/web/src/chain/deployments.json`.
 
 ## Frontend transaction boundary
 
-Read queries and receipts are pinned to the selected chain. The UI checks the actual RPC chain ID, contract code hashes, Lens wiring and payment metadata before a write, switches the wallet when needed, simulates the exact call, then requests one signature. Successful receipts invalidate both single-contract and batched reads. A submitted hash survives navigation and reload; another write waits for its outcome. Network/asset switching discards prepared forms and starts a fresh page.
+Use `/app/testnet?chain=43113&asset=eur` for Fuji readiness. The prepared UI checks the RPC chain ID, contract code hashes, Lens wiring and payment metadata before a write, switches the wallet when needed, simulates the exact call, then requests one signature. Successful receipts invalidate both single-contract and batched reads. A submitted hash survives navigation and reload, and another write waits for its outcome.
 
-Tours have their own local state and persistent simulation banner. They never use the live write path. Unsupported chains and unpublished deployments fail closed. USDG amounts retain dollar denomination and 6 decimals; tEURe amounts retain euro denomination and 18 decimals. Different networks and payment assets are not interchangeable balances.
+Tours use local state and a persistent simulation banner. Fuji payment amounts use the tEURe token stored in the offer, with 18-decimal precision. Wallet writes require a verified published deployment and the relevant contract roles. See the frontend's [README](UI/web/README.md) for development and a Fuji-mode build.
+
+## Deployment status
+
+The available Fuji validation is local. Public Fuji creation receipts, a verified deployment manifest, explorer verification and publication of the Fuji-enabled site remain pending in this checkout.

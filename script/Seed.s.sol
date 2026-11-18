@@ -46,7 +46,7 @@ contract Seed is Script {
     string internal plan;
 
     modifier withPlan() {
-        if (block.chainid != 421614 && block.chainid != 46630 && block.chainid != 31337) {
+        if (block.chainid != 43113 && block.chainid != 421614 && block.chainid != 46630 && block.chainid != 31337) {
             revert UnsupportedChain(block.chainid);
         }
         plan = vm.readFile(vm.envString("SEED_PLAN"));

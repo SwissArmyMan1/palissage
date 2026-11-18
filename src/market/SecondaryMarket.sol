@@ -93,9 +93,7 @@ contract SecondaryMarket is AccessControl, Pausable, ReentrancyGuard {
         treasury = treasury_;
     }
 
-    // ---------------------------------------------------------------------
     // Admin
-    // ---------------------------------------------------------------------
 
     function setPaymentTokenAllowed(address token, bool allowed) external onlyRole(DEFAULT_ADMIN_ROLE) {
         if (token == address(0)) revert ZeroAddress();
@@ -123,9 +121,7 @@ contract SecondaryMarket is AccessControl, Pausable, ReentrancyGuard {
         _unpause();
     }
 
-    // ---------------------------------------------------------------------
     // Listings
-    // ---------------------------------------------------------------------
 
     function list(uint256 lotId, uint32 quantity, uint256 pricePerBottle, address paymentToken)
         external

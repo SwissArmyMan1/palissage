@@ -30,12 +30,26 @@ contract DeploymentWiringTest is Test {
         PalissageDeployment.Actors memory actors =
             PalissageDeployment.Actors({deployer: deployer, admin: admin, owner: admin, treasury: admin});
 
-        uint256[3] memory forbidden = [uint256(1), 42161, 4663];
+        uint256[4] memory forbidden = [uint256(1), 42161, 4663, 43114];
         for (uint256 i = 0; i < forbidden.length; i++) {
             vm.chainId(forbidden[i]);
             vm.expectRevert(abi.encodeWithSelector(PalissageDeployment.UnsupportedChain.selector, forbidden[i]));
             this.deployExternal(actors);
         }
+    }
+
+    function test_FujiDeploymentWiring() public {
+        vm.chainId(43113);
+        PalissageDeployment.Actors memory actors =
+            PalissageDeployment.Actors({deployer: deployer, admin: admin, owner: gatewayOwner, treasury: treasury});
+        vm.startPrank(deployer);
+        PalissageDeployment.Deployment memory fuji = PalissageDeployment.deploy(actors);
+        vm.stopPrank();
+        PalissageLens.ProtocolView memory state = fuji.lens.protocol(address(fuji.paymentToken));
+        assertEq(state.chainId, 43113);
+        assertEq(state.paymentSymbol, "tEURe");
+        assertTrue(state.paymentAllowedPrimary && state.paymentAllowedSecondary);
+        assertFalse(fuji.roleGateway.testMode());
     }
 
     function test_RejectsZeroActor() public {

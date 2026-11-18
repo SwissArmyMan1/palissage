@@ -1,30 +1,25 @@
 # Palissage
 
-Direct B2B wine trade on Arbitrum and Robinhood Chain. Palissage connects wineries with shops and importers, with fewer reseller layers and a shared record of inventory, payments and delivery.
+Palissage is a B2B wine trading platform and RWA project being prepared for Avalanche Fuji. It connects wineries directly with shops and importers, with fewer reseller layers and a shared record of inventory, payments and delivery.
 
-**[Website](https://palissage.net/) · [Guided demo](https://palissage.net/demo) · [Live network status](https://palissage.net/network) · [Frontend repository](https://github.com/SwissArmyMan1/palissage_ui)**
+**[Website](https://palissage.net/) · [Guided demo](https://palissage.net/demo?chain=43113&asset=eur) · [Fuji readiness](https://palissage.net/app/testnet?chain=43113&asset=eur) · [Frontend repository](https://github.com/SwissArmyMan1/palissage_ui)**
 
 The prototype covers verified wine lots, primary purchases, optional En Primeur deposits, milestone-controlled payment escrow, restricted resale with producer royalties, and redemption that burns tokens when delivery is confirmed. One ERC-1155 unit represents one bottle in a lot. Transfers follow ERC-7943-style holder checks and enforcement controls.
 
-## Testnet release
+## Avalanche Fuji
 
-Release `1.1.0` targets **Arbitrum Sepolia (421614)** and **Robinhood Testnet (46630)**. Each chain has its own contracts and inventory; there is no bridge between them. Published manifests record creation receipts, source hashes, runtime hashes, constructor arguments and independent explorer verification status.
+The demonstration targets **Avalanche Fuji C-Chain (43113)**, using **test AVAX** for gas and **Palissage tEURe (18 decimals)** for settlement. tEURe is a valueless demo token with a daily faucet.
 
-| Network | Deployment | Executed workflow |
-| --- | --- | --- |
-| Arbitrum Sepolia | [Manifest](deployments/palissage-421614.manifest.json) | [Receipts and final balances](deployments/palissage-421614.flow-evidence.json) |
-| Robinhood Testnet | [Manifest](deployments/palissage-46630.manifest.json) | [Receipts and final balances](deployments/palissage-46630.flow-evidence.json) |
-
-Settlement supports the official Paxos **test USDG (6 decimals)** and the local **tEURe demonstration token (18 decimals)**. The interface names the token on every monetary amount. Selecting USDG does not convert euro prices: offers retain their original payment asset. [Executed USDG flows](deployments/palissage-46630.usdg-evidence.json) cover primary purchase, resale and redemption with the official test token. USDG can be obtained from the [Paxos faucet](https://faucet.paxos.com/); tEURe has a built-in daily faucet.
+The Fuji deployment and trading workflow have been validated locally. Public Fuji deployment, explorer source verification and publication of the Fuji-enabled site remain pending in this checkout. Wallet writes become available once a verified Fuji deployment is imported into the interface. The [technical guide](TECHNICAL_README.md) covers contract setup and deployment, and the [validation record](submission/VALIDATION.md) describes the available checks.
 
 ## Try the prototype
 
-1. Open the [guided demo](https://palissage.net/demo) for a wallet-free local simulation. Its persistent banner identifies invented data; simulated actions submit no blockchain transactions.
-2. Open [testnet readiness](https://palissage.net/app/testnet), select a network and settlement asset, then connect a wallet.
-3. Obtain test ETH for gas and test payment tokens. Take the Winery or Shop role through the public test-mode gateway. The operator role requires a grant.
+1. Open the [guided demo](https://palissage.net/demo?chain=43113&asset=eur) for a wallet-free local simulation with a persistent banner identifying invented data.
+2. After the Fuji deployment and site are published, open [Fuji readiness](https://palissage.net/app/testnet?chain=43113&asset=eur) and connect a wallet on chain ID 43113.
+3. Obtain test AVAX for gas and claim tEURe through readiness. Once test mode is enabled, take the Winery or Shop role through the gateway. The operator role requires a grant.
 4. Create a lot, have an operator verify it, publish an offer, purchase, resell, and request delivery. [Reviewer instructions](submission/REVIEWER_GUIDE.md) explain the role boundaries and explorer evidence.
 
-The public seed contains explicitly fictional lots. No wine is sold and no real money settles in this release. Self-service test roles are demonstration identities, not KYC/KYB certification. The contracts are non-upgradeable; administration, issuer trust, enforcement and dispute resolution remain privileged. This release has a documented internal review and regression tests, not an independent security audit or production approval.
+Demo lots are fictional and use valueless test assets. Self-service roles represent demonstration identities. The contracts are non-upgradeable, with privileged administration, issuer trust, enforcement and dispute resolution. The [internal security review](submission/SECURITY_REVIEW.md) describes the trust model and regression coverage. Independent security review and production approval remain pending.
 
 ## Develop
 
@@ -33,16 +28,13 @@ git clone --recurse-submodules https://github.com/SwissArmyMan1/palissage.git
 cd palissage
 forge build
 forge test
-cd UI/web
-npm ci
-npm run dev
 ```
 
-The frontend is a separate repository linked at `UI/web`. Public chain configuration is generated from verified deployment manifests; wallet keys never belong in browser environment variables. [Technical guide](TECHNICAL_README.md) covers architecture, tests and reproducible deployment.
+The frontend is a separate repository linked at `UI/web`, with its own [setup instructions](UI/web/README.md). Public chain configuration is generated from verified deployment manifests. Keep signing keys in the operator's local keystore.
 
 ## Scope and next steps
 
-The initial commercial target is repeat B2B orders from independent wineries and professional buyers. Direct access could improve winery proceeds and buyer terms; shipping, duties, claims handling and total delivered cost still need validation in a bounded pilot. En Primeur financing is optional, rather than a prerequisite for the basic marketplace.
+The initial commercial target is repeat B2B orders from independent wineries and professional buyers. Direct access could improve winery proceeds and buyer terms. Shipping, duties, claims handling and total delivered cost still need validation in a bounded pilot. En Primeur financing is an optional extension to the basic marketplace.
 
 Production work includes independent security review, partner onboarding, legal and operational arrangements for wine sales and delivery, and measurement of repeat purchases and all-in economics. Test transactions demonstrate software execution; they do not establish commercial traction.
 

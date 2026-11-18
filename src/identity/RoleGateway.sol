@@ -14,14 +14,9 @@ interface IVerifierRoleManager {
     function revokeRole(bytes32 role, address account) external;
 }
 
-/// @title RoleGateway - on-chain role authority and test-mode role switcher.
-/// @notice A trusted claim issuer that assigns protocol roles without off-chain signing. Each
-///         managed wallet gets a gateway-owned {Identity}; claims are validated from the
-///         gateway's own bookkeeping instead of ECDSA recovery. A wallet holds one role at a
-///         time - {assignRole} (admin) and {assumeRole} (self-service, test mode only) both
-///         drop the previous role's claims first.
-/// @dev Privileged component: registry agent, trusted issuer for every role topic and admin on
-///      the token. In production {testMode} stays off and these powers are scoped down.
+/// @title RoleGateway - identity claims and participant roles.
+/// @notice Manages one role per wallet using gateway-owned identities.
+/// @dev Trusted issuer, registry agent and token admin. Test mode allows self-service roles.
 contract RoleGateway is Ownable {
     string public constant VERSION = "1.1.0";
 
@@ -73,9 +68,7 @@ contract RoleGateway is Ownable {
         _;
     }
 
-    // ---------------------------------------------------------------------
     // Owner
-    // ---------------------------------------------------------------------
 
     /// @notice Toggle the test-mode sandbox. Only the owner (not the admin) may call.
     function setTestMode(bool enabled) external onlyOwner {
@@ -83,9 +76,7 @@ contract RoleGateway is Ownable {
         emit TestModeSet(enabled);
     }
 
-    // ---------------------------------------------------------------------
     // Role assignment
-    // ---------------------------------------------------------------------
 
     /// @notice Self-service: the caller takes on `role`, dropping any previous role. Test mode only.
     /// @dev Admin is not self-assignable: it carries the token's VERIFIER_ROLE, so anyone
@@ -152,9 +143,7 @@ contract RoleGateway is Ownable {
         _claimIssued[address(identity)][topic] = wanted;
     }
 
-    // ---------------------------------------------------------------------
     // IClaimIssuer surface (read by IdentityRegistry)
-    // ---------------------------------------------------------------------
 
     /// @notice A gateway claim is valid iff the gateway currently has it issued for the subject.
     /// @dev `subject` is the wallet's Identity contract (as passed by IdentityRegistry).

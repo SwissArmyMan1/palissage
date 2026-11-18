@@ -161,9 +161,7 @@ contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
         treasury = treasury_;
     }
 
-    // ---------------------------------------------------------------------
     // Admin
-    // ---------------------------------------------------------------------
 
     function setPaymentTokenAllowed(address token, bool allowed) external onlyRole(DEFAULT_ADMIN_ROLE) {
         if (token == address(0)) revert ZeroAddress();
@@ -191,9 +189,7 @@ contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
         _unpause();
     }
 
-    // ---------------------------------------------------------------------
     // Offers (winery)
-    // ---------------------------------------------------------------------
 
     function createOffer(
         uint256 lotId,
@@ -256,8 +252,7 @@ contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
     function setMilestones(uint256 offerId, uint16[] calldata bps, string[] calldata descriptions) external {
         Offer storage offer = _activeOffer(offerId);
         if (offer.winery != msg.sender) revert NotLotWinery(offer.lotId, msg.sender);
-        // Own flag, not `reserved`/`settledFunds`: those fall back to zero once every
-        // allocation is cancelled, and a reset schedule would let releasedBps pass 100%.
+        // Keep the schedule locked even if every allocation is later cancelled.
         if (milestonesLocked[offerId]) revert MilestonesAlreadyStarted(offerId);
         if (bps.length == 0 || bps.length != descriptions.length) revert MilestoneBpsSumInvalid(0);
 
@@ -271,9 +266,7 @@ contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
         emit MilestonesSet(offerId, bps.length);
     }
 
-    // ---------------------------------------------------------------------
     // Reservations (buyer) - allocation receipts
-    // ---------------------------------------------------------------------
 
     /// @notice Reserves `quantity` bottles. `payNow == totalDue` settles immediately and
     ///         mints ERC-7943 tokens; a smaller `payNow` (>= deposit) creates a Reserved receipt.
@@ -293,8 +286,7 @@ contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
         uint256 available = offer.quantity - offer.reserved;
         if (quantity > available) revert InsufficientOfferQuantity(offerId, quantity, available);
 
-        // The lot may have been suspended since the offer was published; a deposit taken
-        // against it could never settle.
+        // Reject deposits for suspended lots, which cannot settle.
         _requireVerifiedLot(offer.lotId);
 
         uint256 totalDue = uint256(quantity) * offer.pricePerBottle;
@@ -355,11 +347,9 @@ contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
 
         Offer storage offer = offers[allocation.offerId];
         if (!allowedPaymentTokens[offer.paymentToken]) revert PaymentTokenNotAllowed(offer.paymentToken);
-        // A partial payment mints nothing, so the token's own mint guard would not catch a
-        // suspended lot here.
+        // Partial payments also require a verified lot.
         _requireVerifiedLot(offer.lotId);
-        // Symmetric to claimDefault: past the deadline the buyer no longer keeps the option
-        // of completing or walking away.
+        // Once default is available, reject late payments.
         if (block.timestamp > offer.fullPaymentDeadline) {
             revert PaymentDeadlinePassed(allocationId, offer.fullPaymentDeadline);
         }
@@ -425,9 +415,7 @@ contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
 
         uint256 forfeited = allocation.paidAmount;
         uint256 settled = settledFunds[offerId];
-        // withdrawReleased pools all settledFunds, so part of this deposit may already have
-        // reached the winery. Subtract that share instead of paying it out of the other
-        // allocations' escrow, rounded up so the remainder never overpays.
+        // Deduct the deposit already released; round up to protect other allocations.
         uint256 alreadyReleased =
             settled == 0 ? 0 : Math.mulDiv(withdrawnGross[offerId], forfeited, settled, Math.Rounding.Ceil);
 
@@ -447,9 +435,7 @@ contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
         emit AllocationDefaulted(allocationId, forfeited);
     }
 
-    // ---------------------------------------------------------------------
     // Escrow release (verifier-gated milestones)
-    // ---------------------------------------------------------------------
 
     function confirmMilestone(uint256 offerId, uint256 index) external onlyRole(VERIFIER_ROLE) {
         Milestone[] storage schedule = _milestones[offerId];
@@ -488,9 +474,7 @@ contract PrimaryMarket is AccessControl, Pausable, ReentrancyGuard {
         emit ReleasedWithdrawn(offerId, offer.winery, gross, fee);
     }
 
-    // ---------------------------------------------------------------------
     // Views
-    // ---------------------------------------------------------------------
 
     function getMilestones(uint256 offerId) external view returns (Milestone[] memory milestones) {
         return _milestones[offerId];

@@ -1,17 +1,19 @@
-# Published deployments
+# Avalanche Fuji deployment records
 
-`palissage-<chainId>.manifest.json` is the public release record. `status: verified` means creation receipts, compiled runtime, source hashes, immutable wiring, privileged roles and enabled payment metadata passed the release verifier at `verifiedAtBlock`. It does not mean an independent audit.
+Avalanche Fuji C-Chain uses chain ID `43113`, test AVAX for gas and Palissage tEURe with 18 decimals for demo settlement. Public Fuji deployment and verification remain pending in this checkout. The [technical guide](../TECHNICAL_README.md) covers the Foundry deployment entry point.
 
-`schema/deployment.schema.json` describes the version 2 release format and its supported chain IDs. Schema validation checks the record's structure; the release verifier separately checks receipts, code and state against the network.
+## Release artifacts
 
-`explorerSourceVerified` and `sourceExplorerUrl` record the separate source-publication result per contract. `palissage-<chainId>.flow-evidence.json` contains real fixture transaction hashes and observed final bottle accounting. The seed is fictional and uses valueless tEURe.
+| File | Purpose |
+| --- | --- |
+| `palissage-43113.manifest.json` | Confirmed contract addresses, creation receipts, source and runtime hashes, compiler settings, roles and payment metadata |
+| `palissage-43113.flow-evidence.json` | Confirmed demo transactions, fictional fixture IDs, payment accounting and final bottle balances |
+| `palissage-43113.identities.json` | Participant Identity contracts, registration receipts and source-verification status |
 
-Supported networks are Arbitrum Sepolia (421614) and Robinhood Testnet (46630). They have independent inventory. Official test USDG is allowed on both markets, and its address and metadata are checked against the selected chain. Workflow evidence states which asset was actually used.
+These names describe the expected Fuji release artifacts. Publish them after their on-chain checks succeed.
 
-`abis/` contains ABIs exported from the exact release artifacts. The frontend manifest is regenerated only after verification succeeds.
+`status: verified` records successful receipt, compiled-runtime, source-hash, immutable-wiring, role and payment-metadata checks at `verifiedAtBlock`. `explorerSourceVerified` and `sourceExplorerUrl` record the explorer's source-publication result for each contract. An independent security audit has its own scope and report.
 
-`palissage-<chainId>.identities.json` lists the three fixture participants' contracts created internally by RoleGateway. It records their registration receipts, exact runtime, constructor argument and separately confirmed explorer source URLs. These dynamic identities are additional to the ten protocol contracts in each main manifest.
+`abis/` contains exported contract ABIs. The frontend uses a verified Fuji record in `UI/web/src/chain/deployments.json` for addresses and runtime checks.
 
-The Arbitrum protocol contracts have Arbiscan Exact Match verification. Arbiscan publishes two repeated fixture Identity addresses through Similar Match to the first verified Identity; `explorerVerificationKind` and `matchedSourceAddress` preserve that distinction. Their source and ABI are visible, and their runtime and gateway management key are checked separately on-chain. [Etherscan verification types](https://info.etherscan.com/types-of-contract-verification/) explains these explorer labels.
-
-Ignored `*.release-journal.json`, drafts and plans are local operational records. Never commit a mnemonic, private key, signed raw transaction or private RPC credential.
+Keep address drafts, transaction journals, seed plans and broadcast output locally. Credentials belong in the operator's keystore or private environment.

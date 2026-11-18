@@ -59,9 +59,7 @@ contract Identity is IIdentity {
         emit KeyAdded(key, ClaimTopicsLib.PURPOSE_MANAGEMENT, ClaimTopicsLib.KEY_TYPE_ECDSA);
     }
 
-    // ---------------------------------------------------------------------
     // ERC-734
-    // ---------------------------------------------------------------------
 
     function getKey(bytes32 key) external view returns (uint256[] memory purposes, uint256 keyType, bytes32 key_) {
         Key storage k = _keys[key];
@@ -181,9 +179,7 @@ contract Identity is IIdentity {
         }
     }
 
-    // ---------------------------------------------------------------------
     // ERC-735
-    // ---------------------------------------------------------------------
 
     function getClaim(bytes32 claimId)
         external
@@ -252,9 +248,7 @@ contract Identity is IIdentity {
         return true;
     }
 
-    // ---------------------------------------------------------------------
     // Modifiers
-    // ---------------------------------------------------------------------
 
     modifier onlyManager() {
         if (

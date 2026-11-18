@@ -61,9 +61,7 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
         identityRegistry = identityRegistry_;
     }
 
-    // ---------------------------------------------------------------------
     // Admin
-    // ---------------------------------------------------------------------
 
     function setIdentityRegistry(IIdentityRegistry registry) external onlyRole(DEFAULT_ADMIN_ROLE) {
         if (address(registry) == address(0)) revert ZeroAddress();
@@ -77,9 +75,7 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
         emit SystemAddressUpdated(account, isSystem);
     }
 
-    // ---------------------------------------------------------------------
     // Lot lifecycle
-    // ---------------------------------------------------------------------
 
     /// @inheritdoc IWineLotToken
     function createLot(WineLotInput calldata input) external returns (uint256 lotId) {
@@ -159,9 +155,7 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
         emit LotStatusChanged(lotId, LotStatus.Closed);
     }
 
-    // ---------------------------------------------------------------------
     // Mint / burn (markets and redemption only)
-    // ---------------------------------------------------------------------
 
     /// @inheritdoc IWineLotToken
     function mint(address to, uint256 lotId, uint256 amount) external onlyRole(MINTER_ROLE) {
@@ -175,9 +169,7 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
         _burn(from, lotId, amount);
     }
 
-    // ---------------------------------------------------------------------
     // ERC-7943
-    // ---------------------------------------------------------------------
 
     /// @inheritdoc IERC7943MultiToken
     function canSend(address account) public view returns (bool allowed) {
@@ -252,9 +244,7 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
         return true;
     }
 
-    // ---------------------------------------------------------------------
     // Views
-    // ---------------------------------------------------------------------
 
     /// @inheritdoc IWineLotToken
     function getLot(uint256 lotId) external view returns (WineLot memory lot) {
@@ -284,9 +274,7 @@ contract WineLotToken is ERC1155Supply, AccessControl, IWineLotToken {
         return interfaceId == type(IERC7943MultiToken).interfaceId || super.supportsInterface(interfaceId);
     }
 
-    // ---------------------------------------------------------------------
     // Transfer restrictions (single choke point)
-    // ---------------------------------------------------------------------
 
     function _update(address from, address to, uint256[] memory ids, uint256[] memory values)
         internal

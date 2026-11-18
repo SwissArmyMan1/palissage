@@ -16,6 +16,7 @@ contract TestEURe is ERC20, Ownable {
     uint256 public constant FAUCET_COOLDOWN = 1 days;
 
     /// @notice Supported public test networks. No mainnet deployment is permitted.
+    uint256 public constant AVALANCHE_FUJI_CHAIN_ID = 43113;
     uint256 public constant ARBITRUM_SEPOLIA_CHAIN_ID = 421614;
     uint256 public constant ROBINHOOD_TESTNET_CHAIN_ID = 46630;
     /// @notice Anvil / local fork, developer builds only.
@@ -32,7 +33,7 @@ contract TestEURe is ERC20, Ownable {
     constructor(address owner_) ERC20("Palissage Test EUR", "tEURe") Ownable(owner_) {
         if (
             block.chainid != ARBITRUM_SEPOLIA_CHAIN_ID && block.chainid != ROBINHOOD_TESTNET_CHAIN_ID
-                && block.chainid != LOCAL_CHAIN_ID
+                && block.chainid != AVALANCHE_FUJI_CHAIN_ID && block.chainid != LOCAL_CHAIN_ID
         ) {
             revert UnsupportedTestChain(block.chainid);
         }

@@ -13,12 +13,9 @@ import {RoleGateway} from "../identity/RoleGateway.sol";
 import {IWineLotToken} from "../interfaces/IWineLotToken.sol";
 import {ClaimTopicsLib} from "../libraries/ClaimTopicsLib.sol";
 
-/// @title PalissageLens - read-only projection of the protocol state for the interface.
-/// @notice Bundles the reads a screen needs into one call and adds the derived values the
-///         interface must never invent for itself (offer phase, remaining balance, transferable
-///         amount, permissions per contract).
-/// @dev `view` only, no storage beyond the six immutable addresses, no roles, holds no funds.
-///      Nothing in the protocol depends on it.
+/// @title PalissageLens - protocol reads for the interface.
+/// @notice Returns balances, offer phases, settlement amounts and contract permissions.
+/// @dev Read-only; holds no funds or roles. Protocol contracts do not depend on it.
 contract PalissageLens {
     string public constant VERSION = "1.1.0";
 
@@ -48,9 +45,7 @@ contract PalissageLens {
     error TooManyPositionIds(uint256 count);
     error EntityNotFound(uint8 kind, uint256 id);
 
-    // ---------------------------------------------------------------------
     // Views returned to the interface
-    // ---------------------------------------------------------------------
 
     struct LotView {
         uint256 id;
@@ -221,9 +216,7 @@ contract PalissageLens {
         bool paymentMetadataOk;
     }
 
-    // ---------------------------------------------------------------------
     // Immutable wiring
-    // ---------------------------------------------------------------------
 
     WineLotToken public immutable token;
     PrimaryMarket public immutable primary;
@@ -253,9 +246,7 @@ contract PalissageLens {
         gateway = gateway_;
     }
 
-    // ---------------------------------------------------------------------
     // Environment and participants
-    // ---------------------------------------------------------------------
 
     /// @notice One call describing the deployment: fees, treasuries, pauses, counters and the
     ///         payment token as both markets actually see it.
@@ -324,9 +315,7 @@ contract PalissageLens {
         view_.canReceive = token.canReceive(wallet);
     }
 
-    // ---------------------------------------------------------------------
     // Lots
-    // ---------------------------------------------------------------------
 
     /// @notice `exists` is separate so a missing id is not shown as an empty Draft.
     function lot(uint256 id) external view returns (bool exists, LotView memory view_) {
@@ -347,9 +336,7 @@ contract PalissageLens {
         return _lotsFiltered(winery, cursor, limit);
     }
 
-    // ---------------------------------------------------------------------
     // Offers
-    // ---------------------------------------------------------------------
 
     function offer(uint256 id) external view returns (OfferView memory view_) {
         _requireOffer(id);
@@ -380,9 +367,7 @@ contract PalissageLens {
         return _offersFiltered(0, winery, cursor, limit);
     }
 
-    // ---------------------------------------------------------------------
     // Allocations
-    // ---------------------------------------------------------------------
 
     function allocation(uint256 id) external view returns (AllocationView memory view_) {
         _requireAllocation(id);
@@ -405,9 +390,7 @@ contract PalissageLens {
         return _allocationsFiltered(address(0), offerId, cursor, limit);
     }
 
-    // ---------------------------------------------------------------------
     // Listings
-    // ---------------------------------------------------------------------
 
     function listing(uint256 id) external view returns (ListingView memory view_) {
         _requireListing(id);
@@ -441,9 +424,7 @@ contract PalissageLens {
         return _listingsFiltered(address(0), lotId, false, cursor, limit);
     }
 
-    // ---------------------------------------------------------------------
     // Redemptions
-    // ---------------------------------------------------------------------
 
     function redemption(uint256 id) external view returns (RedemptionView memory view_) {
         _requireRedemption(id);
@@ -475,9 +456,7 @@ contract PalissageLens {
         return _redemptionsFiltered(address(0), winery, cursor, limit);
     }
 
-    // ---------------------------------------------------------------------
     // Positions and settlement
-    // ---------------------------------------------------------------------
 
     /// @notice Wallet balance, frozen amount and unfrozen remainder per lot.
     /// @dev `transferable` is the unfrozen balance only - lot status, both parties' eligibility
@@ -522,9 +501,7 @@ contract PalissageLens {
         view_.milestones = milestones;
     }
 
-    // ---------------------------------------------------------------------
     // Internal: single-entity projections
-    // ---------------------------------------------------------------------
 
     function _lotView(uint256 id) internal view returns (LotView memory view_) {
         IWineLotToken.WineLot memory record = token.getLot(id);
@@ -676,9 +653,7 @@ contract PalissageLens {
         view_.lotProduction = uint8(record.production);
     }
 
-    // ---------------------------------------------------------------------
     // Internal: paginated scans
-    // ---------------------------------------------------------------------
 
     /// @dev Ids start at 1, `cursor == 0` means from the beginning.
     function _pageBounds(uint256 cursor, uint256 limit, uint256 count)
@@ -829,9 +804,7 @@ contract PalissageLens {
         return (buffer, _nextCursor(id, last, count));
     }
 
-    // ---------------------------------------------------------------------
     // Internal: helpers
-    // ---------------------------------------------------------------------
 
     function _hasRole(address target, bytes32 role, address account) internal view returns (bool) {
         return IAccessControl(target).hasRole(role, account);
